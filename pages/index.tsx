@@ -3,48 +3,54 @@ import Navbar from './components/navbar'
 import Color from '../styles/colors'
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
-
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
+//ipfs
+import { create } from 'ipfs-http-client'
 
 export default function Home() {
- 
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<Boolean>()
   const [activeAccount, setActiveAccount] = useState(null)
-  const [provider, setProvider] = useState(null);
+  const [provider, setProvider] = useState(null)
 
+  // connect to the default API address http://localhost:5001
+  const ipfs = create()
+  // or using options
+  //const ipfs = create({ host: 'localhost', port: '5001', protocol: 'http' })
 
-  detectEthereumProvider().then(prv => setProvider(prv))
-  if(provider){
+  detectEthereumProvider().then((prv) => setProvider(prv))
+  if (provider) {
     // console.log("check provider:  ", provider)
     // provider.request({ method: 'eth_requestAccounts' })
     //         .then(accounts => console.log("accounts: ", accounts))
-    
   }
 
+  //Process the uploaded file for uploading to ipfs
   const captureFile = (event) => {
     event.preventDefault()
-      console.log(event.target.files)
+    console.log(event.target.files)
   }
+
+  //Upload to ipfs and return its hash
+  function uploadToIpfs() {}
 
   return (
     <div>
       <Head>
-      <link rel="preconnect" href="https://fonts.gstatic.com"/>
-      <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+          rel="stylesheet"
+        />
       </Head>
       <Navbar />
 
-      
       <Center>
         <h3>HOME</h3>
 
-        <InputButton type='file' multiple onChange={captureFile}/>
-
+        <InputButton type="file" multiple onChange={captureFile} />
       </Center>
-
-
 
       <style global jsx>
         {`
@@ -80,6 +86,4 @@ const Center = styled.div`
   /* background-color: green; */
 `
 
-const InputButton = styled.input`
-  
-`;
+const InputButton = styled.input``
