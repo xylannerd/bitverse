@@ -5,5 +5,5 @@ module.exports = function (deployer) {
   
   // const defaultOperators = ["0x854539D46883d9830194Ca9C7f703C735b415981"];
 
-  deployer.deploy(Bitverse, 1000, []);
+  deployer.deploy(Bitverse, 10000);
 };
