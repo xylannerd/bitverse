@@ -17,6 +17,8 @@ contract Bitverse is ERC20 {
     /// `cid` is an invalid Ipfs-Cid
     /// @param cid Ipfs-Cid entered.
     error InvalidCid(string cid);
+    /// Empty cid entered.
+    error EmptyCid();
 
     /// Content with Cid: `cid` already exist.
     /// @param cid Cid entered.
@@ -91,7 +93,7 @@ contract Bitverse is ERC20 {
     /// and stores it.
     function _addContent(string memory _cid) public {
         //Make sure NON-EMPTY Cid is entered
-        if (bytes(_cid).length < 0) revert InvalidCid(_cid);
+        if (bytes(_cid).length < 0) revert EmptyCid();
         //TODO Make sure Ipfs-Cid has the corrent format 
         // if (_cid == incorrectFormat) revert InvalidCid(_cid);
 
@@ -113,8 +115,7 @@ contract Bitverse is ERC20 {
     }
 
     // function like(string memory _cid) public {
-    //         uint256 cId = cidToIndex[_cid];
-    //         Content storage c = contents[cId];
+    //         Content storage c = contentsMapping[_cid];
     //         if(c.usersLiked[msg.sender] != true){
     //             c.usersLiked[msg.sender] = true;
     //             if(c.usersDisliked[msg.sender] == true){
@@ -122,7 +123,7 @@ contract Bitverse is ERC20 {
     //                 c.dislikes--;
     //             }
     //             c.likes++;
-    //             c.netLikes++;
+    //             c.netlikes++;
     //             //logic for rewarding ERC777 for every 100th netLikes.
 
     //             if(c.netLikes % 100 == 0 && c.netLikes / 100 == c.nonce + 1){

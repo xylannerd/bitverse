@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "truffle-config.js", "test/bitverse.js"  ],
+, "truffle-config.js", "test/bitverse.test.js"  ],
   "exclude": [
     "node_modules",
     "fonts.ts"
