@@ -2,7 +2,6 @@
 const Bitverse = artifacts.require('Bitverse');
 
 
-
 contract("Bitverse", ([owner, user1, user2, user3]) => {
 
     let bitverse;

@@ -24,7 +24,6 @@ contract Bitverse is ERC20 {
     /// @param cid Cid entered.
     error contentAlreadyExist(string cid);
 
- 
     // @dev An array that contains all the Cids in existence
     // Can be use to get every cid
     // hence every ipfs content there is.
@@ -43,17 +42,18 @@ contract Bitverse is ERC20 {
     /// owned by each author.
     mapping(address => uint256[]) public authorToCidIndices;
 
-    
     /// @dev The main 'Content' struct.
     /// Every content in Bitverse is represented by a copy of this structure.
     // TODO Not yet optimized for the byte-packing rules used by Ethereum.
     struct Content {
-        //The ipfs-Cid of the content.
+        //The IPFS-CID of the content.
         //A unique identifier for the content.
         string cid;
         // //TODO
-        // //Tags in order to classify the content (might remove it later).
-        // string[] tags;
+
+        //The IPFS-CID of the content metadata.
+        //Example: Name, Description for a video content.
+        string metadataCid;
         //Address of the content author.
         address payable author;
         //Total likes the author got for this content.
@@ -94,12 +94,11 @@ contract Bitverse is ERC20 {
     function _addContent(string memory _cid) public {
         //Make sure NON-EMPTY Cid is entered
         if (bytes(_cid).length < 0) revert EmptyCid();
-        //TODO Make sure Ipfs-Cid has the corrent format 
+        //TODO Make sure Ipfs-Cid has the corrent format
         // if (_cid == incorrectFormat) revert InvalidCid(_cid);
 
         //make sure content doesnt already exist
         if (cidToAuthor[_cid] != address(0)) revert contentAlreadyExist(_cid);
-
 
         //refactored Code:
         //since we gonna use string[] cidArray now and mapping of content.
