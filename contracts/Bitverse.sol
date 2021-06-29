@@ -9,24 +9,14 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// @notice You can use this contract for saving ipfs hashes znd doing stuff with it //TODO
 /// @dev //TODO
 contract Bitverse is ERC20 {
+    /* Abbreviations used */
+    // IPFS: Inter-Planetery File System.
+    // Cid: Content Identifier.
+
     /** TEMPORARY STUFF **/
     //eXAMPLE cID - QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
 
-    /** ERRORS **/
-
-    /// `cid` is an invalid Ipfs-Cid
-    /// @param cid Ipfs-Cid entered.
-    error InvalidCid(string cid);
-    /// Empty cid entered.
-    error EmptyCid();
-
-    /// Content with Cid: `cid` already exist.
-    /// @param cid Cid entered.
-    error contentAlreadyExist(string cid);
-
-    // @dev An array that contains all the Cids in existence
-    // Can be use to get every cid
-    // hence every ipfs content there is.
+    // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
 
     //@dev Mapping that contains all the Content in existence
@@ -49,10 +39,9 @@ contract Bitverse is ERC20 {
         //The IPFS-CID of the content.
         //A unique identifier for the content.
         string cid;
-        // //TODO
-
         //The IPFS-CID of the content metadata.
         //Example: Name, Description for a video content.
+        //Stored on IPFS in JSON format.
         string metadataCid;
         //Address of the content author.
         address payable author;
@@ -66,7 +55,7 @@ contract Bitverse is ERC20 {
         // hence a signed integer.
         // The token rewarded are calculated upon the number of netlikes.
         // Note: No tokens can be rewarded more than once for the same milestone,
-        // We use nonce below for this purpose.
+        // We use nonce below to keep track of the milestones.
         int256 netlikes;
         // This is used to make sure no author is rewarded a token more than once for the same milestone.
         uint256 nonce;
@@ -76,22 +65,40 @@ contract Bitverse is ERC20 {
         // This mapping contains all the users who've disliked this content.
         // Also used to make sure no user dislikes the content more than once.
         mapping(address => bool) usersDisliked;
-        // The timestamp from the block when this content came into existence.
+        // The timestamp from the block when this content came into existence on the blockchain.
         uint256 timeStamp;
     }
 
+    /**  CONSTRUCTOR  **/
     /// The constructor for this smart contract
     /// Initializes the name, symbol and initial supply of the token.
     constructor(uint256 initialSupply) ERC20("Bitstone", "BIT") {
         _mint(msg.sender, initialSupply);
     }
 
-    /**  FUNCTIONS **/
+    /***  FUNCTIONS ***/
 
-    //add single content
+    /* Events for _addContent function  */
+    event NewContentAdded(string cid, address author, uint256 timeStamp);
+
+    /* Errors for _addContent function */
+    /// `cid` is an invalid Ipfs-Cid.
+    /// @param cid Ipfs-Cid entered.
+    error InvalidCid(string cid);
+    /// Empty cid entered.
+    error EmptyCid();
+    /// Content with Cid: `cid` already exist.
+    /// @param cid Cid entered.
+    error contentAlreadyExist(string cid);
+
+    //  Add single content
     /// @dev Generate a new Content for the provided Ipfs-Cid
     /// and stores it.
-    function _addContent(string memory _cid) public {
+    /// @notice Author can set/update metadata later as well via setMetadata() function.
+    /// Pass empty string "" for no metadata.
+    function _addContent(string memory _cid, string memory _metadataCid)
+        public
+    {
         //Make sure NON-EMPTY Cid is entered
         if (bytes(_cid).length < 0) revert EmptyCid();
         //TODO Make sure Ipfs-Cid has the corrent format
@@ -100,10 +107,9 @@ contract Bitverse is ERC20 {
         //make sure content doesnt already exist
         if (cidToAuthor[_cid] != address(0)) revert contentAlreadyExist(_cid);
 
-        //refactored Code:
-        //since we gonna use string[] cidArray now and mapping of content.
         Content storage c = contentsMapping[_cid];
         c.cid = _cid;
+        c.metadataCid = _metadataCid;
         c.author = payable(msg.sender);
         c.timeStamp = block.timestamp;
 
@@ -111,6 +117,34 @@ contract Bitverse is ERC20 {
         uint256 newIndex = cidsArray.length - 1;
         cidToAuthor[_cid] = msg.sender;
         authorToCidIndices[msg.sender].push(newIndex);
+
+        emit NewContentAdded(_cid, msg.sender, block.timestamp);
+    }
+
+    /** Errors for updateMetadata function **/
+    /// Only author `originalAuthor` can set the metadata.
+    /// @param originalAuthor Content author.
+    error contentAuthorRequired(address originalAuthor);
+
+    /* Events for updateMetadata function */
+    event MetadataUpdated(
+        string contentCid,
+        string updatedMetadataCid,
+        address author
+    );
+
+    /// @notice Author can use it to set/update metadata for their Content.
+    /// @param _cid IPFS-Cid of the Content.
+    /// @param _metadataCid IPFS-Cid of the metadata.
+    function updateMetadata(string memory _cid, string memory _metadataCid)
+        public
+    {
+        address contentAuthor = cidToAuthor[_cid];
+        if (contentAuthor != msg.sender)
+            revert contentAuthorRequired(contentAuthor);
+        Content storage c = contentsMapping[_cid];
+        c.metadataCid = _metadataCid;
+        emit MetadataUpdated(_cid, _metadataCid, contentAuthor);
     }
 
     // function like(string memory _cid) public {
