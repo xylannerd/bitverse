@@ -7,17 +7,13 @@ import { useState, useEffect } from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 //ipfs
-import { create } from 'ipfs-http-client'
 
 export default function Home() {
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<Boolean>()
   const [activeAccount, setActiveAccount] = useState(null)
   const [provider, setProvider] = useState(null)
 
-  // connect to the default API address http://localhost:5001
-  const ipfs = create()
-  // or using options
-  //const ipfs = create({ host: 'localhost', port: '5001', protocol: 'http' })
+
 
   detectEthereumProvider().then((prv) => setProvider(prv))
   if (provider) {

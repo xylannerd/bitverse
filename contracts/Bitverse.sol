@@ -19,16 +19,16 @@ contract Bitverse is ERC20 {
     // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
 
+    /** 3 Global Mappings. **/
+
     //@dev Mapping that contains all the Content in existence
     // Unique Cid to Content struct.
-    mapping(string => Content) contentsMapping;
+    mapping(string => Content) public contentsMapping;
 
-    //3 Global Mappings.
-
-    /// @dev A mapping of Cid (Content identifier) to their respective Owners
+    /// @dev A mapping of Cid to their respective Owner
     mapping(string => address) public cidToAuthor;
 
-    /// @dev This mapping returns all the indices of Contents (inside array contents[])
+    /// @dev This mapping returns all the indices of Cids (inside array cidsArray)
     /// owned by each author.
     mapping(address => uint256[]) public authorToCidIndices;
 
@@ -69,17 +69,14 @@ contract Bitverse is ERC20 {
         uint256 timeStamp;
     }
 
-    /**  CONSTRUCTOR  **/
+    /*  CONSTRUCTOR  */
     /// The constructor for this smart contract
     /// Initializes the name, symbol and initial supply of the token.
     constructor(uint256 initialSupply) ERC20("Bitstone", "BIT") {
         _mint(msg.sender, initialSupply);
     }
 
-    /***  FUNCTIONS ***/
-
-    /* Events for _addContent function  */
-    event NewContentAdded(string cid, address author, uint256 timeStamp);
+    /**  FUNCTIONS **/
 
     /* Errors for _addContent function */
     /// `cid` is an invalid Ipfs-Cid.
@@ -91,6 +88,9 @@ contract Bitverse is ERC20 {
     /// @param cid Cid entered.
     error contentAlreadyExist(string cid);
 
+    /* Events for _addContent function  */
+    event NewContentAdded(string cid, address author, uint256 timeStamp);
+
     //  Add single content
     /// @dev Generate a new Content for the provided Ipfs-Cid
     /// and stores it.
@@ -100,7 +100,7 @@ contract Bitverse is ERC20 {
         public
     {
         //Make sure NON-EMPTY Cid is entered
-        if (bytes(_cid).length < 0) revert EmptyCid();
+        if (bytes(_cid).length <= 0) revert EmptyCid();
         //TODO Make sure Ipfs-Cid has the corrent format
         // if (_cid == incorrectFormat) revert InvalidCid(_cid);
 
@@ -121,7 +121,7 @@ contract Bitverse is ERC20 {
         emit NewContentAdded(_cid, msg.sender, block.timestamp);
     }
 
-    /** Errors for updateMetadata function **/
+    /* Errors for updateMetadata function */
     /// Only author `originalAuthor` can set the metadata.
     /// @param originalAuthor Content author.
     error contentAuthorRequired(address originalAuthor);
@@ -147,46 +147,54 @@ contract Bitverse is ERC20 {
         emit MetadataUpdated(_cid, _metadataCid, contentAuthor);
     }
 
+
+    /* Errors for like function */
+    /// Already liked!
+    error alreadyLiked();
+    /// Already disliked!
+    error alreadyDisliked();
+
+     /* Events for updateMetadata function */
+     event ContentLiked(string cid, address liker);
+
+     event ContentDisliked(string cid, address disliker);
+
     // function like(string memory _cid) public {
-    //         Content storage c = contentsMapping[_cid];
-    //         if(c.usersLiked[msg.sender] != true){
-    //             c.usersLiked[msg.sender] = true;
-    //             if(c.usersDisliked[msg.sender] == true){
-    //                 c.usersDisliked[msg.sender] == false;
-    //                 c.dislikes--;
-    //             }
-    //             c.likes++;
-    //             c.netlikes++;
-    //             //logic for rewarding ERC777 for every 100th netLikes.
-
-    //             if(c.netLikes % 100 == 0 && c.netLikes / 100 == c.nonce + 1){
-    //                   //mint function to hit with every 100th netLike
-    //                  _mint(c.author, 1, "", "");
-    //                  c.nonce++;
-    //             }
-
-    //         } else {
-    //             revert("Already liked!");
+    //     Content storage c = contentsMapping[_cid];
+    //     if (c.usersLiked[msg.sender] != true) {
+    //         c.usersLiked[msg.sender] = true;
+    //         if (c.usersDisliked[msg.sender] == true) {
+    //             c.usersDisliked[msg.sender] == false;
+    //             c.dislikes--;
     //         }
+    //         c.likes++;
+    //         c.netlikes++;
+    //         //logic for rewarding ERC777 for every 100th netlikes.
 
+    //         if (c.netlikes % 100 == 0 && c.netlikes / 100 == c.nonce + 1) {
+    //             //mint function to hit with every 100th netLike
+    //             _mint(c.author, 1);
+    //             c.nonce++;
+    //         }
+    //     } else {
+    //         revert("Already liked!");
+    //     }
     // }
 
     // function dislike(string memory _cid) public {
-    //         uint256 cId = cidHashToIndex[_hash];
-    //         Content storage c = contents[cId];
-    //         if(c.usersDisliked[msg.sender] != true){
-    //             c.usersDisliked[msg.sender] = true;
-    //             if(c.usersLiked[msg.sender] == true){
-    //                 c.usersLiked[msg.sender] == false;
-    //                 c.likes--;
-    //                 c.netLikes--;
-    //             }
-    //             c.dislikes++;
-    //             c.netLikes--;
-    //         } else {
-    //             revert("Already disliked!");
+    //     Content storage c = contentsMapping[_cid];
+    //     if (c.usersDisliked[msg.sender] != true) {
+    //         c.usersDisliked[msg.sender] = true;
+    //         if (c.usersLiked[msg.sender] == true) {
+    //             c.usersLiked[msg.sender] == false;
+    //             c.likes--;
+    //             c.netlikes--;
     //         }
-
+    //         c.dislikes++;
+    //         c.netlikes--;
+    //     } else {
+    //         revert("Already disliked!");
+    //     }
     // }
 
     ///@dev Reurns the total number of Content in existence.
