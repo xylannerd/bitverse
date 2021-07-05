@@ -55,10 +55,10 @@ contract Bitverse is ERC20 {
         // hence a signed integer.
         // The token rewarded are calculated upon the number of netlikes.
         // Note: No tokens can be rewarded more than once for the same milestone,
-        // We use nonce below to keep track of the milestones.
+        // We use milestone below to keep track of the milestones.
         int256 netlikes;
         // This is used to make sure no author is rewarded a token more than once for the same milestone.
-        uint256 nonce;
+        uint256 milestone;
         // This mapping contains all the users who've liked this content.
         // Also used to make sure no user likes the content more than once.
         mapping(address => bool) usersLiked;
@@ -159,27 +159,53 @@ contract Bitverse is ERC20 {
 
      event ContentDisliked(string cid, address disliker);
 
-    // function like(string memory _cid) public {
-    //     Content storage c = contentsMapping[_cid];
-    //     if (c.usersLiked[msg.sender] != true) {
-    //         c.usersLiked[msg.sender] = true;
-    //         if (c.usersDisliked[msg.sender] == true) {
-    //             c.usersDisliked[msg.sender] == false;
-    //             c.dislikes--;
-    //         }
-    //         c.likes++;
-    //         c.netlikes++;
-    //         //logic for rewarding ERC777 for every 100th netlikes.
+    function like(string memory _cid) public {
+        Content storage c = contentsMapping[_cid];
+        
+        if (c.usersLiked[msg.sender] == true) 
+            revert alreadyLiked();
+        
+        if (c.usersDisliked[msg.sender] == true) {
+                c.usersDisliked[msg.sender] == false;
+                c.dislikes--;
+            }
+ 
+        c.usersLiked[msg.sender] = true;
+        c.likes++;
+        c.netlikes++;
 
-    //         if (c.netlikes % 100 == 0 && c.netlikes / 100 == c.nonce + 1) {
-    //             //mint function to hit with every 100th netLike
-    //             _mint(c.author, 1);
-    //             c.nonce++;
-    //         }
-    //     } else {
-    //         revert("Already liked!");
-    //     }
-    // }
+        //logic for rewarding ERC20 for every 100th netlikes.
+        if (c.netlikes % 100 == 0  && uint256(c.netlikes) / 100 == c.milestone + 1) { //TODO check for exploit
+            //mint function to hit with every 100th netLike
+                _mint(c.author, 1);
+                c.milestone++;
+        }
+
+
+
+        
+        
+        
+        
+        // if (c.usersLiked[msg.sender] != true) {
+        //     c.usersLiked[msg.sender] = true;
+        //     if (c.usersDisliked[msg.sender] == true) {
+        //         c.usersDisliked[msg.sender] == false;
+        //         c.dislikes--;
+        //     }
+        //     c.likes++;
+        //     c.netlikes++;
+        //     //logic for rewarding ERC20 for every 100th netlikes.
+
+        //     if (c.netlikes % 100 == 0 && c.netlikes / 100 == c.milestone + 1) {
+        //         //mint function to hit with every 100th netLike
+        //         _mint(c.author, 1);
+        //         c.milestone++;
+        //     }
+        // } else {
+        //     revert("Already liked!");
+        // }
+    }
 
     // function dislike(string memory _cid) public {
     //     Content storage c = contentsMapping[_cid];
