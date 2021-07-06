@@ -147,81 +147,60 @@ contract Bitverse is ERC20 {
         emit MetadataUpdated(_cid, _metadataCid, contentAuthor);
     }
 
-
     /* Errors for like function */
     /// Already liked!
     error alreadyLiked();
     /// Already disliked!
     error alreadyDisliked();
 
-     /* Events for updateMetadata function */
-     event ContentLiked(string cid, address liker);
+    /* Events for updateMetadata function */
+    event ContentLiked(string cid, address liker);
 
-     event ContentDisliked(string cid, address disliker);
+    event ContentDisliked(string cid, address disliker);
 
     function like(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
-        
-        if (c.usersLiked[msg.sender] == true) 
-            revert alreadyLiked();
-        
+
+        if (c.usersLiked[msg.sender] == true) revert alreadyLiked();
+
         if (c.usersDisliked[msg.sender] == true) {
-                c.usersDisliked[msg.sender] == false;
-                c.dislikes--;
-            }
- 
+            c.usersDisliked[msg.sender] == false;
+            c.dislikes--;
+        }
+
         c.usersLiked[msg.sender] = true;
         c.likes++;
         c.netlikes++;
 
-        //logic for rewarding ERC20 for every 100th netlikes.
-        if (c.netlikes % 100 == 0  && uint256(c.netlikes) / 100 == c.milestone + 1) { //TODO check for exploit
+        //logic for rewarding ERC20 for every 100th netlike.
+        //TODO check for exploit
+        if (
+            c.netlikes % 100 == 0 &&
+            uint256(c.netlikes) / 100 == c.milestone + 1
+        ) {
             //mint function to hit with every 100th netLike
-                _mint(c.author, 1);
-                c.milestone++;
+            _mint(c.author, 1);
+            c.milestone++;
         }
-
-
-
-        
-        
-        
-        
-        // if (c.usersLiked[msg.sender] != true) {
-        //     c.usersLiked[msg.sender] = true;
-        //     if (c.usersDisliked[msg.sender] == true) {
-        //         c.usersDisliked[msg.sender] == false;
-        //         c.dislikes--;
-        //     }
-        //     c.likes++;
-        //     c.netlikes++;
-        //     //logic for rewarding ERC20 for every 100th netlikes.
-
-        //     if (c.netlikes % 100 == 0 && c.netlikes / 100 == c.milestone + 1) {
-        //         //mint function to hit with every 100th netLike
-        //         _mint(c.author, 1);
-        //         c.milestone++;
-        //     }
-        // } else {
-        //     revert("Already liked!");
-        // }
     }
 
-    // function dislike(string memory _cid) public {
-    //     Content storage c = contentsMapping[_cid];
-    //     if (c.usersDisliked[msg.sender] != true) {
-    //         c.usersDisliked[msg.sender] = true;
-    //         if (c.usersLiked[msg.sender] == true) {
-    //             c.usersLiked[msg.sender] == false;
-    //             c.likes--;
-    //             c.netlikes--;
-    //         }
-    //         c.dislikes++;
-    //         c.netlikes--;
-    //     } else {
-    //         revert("Already disliked!");
-    //     }
-    // }
+    function dislike(string memory _cid) public {
+        Content storage c = contentsMapping[_cid];
+
+        if (c.usersDisliked[msg.sender] == true) revert alreadyDisliked();
+
+        if (c.usersLiked[msg.sender] == true) {
+            c.usersLiked[msg.sender] == false;
+            c.likes--;
+            c.netlikes--;
+        }
+
+        c.usersDisliked[msg.sender] = true;
+        c.dislikes++;
+        c.netlikes--;
+
+     
+    }
 
     ///@dev Reurns the total number of Content in existence.
     /// Should be equal to the Length of the content[].
