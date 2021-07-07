@@ -116,5 +116,53 @@ contract("Bitverse", ([owner, user1, user2, user3]) => {
 
  });
 
+ describe("The Like function works properly", async () => {
+
+    it("Increase the likes-count of the Content", async () => {
+        //Increase the likes-count of the Content
+
+        
+
+    });
+
+    it("Increase the netLikes-count of the Content", async () => {
+        //Increase the netLikes-count of the Content
+        
+    })
+
+    it("Mints a token for the 100th Like to the Author's address", async () =>{
+        //give 100 net-likes to the content
+        //assert content author's balance == 1
+    });
+
+    it("Should not mint the token for same milestone", async () => {
+        
+        //the net like reaches 100 again
+        //the milestone remains 1
+
+        //no token is minted to the author's address
+    });
+
+
+ })
+
+ describe("The Dislike function works properly", async () => {
+
+    it("Increase the dislikes-count of the Content", async () => {
+        //Increase the dislikes-count of the Content
+
+
+    });
+
+    it("Decrease the netLikes-count of the Content", async () => {
+        
+        //Decrease the netLikes-count of the Content
+    })
+
+
+
+    
+ })
+
    
-})
+});
