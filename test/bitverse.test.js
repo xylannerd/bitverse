@@ -7,6 +7,13 @@ var chai = require('chai')
 var expect = chai.expect
 var should = chai.should();
 
+const {
+  BN,           // Big Number support
+  constants,    // Common constants, like the zero address and largest integers
+  expectEvent,  // Assertions for emitted events
+  expectRevert, // Assertions for transactions that should fail
+} = require('@openzeppelin/test-helpers');
+
 contract("Bitverse", ([owner, user1, user2, user3]) => {
 
     let bitverse;
@@ -22,7 +29,7 @@ contract("Bitverse", ([owner, user1, user2, user3]) => {
         assert(bitverse.address != '', "Invalid Contract address!!!");
     });
 
- describe("Adds content Bitverse", async () => {
+ describe("Adds content to Bitverse", async () => {
      
      let cid;
      
@@ -44,6 +51,11 @@ contract("Bitverse", ([owner, user1, user2, user3]) => {
         console.log("")
         assert.equal(result.logs[0].args[0], cid, "Cid mismatch!");
         assert.equal(result.logs[0].args[1], user1, "Invalid Author");
+
+        expectEvent(result, 'NewContentAdded', {
+            cid: cid,
+            author: user1,
+          });
 
         let indices = await bitverse.authorToCidIndices(user1, 0);
         console.log("Author's contents indices: " + indices.toString());
@@ -107,8 +119,8 @@ contract("Bitverse", ([owner, user1, user2, user3]) => {
         it("Must initialize with 0 netLikes", async () => {
             expect(content.netlikes.toNumber()).to.equal(0);
         });
-        it("Must initialize with nonce = 0", async () => {
-            expect(content.nonce.toNumber()).to.equal(0);
+        it("Must initialize with milestone = 0", async () => {
+            expect(content.milestone.toNumber()).to.equal(0);
         });
 
     });
