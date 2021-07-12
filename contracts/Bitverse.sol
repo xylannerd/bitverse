@@ -152,13 +152,11 @@ contract Bitverse is ERC20 {
     /* Errors for like function */
     /// Already liked!
     error alreadyLiked();
-    /// Already disliked!
-    error alreadyDisliked();
+   
 
-    /* Events for updateMetadata function */
+    /* Events for like function */
     event ContentLiked(string cid, address liker);
 
-    event ContentDisliked(string cid, address disliker);
 
     function like(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -173,6 +171,8 @@ contract Bitverse is ERC20 {
         c.usersLiked[msg.sender] = true;
         c.likes++;
         c.netlikes++;
+        emit ContentLiked(_cid, msg.sender);
+
 
         //logic for rewarding ERC20 for every 100th netlike.
         //TODO check for exploit
@@ -183,8 +183,16 @@ contract Bitverse is ERC20 {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
             c.milestone++;
+            //maybe emit ean event here TODO 
         }
     }
+
+    /* Errors for dislike function */
+    /// Already disliked!
+    error alreadyDisliked(); 
+
+     /* Events for dislike function */
+    event ContentDisliked(string cid, address disliker);
 
     function dislike(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -200,7 +208,7 @@ contract Bitverse is ERC20 {
         c.usersDisliked[msg.sender] = true;
         c.dislikes++;
         c.netlikes--;
-
+        emit ContentDisliked(_cid, msg.sender);
      
     }
 
@@ -223,4 +231,9 @@ contract Bitverse is ERC20 {
 
     // /// @dev Add multiple contents from a single transaction
     // function addMultipleContent(string[] memory _cid) public {}
+
+    /// Can be used to burn the tokens
+    function burn(uint amount) public {       
+        _burn(msg.sender, amount); 
+    }
 }
