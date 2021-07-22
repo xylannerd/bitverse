@@ -16,7 +16,7 @@ contract Bitverse is ERC20 {
     /** TEMPORARY STUFF **/
     //eXAMPLE cID - QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
 
-    uint public constant REWARD_POINT = 100;
+    int public constant REWARD_POINT = 5;
 
     // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
@@ -177,8 +177,8 @@ contract Bitverse is ERC20 {
         //logic for rewarding ERC20 for every 100th netlike.
         //TODO check for exploit
         if (
-            c.netlikes % 100 == 0 &&
-            uint256(c.netlikes) / REWARD_POINT == c.milestone + 1
+            c.netlikes % REWARD_POINT == 0 &&
+            uint256(c.netlikes / REWARD_POINT) == c.milestone + 1
         ) {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
