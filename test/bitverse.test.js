@@ -24,7 +24,7 @@ contract('Bitverse', (addresses) => {
   })
 
   it('Smart Contract deployed with right parameters', async () => {
-    console.log('Contract Address: ' + bitverse.address)
+    console.log('\nContract Address: ' + bitverse.address + "\n")
     assert(bitverse.address != '', 'Invalid Contract address!!!')
   })
 
@@ -37,8 +37,8 @@ contract('Bitverse', (addresses) => {
         'QmNRCQWfgze6AbBCaT1rkrkV5tJ2aP4oTNPb5JZcXYywve',
         'Invalid Cid!',
       )
-      console.log('IPFS CID: ' + cid)
-      console.log(result)
+      console.log('\nIPFS CID: ' + cid + "\n")
+      console.log("\n" + result + "\n")
     })
 
     it('Adds to smart Contract', async () => {
@@ -54,14 +54,14 @@ contract('Bitverse', (addresses) => {
       })
 
       let indices = await bitverse.authorToCidIndices(addresses[1], 0)
-      console.log("Author's contents indices: " + indices.toString())
+      console.log("\nAuthor's contents indices: " + indices.toString() + "\n")
 
       assert.equal(indices.toString(), 0, 'Author has no content')
     })
 
     it('Must return correct array length', async () => {
       const cidArray = await bitverse.getCidArray()
-      console.log('Items in CidArray: ' + cidArray.length)
+      console.log('\nItems in CidArray: ' + cidArray.length + "\n")
 
       assert.lengthOf(cidArray, 1, 'Invalid length')
     })
@@ -79,7 +79,7 @@ contract('Bitverse', (addresses) => {
       let author = await bitverse.cidToAuthor(
         'QmNRCQWfgze6AbBCaT1rkrkV5tJ2aP4oTNPb5JZcXYywve',
       )
-      console.log('Author: ' + author)
+      console.log('\nAuthor: ' + author + "\n")
       assert.equal(author, addresses[1], 'Author doesnt match.')
     })
 
@@ -92,7 +92,7 @@ contract('Bitverse', (addresses) => {
       })
 
       it('Must contain correct cid', async () => {
-        console.log(content.cid)
+        console.log("\n" + content.cid + "\n")
         content.cid.should.be.a('string')
         expect(content.cid).to.equal(
           'QmNRCQWfgze6AbBCaT1rkrkV5tJ2aP4oTNPb5JZcXYywve',
@@ -174,44 +174,46 @@ contract('Bitverse', (addresses) => {
     })
   })
 
-  //   describe('Mints token for likes given', async () => {
+    describe('Mints token for likes given', async () => {
 
-  //     let results = [];
-  //     let content;
+      let results = [];
+      let content;
 
-  //     async function likesTx() {
-  //       let i = 1;
-  //       while (i < 6) {
-  //        yield bitverse.like(cid, {from: addresses[i++]});
-  //        yield r;
-  //       }
-  //     }
+      // async function likesTx() {
+      //   let i = 4;
+      //   while (i < 7) {
+      //    yield bitverse.like(cid, {from: addresses[i++]});
+      //    yield r;
+      //   }
+      // }
 
-  //     //give 5 net-likes to the content
-  //     before(async () => {
-  //       for await (let res of likesTx()){
-  //         results.push(res);
-  //       }
+      //give 5 net-likes to the content
+      before(async () => {
+        for (let i = 4; i < 10; i++){
+          await bitverse.like(cid, {from: addresses[i]})
+        }
 
-  //     })
+        // result = await bitverse.like(cid, {from: addresses[4]})
+      })
 
-  //     beforeEach(async () => {
-  //       content = await bitverse.contentsMapping(cid)
-  //     })
+      beforeEach(async () => {
+        content = await bitverse.contentsMapping(cid)
+      })
 
-  //     it("Mints a token for the 5th Like to the Author's address", async () => {
+      it("Mints a token for the 5th Like to the Author's address", async () => {
 
-  //       //assert content author's balance == 1
-  //       const balance = await bitverse.balanceOf(addresses[1]);
-  //       expect(balance.toNumber()).to.equal(1);
+        //assert content author's balance == 1
+        const balance = await bitverse.balanceOf(addresses[1]);
+        expect(balance.toNumber()).to.equal(1);
+        console.log("\nAuthor's balance: " + balance.toNumber()+ "\n");
 
-  //     })
+      })
 
-  //   //   it('Should not mint the token for same milestone', async () => {
-  //   //     //the net like reaches 100 again
-  //   //     //the milestone remains 1
-  //   //     //no token is minted to the author's address
-  //   //   })
+    //   it('Should not mint the token for same milestone', async () => {
+    //     //the net like reaches 100 again
+    //     //the milestone remains 1
+    //     //no token is minted to the author's address
+    //   })
 
-  // })
+  })
 })
