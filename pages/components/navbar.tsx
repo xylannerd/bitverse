@@ -3,28 +3,33 @@ import Head from 'next/head'
 import Color from '../../styles/colors'
 
 import Logo from './Logo/logo'
+import { useState } from 'react'
 
-const Navbar = () => (
-  <>
-    <Head>
-      <link rel="preconnect" href="https://fonts.gstatic.com" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;500&display=swap"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap"
-        rel="stylesheet"
-      />
-    </Head>
-    <NavBar>
-     
-     <Logo/>
+function Navbar({ provider, userAccount }) {
 
-      {/* <SearchBar>Search</SearchBar> */}
-    </NavBar>
-  </>
-)
+
+  return (
+    <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;500&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <NavBar>
+        <Logo />
+        if(!provider) <button>install metamask</button>
+        <UserAddress>{userAccount}</UserAddress>
+        {/* <SearchBar>Search</SearchBar> */}
+      </NavBar>
+    </>
+  )
+}
 
 export default Navbar
 
@@ -42,6 +47,11 @@ const NavBar = styled.div`
   /* background-image: linear-gradient(90deg, #1949a1, #482475, #414487, #355f8d, #2a788e, #21908d, #22a884, #42be71, #7ad151, #bddf26, #bddf26); */
   /* background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%, #13547a 70%); */
   box-shadow: 0px 0px 4px 0px black;
+`
+
+const UserAddress = styled.div`
+  color: grey;
+  margin-left: 32px;
 `
 
 // const SearchBar = styled.div`

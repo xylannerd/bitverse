@@ -7,29 +7,38 @@ import { useState, useEffect } from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 //ipfs
+import IPFS from 'ipfs-core'
 
 export default function Home() {
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState<Boolean>()
   const [activeAccount, setActiveAccount] = useState(null)
   const [provider, setProvider] = useState(null)
+  const [fileToUpload, setFileToUpload] = useState(null)
 
-
+  let ipfs;
 
   detectEthereumProvider().then((prv) => setProvider(prv))
   if (provider) {
-    // console.log("check provider:  ", provider)
-    // provider.request({ method: 'eth_requestAccounts' })
-    //         .then(accounts => console.log("accounts: ", accounts))
+    console.log("check provider:  ", provider)
+    provider.request({ method: 'eth_requestAccounts' })
+            .then(accounts => setActiveAccount(accounts[0]))
   }
 
   //Process the uploaded file for uploading to ipfs
   const captureFile = (event) => {
     event.preventDefault()
     console.log(event.target.files)
+    setFileToUpload(event.target.files)
   }
 
   //Upload to ipfs and return its hash
-  function uploadToIpfs() {}
+  async function uploadToIpfs(file) {
+    if(!ipfs) {
+      ipfs =  await IPFS.create()
+    }
+    let result = await ipfs.add(file)
+
+  } 
 
   return (
     <div>
@@ -40,12 +49,13 @@ export default function Home() {
           rel="stylesheet"
         />
       </Head>
-      <Navbar />
+      <Navbar provider={provider} userAccount={activeAccount} /> {/*TODO*/}
 
       <Center>
         <h3>HOME</h3>
 
-        <InputButton type="file" multiple onChange={captureFile} />
+       <InputButton type="file" onChange={captureFile} />  {/* use 'multiple' to select multiple files */}
+      <UploadButton  onClick={uploadToIpfs}> Shoot </UploadButton>
       </Center>
 
       <style global jsx>
@@ -83,3 +93,9 @@ const Center = styled.div`
 `
 
 const InputButton = styled.input``
+
+const UploadButton = styled.button`
+  /* width: 4rem;
+  height: 1rem; */
+  margin-top: 1rem;
+`

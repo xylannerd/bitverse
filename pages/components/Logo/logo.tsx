@@ -24,5 +24,5 @@ const Logo = styled.div`
   font-family: 'Oswald', sans-serif;
   font-size: 27px;
   color: rgba(255, 255, 255, 0.9);
-  padding-left: 32px;
+  margin-left: 32px;
 `
