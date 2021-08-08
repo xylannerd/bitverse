@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
+    "@metamask/onboarding": "^1.0.1",
     "@openzeppelin/contracts": "^4.1.0",
     "ethers": "^5.4.1",
     "framer-motion": "^3.10.6",

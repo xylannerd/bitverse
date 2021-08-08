@@ -3,10 +3,32 @@ import Head from 'next/head'
 import Color from '../../styles/colors'
 
 import Logo from './Logo/logo'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function Navbar({ provider, userAccount }) {
+import MetaMaskOnboarding from '@metamask/onboarding'
 
+function Navbar({ provider, userAccount, requestAccount, isConnected }) {
+
+
+  function HandleMetamaskConnection() {
+    if (provider) {
+      //connect
+      if (isConnected) {
+        //When the user hovers show the address
+        return <ConnectedText>Connected</ConnectedText>
+      } else {
+        return <button onClick={requestAccount}>connect!</button>
+      }
+    } else {
+      //install metamask - link to metamask
+      return <button onClick={handleOnboarding}> Install Metamask </button>
+    }
+  }
+
+  function handleOnboarding() {
+    const onboarding = new MetaMaskOnboarding()
+    onboarding.startOnboarding()
+  }
 
   return (
     <>
@@ -21,11 +43,14 @@ function Navbar({ provider, userAccount }) {
           rel="stylesheet"
         />
       </Head>
+
       <NavBar>
         <Logo />
-        if(!provider) <button>install metamask</button>
-        <UserAddress>{userAccount}</UserAddress>
-        {/* <SearchBar>Search</SearchBar> */}
+        <HandleMetamaskStyle>
+          <HandleMetamaskConnection />
+        </HandleMetamaskStyle>
+
+     
       </NavBar>
     </>
   )
@@ -52,6 +77,15 @@ const NavBar = styled.div`
 const UserAddress = styled.div`
   color: grey;
   margin-left: 32px;
+`
+
+const ConnectedText = styled.div`
+  color: green;
+  /* margin-left: 32px; */
+`
+
+const HandleMetamaskStyle = styled.div`
+  margin-left: 1rem;
 `
 
 // const SearchBar = styled.div`

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "truffle-config.js", "test/bitverse.test.js"  ],
+, "truffle-config.js", "test/bitverse.test.js", "next.config.js"  ],
   "exclude": [
     "node_modules",
     "fonts.ts"
