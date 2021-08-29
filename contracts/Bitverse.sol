@@ -156,6 +156,7 @@ contract Bitverse is ERC20 {
 
     /* Events for like function */
     event ContentLiked(string cid, address liker);
+    event TokenMinted(address author, string cid);
 
 
     function like(string memory _cid) public {
@@ -183,7 +184,7 @@ contract Bitverse is ERC20 {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
             c.milestone++;
-            //maybe emit ean event here TODO 
+            emit TokenMinted(c.author, _cid);
         }
     }
 
