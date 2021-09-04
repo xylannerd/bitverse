@@ -6,5 +6,7 @@
 @tailwind utilities;
 
 @layer base {
- 
+    body{
+        @apply bg-red-900
+    }
 }

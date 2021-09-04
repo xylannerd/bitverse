@@ -192,7 +192,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-gray-800 h-screen font-bodyfont">
+    <div className="h-screen font-bodyfont">
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link

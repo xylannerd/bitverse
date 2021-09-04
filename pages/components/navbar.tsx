@@ -10,11 +10,30 @@ import Blockies from 'react-blockies'
 import { motion } from 'framer-motion'
 
 import MetaMaskOnboarding from '@metamask/onboarding'
-import { Menu } from '@headlessui/react'
+import { Popover, Transition } from '@headlessui/react'
+
+import { usePopper } from 'react-popper'
+
 import React from 'react'
 
 function Navbar({ provider, userAccount, requestAccount, isConnected }) {
   const [active, setActive] = useState()
+
+  //popper.js for dropdown menu placement
+  const [referenceElement, setReferenceElement] = useState(null)
+  const [popperElement, setPopperElement] = useState(null)
+  let { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'bottom-start',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          // dropdown x, y axis adjustment
+          offset: [-64, 6],
+        },
+      },
+    ],
+  })
 
   useEffect(() => {
     HandleMetamaskConnection()
@@ -62,54 +81,42 @@ function Navbar({ provider, userAccount, requestAccount, isConnected }) {
           rel="stylesheet"
         />
       </Head>
-
-      <NavBar>
-        <LeftHalf>
+      <div className="flex items-center w-full h-16 bg-black shadow-md">
+        <div className="flex w-3/6 h-full items-center bg-black">
           <Logo />
-          <HandleMetamaskStyle>
-            <HandleMetamaskConnection />
-          </HandleMetamaskStyle>
-        </LeftHalf>
-
-        <RightHalf>
-          <Menu>
-            <Menu.Button as={React.Fragment}>
-              <Avatar
-                as={motion.div}
-                whileHover={{ boxShadow: '0px 0px 8px white' }}
-                whileTap={{ scale: 0.99, boxShadow: '0px 0px 10px white' }}
-              >
-                {userAccount && <MyBlockies />}
-              </Avatar>
-            </Menu.Button>
-
-            <Menu.Items className="absolute z-50 p-16 mt-16">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/">
-                    <a className={`${active && 'bg-gray-100'} block px-2 py-1`}>
-                      Home
-                    </a>
-                  </Link>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="#">
-                    <a
-                      className={`${
-                        active && 'bg-gray-100'
-                      } bg-white block px-2 py-1`}
-                    >
-                      Dashboard
-                    </a>
-                  </Link>
-                )}
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
-        </RightHalf>
-      </NavBar>
+        </div>
+        <div className="flex  w-3/6 h-full bg-blue-900 items-center justify-end">
+          <Popover className="relative">
+            {({ open }) => (
+              <>
+                <Popover.Button ref={setReferenceElement}>
+                  <motion.div
+                    className="rounded-full h-10 w-10 mr-8 bg-indigo-50 overflow-hidden flex items-center justify-center"
+                    whileHover={{ boxShadow: '0px 0px 8px white' }}
+                    whileTap={{ scale: 0.99, boxShadow: '0px 0px 10px white' }}
+                  >
+                    {userAccount && <MyBlockies />}
+                  </motion.div>
+                </Popover.Button>
+               
+                <Popover.Panel
+                    className="absolute z-20 bg-white py-1 px-3 rounded-md shadow-md"
+                    ref={setPopperElement}
+                    style={styles.popper}
+                    {...attributes.popper}
+                >
+                    <div className="flex flex-col">
+                      <a href="#">Dashboard</a>
+                      <a href="/engagement">Engagement</a>
+                      <a href="/security">Security</a>
+                      <a href="/integrations">Integrations</a>
+                    </div>
+                  </Popover.Panel>
+              </>
+            )}
+          </Popover>
+        </div>
+      </div>
     </>
   )
 }
@@ -124,7 +131,7 @@ const NavBar = styled.div`
   /* padding-right: 32px */
   width: 100%;
   height: 72px;
-  background-color: ${Color.navGray};
+  background-color: ${Color.findMeBlue};
   /* background-color: rgba(230, 230, 230, 0.999); */
 
   /* background-image: linear-gradient(90deg, #1949a1, #482475, #414487, #355f8d, #2a788e, #21908d, #22a884, #42be71, #7ad151, #bddf26, #bddf26); */
@@ -135,7 +142,7 @@ const NavBar = styled.div`
 const LeftHalf = styled.div`
   width: 50%;
   height: 100%;
-  background: #000000;
+  background: greenyellow;
   display: flex;
   align-items: center;
 `
@@ -148,7 +155,7 @@ const RightHalf = styled.div`
   position: relative;
   align-items: center;
   justify-content: flex-end;
-  color: white;
+  color: green;
 `
 const RelativeDiv = styled.div`
   position: relative;
