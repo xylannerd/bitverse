@@ -21,7 +21,7 @@ function Modal({ closeModal }) {
       >
         <div
           id="contentInputContainer"
-          className="flex flex-row w-full h-full items-center"
+          className="flex flex-row w-full h-full items-center select-none"
         >
           {/* use 'multiple' to select multiple files */}
           <input className="hidden" type="file" onChange={captureFile} />
@@ -43,7 +43,9 @@ function Modal({ closeModal }) {
             <p>Choose Image</p>
           </div>
           <input className="hidden" type="file" onChange={captureFile} />
-          <div className="flex flex-col w-1/2 h-full items-center justify-center cursor-pointer hover:bg-gray-200 bg-white">
+          <div className="relative flex flex-col w-1/2 h-full items-center justify-center cursor-pointer hover:bg-gray-200 bg-white">
+            <button className="absolute top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white 00 bg-red-500 hover:bg-red-700" onClick={() => closeModal(false)}>Cancel</button>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
