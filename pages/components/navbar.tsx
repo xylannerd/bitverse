@@ -181,12 +181,12 @@ function Navbar() {
           rel="stylesheet"
         />
       </Head>
-      <div className="flex items-center w-full h-16 bg-black shadow-md">
-        <div className="flex w-3/6 h-full items-center bg-black">
+      <div id="navBar" className="flex items-center w-full h-16 bg-black shadow-md">
+        <div id="leftSide" className="flex w-3/6 h-full items-center bg-black">
           <Logo />
           {chainId && <p>{chainId}</p>}
         </div>
-        <div className="flex  w-3/6 h-full bg-black items-center justify-end">
+        <div id="rightSide" className="flex w-3/6 h-full bg-black items-center justify-end">
           <HandleMetamaskConnectionButton />
           <Popover className="relative">
             {({ open }) => (
