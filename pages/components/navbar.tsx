@@ -84,14 +84,12 @@ function Navbar() {
   }, [activeAccount])
 
   useEffect(() => {
-  
-      ethereum.on('accountsChanged', (accounts) => {
-        // Handle the new accounts, or lack thereof.
-        // "accounts" will always be an array, but it can be empty.
+    ethereum.on('accountsChanged', (accounts) => {
+      // Handle the new accounts, or lack thereof.
+      // "accounts" will always be an array, but it can be empty.
 
-        handleAccountsChanged(accounts)
-      })
-   
+      handleAccountsChanged(accounts)
+    })
   }, [activeAccount])
 
   useEffect(() => {
@@ -106,7 +104,6 @@ function Navbar() {
       // MetaMask is locked or the user has not connected any accounts
       console.log('Please connect to MetaMask.')
       setActiveAccount(null)
-
     } else if (accounts[0] !== activeAccount) {
       setActiveAccount(accounts[0])
       // Do any other work!
@@ -146,7 +143,7 @@ function Navbar() {
             onClick={requestForAccount}
             className=" flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 cursor-pointer"
           >
-           <p className="font-thin text-sm ml-1">Link Wallet</p>
+            <p className="font-thin text-sm ml-1">Link Wallet</p>
           </button>
         )
       }
@@ -157,7 +154,7 @@ function Navbar() {
           onClick={handleOnboarding}
           className="  flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 cursor-pointer"
         >
-        <p className="font-thin text-sm ml-1">Install Metamask</p>
+          <p className="font-thin text-sm ml-1">Install Metamask</p>
         </button>
       )
     }
@@ -181,41 +178,52 @@ function Navbar() {
           rel="stylesheet"
         />
       </Head>
-      <div id="navBar" className="flex items-center w-full h-16 bg-black shadow-md">
+      <div
+        id="navBar"
+        className="flex items-center w-full h-16 bg-black shadow-md"
+      >
         <div id="leftSide" className="flex w-3/6 h-full items-center bg-black">
           <Logo />
           {chainId && <p>{chainId}</p>}
         </div>
-        <div id="rightSide" className="flex w-3/6 h-full bg-black items-center justify-end">
+        <div
+          id="rightSide"
+          className="flex w-3/6 h-full bg-black items-center justify-end"
+        >
           <HandleMetamaskConnectionButton />
-          <Popover className="relative">
-            {({ open }) => (
-              <>
-                <Popover.Button ref={setReferenceElement}>
-                  <motion.div
-                    className="rounded-full h-10 w-10 mr-8 bg-indigo-50 overflow-hidden flex items-center justify-center"
-                    whileHover={{ boxShadow: '0px 0px 8px white' }}
-                    whileTap={{ scale: 0.99, boxShadow: '0px 0px 10px white' }}
-                  >
-                    {activeAccount && <MyBlockies />}
-                  </motion.div>
-                </Popover.Button>
+          {activeAccount && (
+            <Popover className="relative">
+              {({ open }) => (
+                <>
+                  <Popover.Button ref={setReferenceElement}>
+                    <motion.div
+                      className="rounded-full h-10 w-10 mr-8 bg-indigo-50 overflow-hidden flex items-center justify-center"
+                      whileHover={{ boxShadow: '0px 0px 8px white' }}
+                      whileTap={{
+                        scale: 0.99,
+                        boxShadow: '0px 0px 10px white',
+                      }}
+                    >
+                      {activeAccount && <MyBlockies />}
+                    </motion.div>
+                  </Popover.Button>
 
-                <Popover.Panel
-                  className="absolute z-20 bg-white py-1 px-3 rounded-md shadow-md"
-                  ref={setPopperElement}
-                  style={styles.popper}
-                  {...attributes.popper}
-                >
-                  <div className="flex flex-col">
-                    <Link href="/dashboard">
-                      <a>Dashboard</a>
-                    </Link>
-                  </div>
-                </Popover.Panel>
-              </>
-            )}
-          </Popover>
+                  <Popover.Panel
+                    className="absolute z-20 bg-white py-1 px-3 rounded-md shadow-md"
+                    ref={setPopperElement}
+                    style={styles.popper}
+                    {...attributes.popper}
+                  >
+                    <div className="flex flex-col">
+                      <Link href="/dashboard">
+                        <a>Dashboard</a>
+                      </Link>
+                    </div>
+                  </Popover.Panel>
+                </>
+              )}
+            </Popover>
+          )}
         </div>
       </div>
     </>

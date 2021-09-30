@@ -1,13 +1,39 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 function Modal({ closeModal }) {
-  const [fileToUpload, setFileToUpload] = useState(null)
+  const [fileCaptured, setFileCaptured] = useState(false)
+  const [imageToUpload, setImageToUpload] = useState(null)
+  const [videoToUpload, setVideoToUpload] = useState(null)
 
-  //Process the uploaded file for uploading to ipfs
-  const captureFile = (event) => {
+  const imageInput = useRef(null)
+  const videoInput = useRef(null)
+
+   //capture the image and previews
+  const captureImage = (event) => {
     event.preventDefault()
     console.log(event.target.files)
-    setFileToUpload(event.target.files[0])
+    setImageToUpload(event.target.files[0])
+    setFileCaptured(true)
+     
+  }
+  
+  //capture the video and previews
+  const captureVideo = (event) => {
+    event.preventDefault()
+    console.log(event.target.files)
+    setVideoToUpload(event.target.files[0])
+    setFileCaptured(true)
+     
+  }
+
+  //Closes the modal
+  const exitModal = (e) => {
+    closeModal(false)
+    
+    //this part stops the click from propagating
+    if (!e) var e = window.event;
+    e.cancelBubble = true;
+    if (e.stopPropagation) e.stopPropagation();
   }
 
   return (
@@ -19,13 +45,17 @@ function Modal({ closeModal }) {
         id="modal"
         className="w-2/3 h-2/3 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg"
       >
+
+        
         <div
           id="contentInputContainer"
           className="flex flex-row w-full h-full items-center select-none"
         >
           {/* use 'multiple' to select multiple files */}
-          <input className="hidden" type="file" onChange={captureFile} />
-          <div className="flex flex-col w-1/2 h-full items-center justify-center cursor-pointer text-white bg-black hover:bg-gray-900">
+          <input id="videoInput" className="hidden" type="file" ref={imageInput} onChange={captureImage} />
+          <div id="imageInputDiv" className="flex flex-col w-1/2 h-full items-center justify-center cursor-pointer text-white bg-black hover:bg-gray-900"
+           onClick={() => imageInput.current.click()}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -42,9 +72,11 @@ function Modal({ closeModal }) {
             </svg>
             <p>Choose Image</p>
           </div>
-          <input className="hidden" type="file" onChange={captureFile} />
-          <div className="relative flex flex-col w-1/2 h-full items-center justify-center cursor-pointer hover:bg-gray-200 bg-white">
-            <button className="absolute top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white 00 bg-red-500 hover:bg-red-700" onClick={() => closeModal(false)}>Cancel</button>
+          <input id="videoInput" className="hidden" type="file" ref={videoInput} onChange={captureVideo} />
+          <div id="videoInputDiv" className="relative flex flex-col w-1/2 h-full items-center justify-center cursor-pointer hover:bg-gray-200 bg-white"
+            onClick={() => videoInput.current.click()}
+          >
+            <button className="absolute top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white 00 bg-red-500 hover:bg-red-700" onClick={exitModal}>Cancel</button>
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +107,19 @@ function Modal({ closeModal }) {
         </button>
         <button onClick={() => closeModal(false)}>Close Modal</button> */}
       </div>
+
+      {/* TODO:
+      - preview file
+      - Enter title
+      - Enter Description
+      - Author address
+      - Upload to IPFS
+      - Add to Bitverse
+      - Upload successful
+      ~
+      - Show up in My Uploads
+      -Show up in Homescreen etc
+      */}
     </div>
   )
 
