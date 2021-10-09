@@ -60,7 +60,7 @@ function Modal({ closeModal }) {
         return (
           <div
             id="imagePreviewContainer"
-            className="flex flex-col w-full h-full items-center"
+            className="flex flex-col w-full h-full items-center overflow-y-auto"
           >
             <div id="cancel_bt" className="w-full relative">
               <button
@@ -75,7 +75,7 @@ function Modal({ closeModal }) {
             <p>{imagePreview} </p> */}
             <div
               id="imageBackground"
-              className="mt-8 flex items-center justify-center w-5/6 h-96 bg-gray-100 rounded-md overflow-hidden relative"
+              className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
             >
               <Image
                 className="object-contain"
@@ -94,8 +94,11 @@ function Modal({ closeModal }) {
                 />
 
                 <label>Description:</label>
-                <input
+                <textarea
                   {...register('description')}
+                  rows={4}
+
+                
                   className="mb-8 px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
                 />
 
@@ -189,7 +192,7 @@ function Modal({ closeModal }) {
     >
       <div
         id="modal"
-        className="w-2/3 h-4/6 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg"
+        className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg"
       >
         <UploadingInterface />
 
