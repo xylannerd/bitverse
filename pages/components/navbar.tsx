@@ -14,7 +14,7 @@ import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 
-import React from 'react'
+
 
 function Navbar() {
   const [mProvider, setmProvider] = useState(null)

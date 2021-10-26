@@ -10,7 +10,13 @@ import { ethers } from 'ethers'
 import IPFS from 'ipfs-core'
 import bitverseAbi from '../build/contracts/Bitverse.json'
 
+import React from 'react'
+
+
+
 const bitverseAddress = '0x021b7D5FA4db1522b6ac3FEf6e96C6c8C831736E'
+
+
 
 export default function Home() {
   const [fileToUpload, setFileToUpload] = useState(null)

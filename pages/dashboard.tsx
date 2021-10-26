@@ -2,10 +2,14 @@ import Navbar from './components/navbar'
 import { useState } from 'react'
 import Modal from './components/Modal'
 
-function Dashboard() {
+function Dashboard(){
 
   const [isModalOpen, setisModalOpen] = useState(false)
   
+
+  //Need user account here from navBar component
+  //gotta use mobX state management library
+
   
 
   return (
