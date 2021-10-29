@@ -24,14 +24,6 @@ export default function Home() {
   const [ipfs, setipfs] = useState(null)
   const [bitverse, setBitverse] = useState(null)
 
-  // //recoil states
-  // const [mmProvider, setMmProvider] = useRecoilState(metamaskProvider)
-
-  // const [activeAccount, setActiveAccount] = useRecoilState(connectedAccount)
-  // const [chainId, setChainId] = useRecoilState(currentChainId)
-
-  // const [ethProvider, setEthProvider] = useRecoilState(ethersProvider)
-  // const [ethSigner, setEthSigner] = useRecoilState(ethersSigner)
 
   // let ipfs
   let chainId

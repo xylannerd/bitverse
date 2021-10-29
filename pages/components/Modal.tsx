@@ -2,7 +2,14 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 
-function Modal({ closeModal }) {
+import store from '../store/rootstore'
+import { Observer, observer } from 'mobx-react-lite'
+
+interface ModalProps {
+  closeModal: any
+}
+
+const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [fileCaptured, setFileCaptured] = useState(false)
   const [imageToUpload, setImageToUpload] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -57,7 +64,7 @@ function Modal({ closeModal }) {
   function UploadingInterface() {
     if (fileCaptured) {
       if (imageToUpload) {
-        return (
+        return ( <Observer>{() =>(
           <div
             id="imagePreviewContainer"
             className="flex flex-col w-full h-full items-center overflow-y-auto"
@@ -87,25 +94,30 @@ function Modal({ closeModal }) {
 
             <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
               <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-                <label>Title:</label>
+                <label className="select-none">Title:</label>
                 <input
                   {...register('title')}
                   className="mb-4 px-1 border shadow-inner rounded-sm focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
                 />
 
-                <label>Description:</label>
+                <label className="select-none">Description:</label>
                 <textarea
                   {...register('description')}
                   rows={4}
-
-                
                   className="mb-8 px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
                 />
 
-                <input type="submit" className="bg-black text-white rounded-md py-2 mb-8 w-4/6 place-self-center"/>
+                <label className="select-none">Author's address:</label>
+               <p>{store.address ? store.address : "Invalid"}</p>
+
+                <input
+                  type="submit"
+                  className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
+                />
               </form>
             </div>
-          </div>
+          </div>)}
+          </Observer>
         )
       } else if (videoToUpload) {
         return <div>Video Captured!</div>

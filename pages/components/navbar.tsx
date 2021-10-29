@@ -14,11 +14,13 @@ import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 
+import store from '../store/rootstore'
+import { observer } from "mobx-react-lite"
 
 
-function Navbar() {
+const Navbar = observer(() => {
   const [mProvider, setmProvider] = useState(null)
-  const [activeAccount, setActiveAccount] = useState('')
+  const [activeAccount, setActiveAccount] = useState(null)
 
   const [chainId, setChainId] = useState(null)
 
@@ -53,7 +55,7 @@ function Navbar() {
 
   const MyBlockies = () => (
     <Blockies
-      seed={activeAccount}
+      seed={store.address}
       size={11}
       bgColor="#000000"
       spotColor="#000000"
@@ -79,9 +81,9 @@ function Navbar() {
 
   useEffect(() => {
     if (ethereum.selectedAddress) {
-      setActiveAccount(ethereum.selectedAddress)
+      store.setAddress(ethereum.selectedAddress)
     }
-  }, [activeAccount])
+  }, [store.address])
 
   useEffect(() => {
     ethereum.on('accountsChanged', (accounts) => {
@@ -90,22 +92,24 @@ function Navbar() {
 
       handleAccountsChanged(accounts)
     })
-  }, [activeAccount])
+  }, [store.address])
 
   useEffect(() => {
     ethereum.on('disconnect', (error) => {
       window.location.reload()
       console.log('Metamask Disconnected')
     })
-  }, [activeAccount])
+  }, [store.address])
 
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       // MetaMask is locked or the user has not connected any accounts
       console.log('Please connect to MetaMask.')
-      setActiveAccount(null)
-    } else if (accounts[0] !== activeAccount) {
-      setActiveAccount(accounts[0])
+      store.setAddress(null)
+
+    } else if (accounts[0] !== store.address) {
+      store.setAddress(accounts[0])
+
       // Do any other work!
     }
   }
@@ -129,7 +133,7 @@ function Navbar() {
   function HandleMetamaskConnectionButton() {
     if (mProvider) {
       //metamask installed
-      if (activeAccount) {
+      if (store.address) {
         //When the user hovers show the address
         return (
           <div className="flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 select-none">
@@ -191,7 +195,7 @@ function Navbar() {
           className="flex w-3/6 h-full bg-black items-center justify-end"
         >
           <HandleMetamaskConnectionButton />
-          {activeAccount && (
+          {store.address && (
             <Popover className="relative">
               {({ open }) => (
                 <>
@@ -204,7 +208,7 @@ function Navbar() {
                         boxShadow: '0px 0px 10px white',
                       }}
                     >
-                      {activeAccount && <MyBlockies />}
+                      {store.address && <MyBlockies />}
                     </motion.div>
                   </Popover.Button>
 
@@ -228,6 +232,6 @@ function Navbar() {
       </div>
     </>
   )
-}
+})
 
 export default Navbar
