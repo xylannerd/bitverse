@@ -9,10 +9,10 @@ import { observer } from "mobx-react-lite"
 const Dashboard: React.FC = observer(() => {
   const [isModalOpen, setisModalOpen] = useState(false)
 
-  //Need user account here from navBar component
-  //gotta use mobX state management library
+  
 
   function HandleDashboard() {
+    console.log(store.address)
     if (store.address) {
       return (
         <>

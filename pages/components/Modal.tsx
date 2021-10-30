@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import store from '../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
@@ -28,7 +30,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     setFileCaptured(true)
   }
 
-  //capture the video and previews
+  //coming soon
+  //capture video and previews
   const captureVideo = (event) => {
     event.preventDefault()
     console.log(event.target.files)
@@ -46,77 +49,113 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     if (e.stopPropagation) e.stopPropagation()
   }
 
+  //react-hook-form and validation via Yup.
+
   type Inputs = {
-    title: string
-    description: string
+    Title: string
+    Description: string
   }
 
-  //react-hook-form
+  var schema = yup.object().shape({
+    Title: yup.string().required().max(100, `Max length - 100 characters.`),
+    Description: yup.string().max(500, `Max length - 500 characters.`),
+  })
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>()
+  } = useForm<Inputs>({
+    resolver: yupResolver(schema),
+  })
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+  //This is where we get the form data and
+  //we process it for ipfs and bitverse.
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data)
+    //
+    // upload to ipfs
+    // then to bitverse!
+    //
+  }
 
   function UploadingInterface() {
     if (fileCaptured) {
       if (imageToUpload) {
-        return ( <Observer>{() =>(
-          <div
-            id="imagePreviewContainer"
-            className="flex flex-col w-full h-full items-center overflow-y-auto"
-          >
-            <div id="cancel_bt" className="w-full relative">
-              <button
-                className="absolute z-10 top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white bg-red-500 hover:bg-red-700"
-                onClick={exitModal}
+        return (
+          <Observer>
+            {() => (
+              <div
+                id="imagePreviewContainer"
+                className="flex flex-col w-full h-full items-center overflow-y-auto"
               >
-                Cancel
-              </button>
-            </div>
-            {/* preview image and get title and description */}
-            {/* <p> Image Captured! </p>
+                <div id="cancel_bt" className="w-full relative">
+                  <button
+                    className="absolute z-10 top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white bg-red-500 hover:bg-red-700"
+                    onClick={exitModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                {/* preview image and get title and description */}
+                {/* <p> Image Captured! </p>
             <p>{imagePreview} </p> */}
-            <div
-              id="imageBackground"
-              className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
-            >
-              <Image
-                className="object-contain"
-                src={imagePreview}
-                unoptimized={true}
-                layout="fill"
-              />
-            </div>
+                <div
+                  id="imageBackground"
+                  className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
+                >
+                  <Image
+                    className="object-contain"
+                    src={imagePreview}
+                    unoptimized={true}
+                    layout="fill"
+                  />
+                </div>
 
-            <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-                <label className="select-none">Title:</label>
-                <input
-                  {...register('title')}
-                  className="mb-4 px-1 border shadow-inner rounded-sm focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
-                />
+                <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col"
+                  >
+                    <label className="select-none">Title:</label>
+                    <input
+                      {...register('Title')}
+                      className="px-1 border shadow-inner rounded-sm focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
+                    />
+                    <p className="text-red-500"> {errors.Title?.message} </p>
 
-                <label className="select-none">Description:</label>
-                <textarea
-                  {...register('description')}
-                  rows={4}
-                  className="mb-8 px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
-                />
+                    <label className="mt-4 select-none">Description:</label>
+                    <textarea
+                      {...register('Description')}
+                      rows={4}
+                      className="px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
+                    />
+                    <p className="text-red-500">
+                      {errors.Description?.message}{' '}
+                    </p>
 
-                <label className="select-none">Author's address:</label>
-               <p>{store.address ? store.address : "Invalid"}</p>
+                    <label className="mt-4 select-none">
+                      Author's address:
+                    </label>
+                    <p className="text-blue-500">
+                      {store.address ? (
+                        store.address
+                      ) : (
+                        <div className="text-yellow-600">
+                          Make sure Metamask is properly linked.
+                        </div>
+                      )}
+                    </p>
 
-                <input
-                  type="submit"
-                  className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
-                />
-              </form>
-            </div>
-          </div>)}
+                    <input
+                      type="submit"
+                      className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
+                    />
+                  </form>
+                </div>
+              </div>
+            )}
           </Observer>
         )
       } else if (videoToUpload) {
@@ -130,7 +169,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         >
           {/* use 'multiple' to select multiple files */}
           <input
-            id="videoInput"
+            id="imageInput"
             className="hidden"
             type="file"
             ref={imageInput}
@@ -167,7 +206,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
           <div
             id="videoInputDiv"
             className="relative flex flex-col w-1/2 h-full items-center justify-center cursor-pointer hover:bg-gray-200 bg-white"
-            onClick={() => videoInput.current.click()}
+            // onClick={() => videoInput.current.click()}
+            onClick={() => alert('This feature is coming soon 🤞')}
           >
             <button
               className="absolute top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white 00 bg-red-500 hover:bg-red-700"
@@ -207,17 +247,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg"
       >
         <UploadingInterface />
-
-        {/* {fileToUpload && <div> file is here! </div>}
-        <button className="mt-8" onClick={uploadToIpfs}>
-          {' '}
-          Upload to IPFS{' '}
-        </button>
-        <button className="mt-8" onClick={addToBitverse}>
-          {' '}
-          addToBitverse{' '}
-        </button>
-        <button onClick={() => closeModal(false)}>Close Modal</button> */}
       </div>
 
       {/* TODO:
