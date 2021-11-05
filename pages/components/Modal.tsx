@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
@@ -6,6 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import store from '../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
+
+import Confirmation from './confirmation'
 
 interface ModalProps {
   closeModal: any
@@ -17,6 +19,13 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [imagePreview, setImagePreview] = useState(null)
 
   const [videoToUpload, setVideoToUpload] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [startUploading, setStartUploading] = useState(false)
+  
+
+  //countdown for 5 second confirmation dialogue
+  const [countDown, setCountdown] = useState(5)
+  const [showPopUp, setShowPopUp] = useState(false)
 
   const imageInput = useRef(null)
   const videoInput = useRef(null)
@@ -74,15 +83,26 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   //we process it for ipfs and bitverse.
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data)
-    //
+
     // upload to ipfs
     // then to bitverse!
-    //
+    setShowPopUp(true)
   }
 
   function UploadingInterface() {
     if (fileCaptured) {
+      /*
+        File is captured,
+        if its image, create the image preview.
+        if its video, create the video preview.
+        take the user input and proceed to upload!
+      */
+
       if (imageToUpload) {
+        /* 
+          Image is captured,
+          proceed with user input 
+        */
         return (
           <Observer>
             {() => (
@@ -98,9 +118,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                     Cancel
                   </button>
                 </div>
-                {/* preview image and get title and description */}
-                {/* <p> Image Captured! </p>
-            <p>{imagePreview} </p> */}
+
                 <div
                   id="imageBackground"
                   className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
@@ -150,6 +168,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
                     <input
                       type="submit"
+                      value="Add To Bitverse"
                       className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
                     />
                   </form>
@@ -162,6 +181,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         return <div>Video Captured!</div>
       }
     } else {
+      /* 
+          File is not captured yet,
+          user is asked to select image, video.
+
+      */
       return (
         <div
           id="contentInputContainer"
@@ -172,6 +196,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
             id="imageInput"
             className="hidden"
             type="file"
+            accept="image/*"
             ref={imageInput}
             onChange={captureImage}
           />
@@ -244,28 +269,13 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     >
       <div
         id="modal"
-        className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg"
+        className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg relative"
       >
+       {showPopUp && <Confirmation popUp={showPopUp} setPopUp={setShowPopUp} triggerUploading={setStartUploading} />}
         <UploadingInterface />
       </div>
-
-      {/* TODO:
-      - preview file
-      - Enter title
-      - Enter Description
-      - Author address
-      - Upload to IPFS
-      - Add to Bitverse
-      - Upload successful
-      ~
-      - Show up in My Uploads
-      -Show up in Homescreen etc
-      */}
     </div>
   )
-
-  function uploadToIpfs() {}
-  function addToBitverse() {}
 }
 
 export default Modal

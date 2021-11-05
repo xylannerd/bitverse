@@ -1,6 +1,6 @@
 import Navbar from './components/navbar'
-import { useState } from 'react'
-import Modal from './components/Modal'
+import { useEffect, useState } from 'react'
+import Modal from './components/modal'
 
 import store from './store/rootstore'
 import { observer } from "mobx-react-lite"
@@ -9,10 +9,15 @@ import { observer } from "mobx-react-lite"
 const Dashboard: React.FC = observer(() => {
   const [isModalOpen, setisModalOpen] = useState(false)
 
-  
+  useEffect(() => {
+    if (ethereum.selectedAddress) {
+      store.setAddress(ethereum.selectedAddress)
+    }
+  }, [store.address])
 
   function HandleDashboard() {
     console.log(store.address)
+    
     if (store.address) {
       return (
         <>
