@@ -20,8 +20,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
   const [videoToUpload, setVideoToUpload] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
-  const [startUploading, setStartUploading] = useState(false)
-  
 
   //countdown for 5 second confirmation dialogue
   const [countDown, setCountdown] = useState(5)
@@ -89,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     setShowPopUp(true)
   }
 
-  function UploadingInterface() {
+  function UploadDetailsInterface() {
     if (fileCaptured) {
       /*
         File is captured,
@@ -262,6 +260,24 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     }
   }
 
+  function UploadProgress() {
+    /* 
+      The final step in the upload process.
+      1. Add the metadata to ipfs
+      2. Add the content to ipfs
+      3. Add the ipfs-hash to the bitverse-contract.
+    */
+
+    return (
+      <div
+        id="uploadProgressContainer"
+        className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
+      >
+        Uploading...
+      </div>
+    )
+  }
+
   return (
     <div
       id="modalBackground"
@@ -271,8 +287,14 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         id="modal"
         className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg relative"
       >
-       {showPopUp && <Confirmation popUp={showPopUp} setPopUp={setShowPopUp} triggerUploading={setStartUploading} />}
-        <UploadingInterface />
+        {showPopUp && (
+          <Confirmation
+            popUp={showPopUp}
+            setPopUp={setShowPopUp}
+            triggerUploading={setIsUploading}
+          />
+        )}
+        {isUploading ? <UploadProgress /> : <UploadDetailsInterface />}
       </div>
     </div>
   )
