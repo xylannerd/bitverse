@@ -16,7 +16,7 @@ const Dashboard: React.FC = observer(() => {
   }, [store.address])
 
   function HandleDashboard() {
-    console.log(store.address)
+    console.log("account address" + store.address)
     
     if (store.address) {
       return (

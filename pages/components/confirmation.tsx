@@ -30,8 +30,9 @@ const Confirmation: React.FC<ConfirmationProps> = ({ popUp, setPopUp, triggerUpl
 
   /* 
   2nd useEffect -
-  this closes the popUP after countdown hits 0
+  this closes the popUp after countdown hits 0
   which triggers the cleanup fn of the first useEffect.
+  Also triggers the uploading process.   
    */
   useEffect(() => {
     if (countDown === 0) {
@@ -39,7 +40,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({ popUp, setPopUp, triggerUpl
       setPopUp(false)
 
       //Also redirects the user to uploading process!
-      triggerUploading(true)
+      triggerUploading()
 
     }
   }, [countDown])

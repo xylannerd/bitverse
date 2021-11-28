@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import IPFS from 'ipfs-core'
 
 import store from '../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
@@ -20,6 +21,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
   const [videoToUpload, setVideoToUpload] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [metadataJson, setMetadataJson] = useState('')
 
   //countdown for 5 second confirmation dialogue
   const [countDown, setCountdown] = useState(5)
@@ -27,6 +29,13 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
   const imageInput = useRef(null)
   const videoInput = useRef(null)
+
+  //Upload status
+  const [ipfsNodeInitializing, setIpfsNodeInitializing] = useState(false)
+  const [ipfsNodeStarted, setIpfsNodeStarted] = useState(false)
+  const [uploadingToIpfs, setUploadingToIpfs] = useState(false)
+  const [addingToBitverse, setAddingToBitverse] = useState(false)
+  const [isUploadSuccessful, setIsUploadSuccessful] = useState(false)
 
   //capture the image and previews
   const captureImage = (event) => {
@@ -84,6 +93,9 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
     // upload to ipfs
     // then to bitverse!
+
+    setMetadataJson(JSON.stringify(data))
+
     setShowPopUp(true)
   }
 
@@ -260,6 +272,75 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     }
   }
 
+  //this fn starts the upload process
+  //but what triggers it?
+  //pass it to the confirmation popUp and trigger it from there!
+  async function initUpload() {
+
+    setIsUploading(true)
+
+    if (fileCaptured) {
+      const fileToUpload = imageToUpload ? imageToUpload : videoToUpload
+
+      /* 
+      If you’ve already initialised IPFS on a repo, it will lock it.
+      If you’d like to test with multiple repos, you can use something like this:
+    */
+
+      addToIpfs(fileToUpload).then(({ metadataCid, contentCid }) => {
+        // addToBitverse(contentCid, metadataCid)
+
+      })
+
+      /* 
+     Init Bitverse contract here
+     and add the content Cid to bitverse
+   */
+    } else {
+      console.error('File is not captured')
+    }
+  }
+
+  async function addToIpfs(file) {
+    var metadataCid
+    var contentCid
+
+    //init an ipfs node with a new repo
+    setIpfsNodeInitializing(true)
+    let ipfs = await IPFS.create({ repo: 'ok' + Math.random() })
+    console.log(ipfs)
+    // ipfs = await IPFS.create() //may show lock repo error!
+
+    //add content metadata and receives back its cid
+    if (ipfs) {
+      setIpfsNodeStarted(true)
+      setIpfsNodeInitializing(false)
+
+      try {
+        setUploadingToIpfs(true)
+        contentCid = await ipfs.add(file)
+        metadataCid = await ipfs.add(metadataJson)
+      } catch (error) {
+        console.error(error)
+        return error
+      }
+
+      return { metadataCid, contentCid }
+    } else {
+      console.error('ipfs not initialised')
+    }
+  }
+
+  async function addToBitverse(contentHash, metadataHash){
+    
+    setUploadingToIpfs(false)
+    setAddingToBitverse(true)
+    
+    console.log("content hash: " + contentHash)
+    console.log("metadata hash: " + metadataHash)
+
+  }
+
   function UploadProgress() {
     /* 
       The final step in the upload process.
@@ -268,12 +349,43 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       3. Add the ipfs-hash to the bitverse-contract.
     */
 
+    console.log(metadataJson)
+
     return (
       <div
         id="uploadProgressContainer"
         className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
       >
-        Uploading...
+        
+        {ipfsNodeInitializing && (
+          <div className="div">Initiliazing ipfs node...</div>
+        )}
+        {uploadingToIpfs && <div className="div">Adding to ipfs...</div>}
+        {addingToBitverse && <div className="div">Adding to Bitverse...</div>}
+        {isUploadSuccessful && (
+          <div className="div">
+            Upload Successful!{' '}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+        )}
+        {/* 
+          //Run the ipfs node
+          //upload the shit to ipfs get the hash
+          //
+        */}
       </div>
     )
   }
@@ -291,7 +403,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
           <Confirmation
             popUp={showPopUp}
             setPopUp={setShowPopUp}
-            triggerUploading={setIsUploading}
+            triggerUploading={initUpload}
+
           />
         )}
         {isUploading ? <UploadProgress /> : <UploadDetailsInterface />}
