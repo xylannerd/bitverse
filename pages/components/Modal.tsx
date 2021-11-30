@@ -289,10 +289,15 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       setIpfsNodeInitializing(true)
 
       addToIpfs(fileToUpload).then((cCid) => {
+        //this contentCid state update takes time
+        //value may not be updated/reflected soon enough
         setContentCid(cCid)
         addToIpfs(metadataJson).then((metaCid) => {
           setUploadingToIpfs(false)
+          //metadataJsonCid state update takes time
           setMetadaJsonCid(metaCid)
+
+          //so using the cCid and metaCid instead.
           addToBitverse(cCid, metaCid)
         })
       })
@@ -349,9 +354,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     console.log('bitverse content hash: ' + contentHash)
     console.log('bitverse metadata hash: ' + metadataHash)
 
-    console.log(
-      'checking state update: ' + '\n' + contentCid + '\n' + metadataJsonCid,
-    )
 
     setTimeout(() => {
       setAddingToBitverse(false)
