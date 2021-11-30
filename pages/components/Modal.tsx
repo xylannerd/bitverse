@@ -37,6 +37,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [addingToBitverse, setAddingToBitverse] = useState(false)
   const [isUploadSuccessful, setIsUploadSuccessful] = useState(false)
 
+  //IPFS stuff
+  const [ipfs, setIpfs] = useState(null)
+  const [contentCid, setContentCid] = useState()
+  const [metadataJsonCid, setMetadaJsonCid] = useState()
+
   //capture the image and previews
   const captureImage = (event) => {
     event.preventDefault()
@@ -276,69 +281,88 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   //but what triggers it?
   //pass it to the confirmation popUp and trigger it from there!
   async function initUpload() {
-
     setIsUploading(true)
 
     if (fileCaptured) {
       const fileToUpload = imageToUpload ? imageToUpload : videoToUpload
 
-      /* 
-      If you’ve already initialised IPFS on a repo, it will lock it.
-      If you’d like to test with multiple repos, you can use something like this:
-    */
+      setIpfsNodeInitializing(true)
 
-      addToIpfs(fileToUpload).then(({ metadataCid, contentCid }) => {
-        // addToBitverse(contentCid, metadataCid)
-
+      addToIpfs(fileToUpload).then((cCid) => {
+        setContentCid(cCid)
+        addToIpfs(metadataJson).then((metaCid) => {
+          setUploadingToIpfs(false)
+          setMetadaJsonCid(metaCid)
+          addToBitverse(cCid, metaCid)
+        })
       })
-
-      /* 
-     Init Bitverse contract here
-     and add the content Cid to bitverse
-   */
     } else {
       console.error('File is not captured')
     }
   }
 
+  //this one checks if ipfs node is running
+  //and uploads the content to ipfs
   async function addToIpfs(file) {
-    var metadataCid
-    var contentCid
+    //add content and receives back its cid
 
-    //init an ipfs node with a new repo
-    setIpfsNodeInitializing(true)
-    let ipfs = await IPFS.create({ repo: 'ok' + Math.random() })
-    console.log(ipfs)
-    // ipfs = await IPFS.create() //may show lock repo error!
+    /* 
+      If you’ve already initialised IPFS on a repo, it will lock it.
+      If you’d like to test with multiple repos, you can use something like this:
+   
+      let ipfsNode = await IPFS.create({ repo: 'ok' + Math.random() })
+   
+      //ipfs = await IPFS.create() //may show lock repo error!
 
-    //add content metadata and receives back its cid
-    if (ipfs) {
+  */
+
+    let ipfsNode = ipfs
+      ? ipfs
+      : await IPFS.create({ repo: 'ok' + Math.random() })
+
+    if (!ipfs) {
+      setIpfs(ipfsNode)
+    }
+
+    if (ipfsNode) {
       setIpfsNodeStarted(true)
       setIpfsNodeInitializing(false)
 
       try {
         setUploadingToIpfs(true)
-        contentCid = await ipfs.add(file)
-        metadataCid = await ipfs.add(metadataJson)
+        var result = await ipfsNode.add(file)
+        return result.cid.toString()
       } catch (error) {
-        console.error(error)
         return error
       }
-
-      return { metadataCid, contentCid }
     } else {
-      console.error('ipfs not initialised')
+      console.log('No ipfs node initialised')
     }
   }
 
-  async function addToBitverse(contentHash, metadataHash){
-    
+  async function addToBitverse(contentHash: string, metadataHash: string) {
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
-    
-    console.log("content hash: " + contentHash)
-    console.log("metadata hash: " + metadataHash)
 
+    console.log('*** bitverse function ***')
+
+    console.log('bitverse content hash: ' + contentHash)
+    console.log('bitverse metadata hash: ' + metadataHash)
+
+    console.log(
+      'checking state update: ' + '\n' + contentCid + '\n' + metadataJsonCid,
+    )
+
+    setTimeout(() => {
+      setAddingToBitverse(false)
+      setIsUploadSuccessful(true)
+    }, 3000)
+
+    /* 
+      init the bitverse contract 
+      add to bitverse
+      
+    */
   }
 
   function UploadProgress() {
@@ -349,28 +373,25 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       3. Add the ipfs-hash to the bitverse-contract.
     */
 
-    console.log(metadataJson)
-
     return (
       <div
         id="uploadProgressContainer"
         className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
       >
-        
         {ipfsNodeInitializing && (
           <div className="div">Initiliazing ipfs node...</div>
         )}
         {uploadingToIpfs && <div className="div">Adding to ipfs...</div>}
         {addingToBitverse && <div className="div">Adding to Bitverse...</div>}
         {isUploadSuccessful && (
-          <div className="div">
-            Upload Successful!{' '}
+          <div className="flex flex-row">
+            Upload Successful{' '}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke="green"
             >
               <path
                 strokeLinecap="round"
@@ -404,7 +425,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
             popUp={showPopUp}
             setPopUp={setShowPopUp}
             triggerUploading={initUpload}
-
           />
         )}
         {isUploading ? <UploadProgress /> : <UploadDetailsInterface />}
