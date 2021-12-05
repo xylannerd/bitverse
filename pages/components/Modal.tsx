@@ -3,7 +3,14 @@ import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import Lottie from 'react-lottie'
+import loadingAnimation from '../../public/8994-loading-circle.json'
 import IPFS from 'ipfs-core'
+//ethereum libraries
+import detectEthereumProvider from '@metamask/detect-provider'
+import { ethers } from 'ethers'
+
+import bitverseAbi from '../../build/contracts/Bitverse.json'
 
 import store from '../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
@@ -61,7 +68,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   }
 
   //Closes the modal
-  const exitModal = (e) => {
+  const exitModal = (e: any) => {
     closeModal(false)
 
     //this part stops the click from propagating
@@ -345,26 +352,50 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     }
   }
 
+  /* 
+    This fn get the contract instance ready
+    and uploads the content and metadata CID 
+    to the bitverse smart contract
+  */
   async function addToBitverse(contentHash: string, metadataHash: string) {
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
 
+    var bitverse
+    var tx
+
     console.log('*** bitverse function ***')
 
-    console.log('bitverse content hash: ' + contentHash)
-    console.log('bitverse metadata hash: ' + metadataHash)
+    const provider = await detectEthereumProvider()
+    const ethProvider = new ethers.providers.Web3Provider(provider)
+    const ethSigner = ethProvider.getSigner()
 
+    //Can be initialised with a provider or a signer
+    bitverse = new ethers.Contract(
+      bitverseAbi.networks[5777].address,
+      bitverseAbi.abi,
+      ethSigner,
+    )
+    console.log('*********  bitverse ***********')
 
-    setTimeout(() => {
-      setAddingToBitverse(false)
-      setIsUploadSuccessful(true)
-    }, 3000)
+    console.log(bitverse)
+    tx = await bitverse._addContent(contentHash, metadataHash)
 
-    /* 
-      init the bitverse contract 
-      add to bitverse
-      
-    */
+    console.log('*********  result ***********')
+    console.log(tx)
+
+    await tx.wait()
+    setAddingToBitverse(false)
+    setIsUploadSuccessful(true)
+  }
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loadingAnimation,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
   }
 
   function UploadProgress() {
@@ -380,11 +411,26 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         id="uploadProgressContainer"
         className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
       >
-        {ipfsNodeInitializing && (
-          <div className="div">Initiliazing ipfs node...</div>
+        {!isUploadSuccessful && (
+          <Lottie options={defaultOptions} height={300} width={300} />
         )}
-        {uploadingToIpfs && <div className="div">Adding to ipfs...</div>}
-        {addingToBitverse && <div className="div">Adding to Bitverse...</div>}
+
+        {ipfsNodeInitializing && (
+          <div className="font-thin">Initiliazing ipfs node...</div>
+        )}
+        {uploadingToIpfs && <div className="font-thin">Adding to ipfs...</div>}
+        {addingToBitverse && (
+          <div className="font-thin">Adding to Bitverse...</div>
+        )}
+
+        {addingToBitverse && (
+          <div className="font-bold">Waiting For Confirmation</div>
+        )}
+        {addingToBitverse && (
+          <div className="text-gray-400">
+            Please confirm the transaction in your wallet
+          </div>
+        )}
         {isUploadSuccessful && (
           <div className="flex flex-row">
             Upload Successful{' '}
