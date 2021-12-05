@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Lottie from 'react-lottie'
 import loadingAnimation from '../../public/8994-loading-circle.json'
 import IPFS from 'ipfs-core'
+import fs from 'fs'
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
@@ -29,6 +30,9 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [videoToUpload, setVideoToUpload] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [metadataJson, setMetadataJson] = useState('')
+
+  const [uploadFailed, setUploadFailed] = useState(false)
+  const [showSpinner, setShowSpinner] = useState(false)
 
   //countdown for 5 second confirmation dialogue
   const [countDown, setCountdown] = useState(5)
@@ -289,6 +293,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   //pass it to the confirmation popUp and trigger it from there!
   async function initUpload() {
     setIsUploading(true)
+    setShowSpinner(true)
 
     if (fileCaptured) {
       const fileToUpload = imageToUpload ? imageToUpload : videoToUpload
@@ -379,14 +384,25 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     console.log('*********  bitverse ***********')
 
     console.log(bitverse)
-    tx = await bitverse._addContent(contentHash, metadataHash)
+    try {
+      tx = await bitverse._addContent(contentHash, metadataHash)
+      console.log('*********  result ***********')
+      console.log(tx)
 
-    console.log('*********  result ***********')
-    console.log(tx)
+      await tx.wait()
+      setAddingToBitverse(false)
+      setShowSpinner(false)
 
-    await tx.wait()
-    setAddingToBitverse(false)
-    setIsUploadSuccessful(true)
+      setIsUploadSuccessful(true)
+    } catch (error) {
+      console.error('****** Contract upload error *******')
+
+      console.log(error)
+      setShowSpinner(false)
+      setAddingToBitverse(false)
+
+      setUploadFailed(true)
+    }
   }
 
   const defaultOptions = {
@@ -411,7 +427,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         id="uploadProgressContainer"
         className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
       >
-        {!isUploadSuccessful && (
+        {showSpinner && (
           <Lottie options={defaultOptions} height={300} width={300} />
         )}
 
@@ -430,6 +446,12 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
           <div className="text-gray-400">
             Please confirm the transaction in your wallet
           </div>
+        )}
+        {uploadFailed && (
+          <div className="font-bold text-red-500">Upload Unsuccessful</div>
+        )}
+        {uploadFailed && (
+          <div className="text-gray-400">Seems like transaction failed</div>
         )}
         {isUploadSuccessful && (
           <div className="flex flex-row">
