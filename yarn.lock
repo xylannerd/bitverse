@@ -1300,6 +1300,11 @@
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.6.tgz#0b7018723084918a865eff99249c490505df2163"
   integrity sha512-7fDOJFA/x8B+sO1901BmHlf5dE1cxBU8mRXj8QOEDnn16hhGJv/IHxJtZhvsabZsIMn0eLIyeOKAeqSNJJYTpA==
 
+"@types/file-saver@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.4.tgz#aaf9b96296150d737b2fefa535ced05ed8013d84"
+  integrity sha512-sPZYQEIF/SOnLAvaz9lTuydniP+afBMtElRTdYkeV1QtEgvtJ7qolCPjly6O32QI8CbEmP5O/fztMXEDWfEcrg==
+
 "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.7":
   version "7.0.8"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.8.tgz#edf1bf1dbf4e04413ca8e5b17b3b7d7d54b59818"
@@ -4324,6 +4329,11 @@ figgy-pudding@^3.5.1:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
   integrity sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-uri-to-path@1.0.0:
   version "1.0.0"

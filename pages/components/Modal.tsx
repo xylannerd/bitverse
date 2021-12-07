@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Lottie from 'react-lottie'
 import loadingAnimation from '../../public/8994-loading-circle.json'
 import IPFS from 'ipfs-core'
-import fs from 'fs'
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
@@ -17,6 +16,8 @@ import store from '../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
 
 import Confirmation from './confirmation'
+
+import { saveAs } from 'file-saver'
 
 interface ModalProps {
   closeModal: any
@@ -105,11 +106,12 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   //This is where we get the form data and
   //we process it for ipfs and bitverse.
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
+    console.log(JSON.stringify(data))
 
     // upload to ipfs
     // then to bitverse!
 
+    //prepares the content metadata
     setMetadataJson(JSON.stringify(data))
 
     setShowPopUp(true)
@@ -304,6 +306,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         //this contentCid state update takes time
         //value may not be updated/reflected soon enough
         setContentCid(cCid)
+
         addToIpfs(metadataJson).then((metaCid) => {
           setUploadingToIpfs(false)
           //metadataJsonCid state update takes time
@@ -382,6 +385,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       ethSigner,
     )
     console.log('*********  bitverse ***********')
+    console.log(`contentCid - ${contentHash}
+    metadataCid - ${metadataHash}`)
 
     console.log(bitverse)
     try {
@@ -403,6 +408,21 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
       setUploadFailed(true)
     }
+  }
+
+  //create the metadata.json file
+  //the user can host/pin this file in their ipfs node
+  //metadata file naming convention- {contentCid}.json
+  function downloadMetaDataJsonFile() {
+    if (!contentCid) {
+      console.log('CID not found')
+    }
+
+    if (!metadataJson) {
+      console.log('No Metadata JSON file')
+    }
+    var blob = new Blob([metadataJson], { type: 'text/plain;charset=utf-8' })
+    saveAs(blob, `${contentCid}.json`)
   }
 
   const defaultOptions = {
@@ -448,10 +468,26 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
           </div>
         )}
         {uploadFailed && (
-          <div className="font-bold text-red-500">Upload Unsuccessful</div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="grey"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
         )}
         {uploadFailed && (
-          <div className="text-gray-400">Seems like transaction failed</div>
+          <div className="font-bold text-red-500">Upload Failed</div>
+        )}
+        {uploadFailed && (
+          <div className="text-gray-400">Seems like the transaction failed</div>
         )}
         {isUploadSuccessful && (
           <div className="flex flex-row">
@@ -472,11 +508,22 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
             </svg>
           </div>
         )}
-        {/* 
-          //Run the ipfs node
-          //upload the shit to ipfs get the hash
-          //
-        */}
+        {isUploadSuccessful && (
+          <button
+            className="w-2/4 mt-8 p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600"
+            onClick={downloadMetaDataJsonFile}
+          >
+            Get Metadata JSON File
+          </button>
+        )}
+        {isUploadSuccessful && (
+          <button
+            className="w-2/4 mt-2 p-2 rounded-lg text-white bg-black hover:bg-gray-800"
+            onClick={exitModal}
+          >
+            All Done
+          </button>
+        )}
       </div>
     )
   }
