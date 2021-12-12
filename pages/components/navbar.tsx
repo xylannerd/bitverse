@@ -22,7 +22,6 @@ const Navbar = observer(() => {
   const [mProvider, setmProvider] = useState(null)
   const [activeAccount, setActiveAccount] = useState(null)
 
-  const [chainId, setChainId] = useState(null)
 
   //popper.js for dropdown menu placement
   const [referenceElement, setReferenceElement] = useState(null)
@@ -47,7 +46,7 @@ const Navbar = observer(() => {
       detectEthereumProvider().then((prv) => {
         // setMmProvider(prv)
         setmProvider(prv)
-        setChainId(prv.chainId)
+        store.setChainId(prv.chainId)
       })
     }
     initProvider()
@@ -121,11 +120,11 @@ const Navbar = observer(() => {
       // We recommend reloading the page unless you have good reason not to.
       handleChainChanged(_chainId)
     })
-  }, [chainId])
+  }, [store.chainId])
 
   function handleChainChanged(_chainId) {
     // We recommend reloading the page, unless you must do otherwise
-    if (chainId !== _chainId) {
+    if (store.chainId !== _chainId) {
       window.location.reload()
     }
   }
@@ -188,7 +187,7 @@ const Navbar = observer(() => {
       >
         <div id="leftSide" className="flex w-3/6 h-full items-center bg-black">
           <Logo />
-          {chainId && <p>{chainId}</p>}
+          {store.chainId && <p>{store.chainId}</p>}
         </div>
         <div
           id="rightSide"

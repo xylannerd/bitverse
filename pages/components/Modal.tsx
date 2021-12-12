@@ -20,10 +20,11 @@ import Confirmation from './confirmation'
 import { saveAs } from 'file-saver'
 
 interface ModalProps {
-  closeModal: any
+  closeModal: any;
+  ipfs: any;
 }
 
-const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
   const [fileCaptured, setFileCaptured] = useState(false)
   const [imageToUpload, setImageToUpload] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -50,7 +51,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [isUploadSuccessful, setIsUploadSuccessful] = useState(false)
 
   //IPFS stuff
-  const [ipfs, setIpfs] = useState(null)
   const [contentCid, setContentCid] = useState()
   const [metadataJsonCid, setMetadaJsonCid] = useState()
 
@@ -80,6 +80,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     if (!e) var e = window.event
     e.cancelBubble = true
     if (e.stopPropagation) e.stopPropagation()
+  }
+
+  const exitAndRefresh = (e: any) => {
+    exitModal(e)
+    window.location.reload()
   }
 
   //react-hook-form and validation via Yup.
@@ -340,9 +345,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       ? ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
 
-    if (!ipfs) {
-      setIpfs(ipfsNode)
-    }
+   
 
     if (ipfsNode) {
       setIpfsNodeStarted(true)
@@ -422,7 +425,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       console.log('No Metadata JSON file')
     }
     var blob = new Blob([metadataJson], { type: 'text/plain;charset=utf-8' })
-    saveAs(blob, `${contentCid}.json`)
+    saveAs(blob, `md_ ${contentCid}.json`)
   }
 
   const defaultOptions = {
@@ -519,7 +522,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
         {isUploadSuccessful && (
           <button
             className="w-2/4 mt-2 p-2 rounded-lg text-white bg-black hover:bg-gray-800"
-            onClick={exitModal}
+            onClick={exitAndRefresh}
           >
             All Done
           </button>
@@ -531,11 +534,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   return (
     <div
       id="modalBackground"
-      className="w-screen h-screen flex items-center justify-center backdrop-filter backdrop-blur-sm fixed"
+      className="w-screen h-screen z-20 flex items-center justify-center backdrop-filter backdrop-blur-sm fixed"
     >
       <div
         id="modal"
-        className="w-4/6 h-3/4 z-20 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg relative"
+        className="w-4/6 h-3/4 z-40 flex flex-col overflow-hidden items-center justify-center bg-white rounded-lg relative"
       >
         {showPopUp && (
           <Confirmation

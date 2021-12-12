@@ -3,6 +3,7 @@ import { makeAutoObservable } from "mobx"
 class RootStore{
 
     userAddress;
+    networkChainId;
 
     constructor() {
         makeAutoObservable(this);
@@ -15,6 +16,14 @@ class RootStore{
 
       get address(){
           return this.userAddress;
+      }
+
+      setChainId(_chainId){
+          this.networkChainId = _chainId
+      }
+
+      get chainId(){
+          return this.networkChainId
       }
 
 

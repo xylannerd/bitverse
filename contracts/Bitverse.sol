@@ -4,9 +4,9 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-/// @title A decentralised platform for content creators //TODO
+/// @title A decentralised platform for NFTs and content creators //TODO
 /// @author Xylan W. Reeves
-/// @notice You can use this contract for saving ipfs hashes znd doing stuff with it //TODO
+/// @notice You can use this contract for saving ipfs hashes, nfts and can do stuff with it //TODO
 /// @dev //TODO
 contract Bitverse is ERC20 {
     /* Abbreviations used */
@@ -213,7 +213,7 @@ contract Bitverse is ERC20 {
      
     }
 
-    ///@dev Reurns the total number of Content in existence.
+    ///@dev Returns the total number of Content in existence.
     /// Should be equal to the Length of the content[].
     function getTotalContentCount() public view returns (uint256) {
         return cidsArray.length;
@@ -229,6 +229,15 @@ contract Bitverse is ERC20 {
     function getCidArray() public view returns (string[] memory) {
         return cidsArray;
     }
+
+
+    // @notice Returns the length of the authorToCidIndices[] array
+    //Also represents the content the author has uploaded so far.
+     function authorToCidIndicesLength() public view returns (uint256) {
+        return authorToCidIndices[msg.sender].length;
+    }
+
+
 
     // /// @dev Add multiple contents from a single transaction
     // function addMultipleContent(string[] memory _cid) public {}
