@@ -228,28 +228,29 @@ const Dashboard: React.FC = observer(() => {
 
     return (
       <div className="flex w-full h-56 border-b border-opacity-40">
-        <div className="flex flex-row h-full w-full items-center">
+        <div className="flex flex-row items-center">
           <div
             id="imageBackground"
-            className="flex items-center z-10 mx-4 justify-center w-52 h-5/6 bg-gray-700 bg-opacity-50 rounded-sm overflow-hidden relative"
+            className="flex w-44 h-5/6 shrink-0 items-center z-10 mx-4 justify-items-start bg-gray-700 bg-opacity-50 rounded-sm overflow-hidden "
           >
-            <Image
-              className="object-contain"
-              src={imageSource}
-              unoptimized={true}
-              layout="fill"
-            />
+            <div className="relative">
+              <Image
+                className="object-contain"
+                src={imageSource}
+                unoptimized={true}
+                layout="fill"
+              />
+            </div>
           </div>
-
           <div
             id="cardBody"
-            className="flex h-full w-full p-4 bg-blue-900 bg-opacity-20"
+            className="flex grow h-full p-4 bg-blue-900 bg-opacity-20"
           >
-            <div className="flex flex-col text-white text-justify">
+            <div className="flex flex-col text-white">
               <div className="div">title</div>
               <div className="div">Description</div>
               <div className="div">woooooooo</div>
-              <div className="div">
+              <div className="align-bottom">
                 Cid: {CID.parse(content.cid).toV1().toString()}
               </div>
             </div>
@@ -270,30 +271,33 @@ const Dashboard: React.FC = observer(() => {
           ) : (
             <div className="div">
               {rightNetwork && (
-                <div className="flex flex-col items-center justify-center mt-8">
-                  <div
-                    className="flex flex-col w-10/12 bg-black text-white border-dashed border-2 border-gray-400 select-none  cursor-pointer py-8 rounded-md items-center justify-center shadow-md"
-                    onClick={() => setisModalOpen(!isModalOpen)}
-                  >
-                    <p>+</p>
-                    <p>Add Content</p>
-                  </div>
+                <div className="div">
+                  <div className="flex flex-col items-center justify-center mt-8">
+                    <div
+                      className="flex flex-col w-10/12 bg-black text-white border-dashed border-2 border-gray-400 select-none  cursor-pointer py-8 rounded-md items-center justify-center shadow-md"
+                      onClick={() => setisModalOpen(!isModalOpen)}
+                    >
+                      <p>+</p>
+                      <p>Add Content</p>
+                    </div>
 
-                  <div className="w-10/12 mt-11">
-                    <h1 className="text-gray-200 font-bold text-xl">
-                      My Uploads
-                    </h1>
+                    <div className="w-10/12 mt-11">
+                      <h1 className="text-gray-200 font-bold text-xl">
+                        My Uploads
+                      </h1>
+                    </div>
                   </div>
 
                   {isLoadingContent ? (
                     <Loading />
                   ) : (
-                    <div className="mt-8 w-5/6 h-full rounded-md">
+                    <div className="flex mt-8 w-full h-full bg-yellow-500 bg-opacity-50 justify-center">
                       <DisplayUserContent />
                     </div>
                   )}
                 </div>
               )}
+
               {!rightNetwork && (
                 <p className="text-white mt-8 text-center ">
                   {' '}
