@@ -1,8 +1,15 @@
 import Navbar from './components/navbar'
 import { useEffect, useState } from 'react'
-import Modal from './components/modal'
+import Modal from './components/dashboard/modal'
 import Image from 'next/image'
 import Lottie from 'react-lottie'
+
+
+//interfaces
+import { Content } from './components/interfaces'
+//components
+import DisplayUserContent from './components/dashboard/displayUserContent'
+
 
 import loadingAnimation from '../public/79943-spiral-dots-preloader.json'
 //ethereum libraries
@@ -13,16 +20,12 @@ import bitverseAbi from '../build/contracts/Bitverse.json'
 import store from './store/rootstore'
 import { observer } from 'mobx-react-lite'
 import IPFS from 'ipfs-core'
-import { CID } from 'multiformats/cid'
 
 const Dashboard: React.FC = observer(() => {
   //ganache networkId - 5777
   //ganache chainID - 0x539 || 1337
   const RIGHT_NETWORK = 5777
 
-  const IPFS_GATEWAY = 'ipfs.io'
-  const IPFS_PUBLIC_GATEWAY = 'dweb.link'
-  const PINATA_PUBLIC_GATEWAY = 'gateway.pinata.cloud'
 
   const [rightNetwork, setRightNetwork] = useState(false)
 
@@ -44,16 +47,7 @@ const Dashboard: React.FC = observer(() => {
   // const auth =
   //   'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
-  interface Content {
-    cid: string
-    metadataCid: string
-    author: string
-    likes: number
-    dislikes: number
-    netLikes: number
-    milestone: number
-    timeStamp: number
-  }
+  
 
   useEffect(() => {
     if (ethereum.selectedAddress) {
@@ -188,77 +182,6 @@ const Dashboard: React.FC = observer(() => {
     return <Lottie options={defaultOptions} height={200} width={200} />
   }
 
-  function DisplayUserContent() {
-    if (userContentCount > 0 && userContent) {
-      //fetch and display content
-      return (
-        <div className="div">
-          {userContent.map((content: Content) => (
-            <ContentCard key={content.cid} content={content} />
-          ))}
-        </div>
-      )
-    } else {
-      return (
-        <div className="text-white font-semibold text-center py-4  bg-red-400 rounded-md">
-          Seems like you have no uploads yet
-        </div>
-      )
-    }
-  }
-
-  function ContentCard({ content }) {
-    //`https://${IPFS_PUBLIC_GATEWAY}/ipfs/${content.cid}`
-    // `ipfs://${content.cid}`
-    //`http://localhost:48084/ipfs/${content.cid}`
-    // https://{CID}.ipfs.infura-ipfs.io/{optional path to resource}
-
-    ///SUB-DOMAIN Format
-    //https://{CID}.ipfs.{gatewayURL}/{optional path to resource}
-
-    let cid
-    //cid v1 is new and better than cid v0, lookup up the reasons yourself
-    if (CID.parse(content.cid).version == 0) {
-      cid = CID.parse(content.cid).toV1().toString()
-    } else {
-      cid = content.cid
-    }
-
-    const imageSource = `https://${cid}.ipfs.${IPFS_PUBLIC_GATEWAY}`
-
-    return (
-      <div className="flex w-full h-56 border-b border-opacity-40">
-        <div className="flex flex-row items-center">
-          <div
-            id="imageBackground"
-            className="flex w-44 h-5/6 shrink-0 items-center z-10 mx-4 justify-items-start bg-gray-700 bg-opacity-50 rounded-sm overflow-hidden "
-          >
-            <div className="relative">
-              <Image
-                className="object-contain"
-                src={imageSource}
-                unoptimized={true}
-                layout="fill"
-              />
-            </div>
-          </div>
-          <div
-            id="cardBody"
-            className="flex grow h-full p-4 bg-blue-900 bg-opacity-20"
-          >
-            <div className="flex flex-col text-white">
-              <div className="div">title</div>
-              <div className="div">Description</div>
-              <div className="div">woooooooo</div>
-              <div className="align-bottom">
-                Cid: {CID.parse(content.cid).toV1().toString()}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   function HandleDashboard() {
     if (store.address) {
@@ -292,7 +215,7 @@ const Dashboard: React.FC = observer(() => {
                     <Loading />
                   ) : (
                     <div className="flex mt-8 w-full h-full bg-yellow-500 bg-opacity-50 justify-center">
-                      <DisplayUserContent />
+                      <DisplayUserContent userContentCount={userContentCount} userContent={userContent} />
                     </div>
                   )}
                 </div>

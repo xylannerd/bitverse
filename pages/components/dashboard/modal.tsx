@@ -4,15 +4,15 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../public/8994-loading-circle.json'
+import loadingAnimation from '../../../public/8994-loading-circle.json'
 import IPFS from 'ipfs-core'
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 
-import bitverseAbi from '../../build/contracts/Bitverse.json'
+import bitverseAbi from '../../../build/contracts/Bitverse.json'
 
-import store from '../store/rootstore'
+import store from '../../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
 
 import Confirmation from './confirmation'
@@ -73,7 +73,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
   }
 
   //Closes the modal
-  const exitModal = (e: any) => {
+  const exitModal = (e) => {
     closeModal(false)
 
     //this part stops the click from propagating
