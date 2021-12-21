@@ -304,6 +304,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
 
     if (fileCaptured) {
       const fileToUpload = imageToUpload ? imageToUpload : videoToUpload
+      const contentType = imageToUpload ? "image" : "video"
 
       setIpfsNodeInitializing(true)
 
@@ -315,10 +316,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
         addToIpfs(metadataJson).then((metaCid) => {
           setUploadingToIpfs(false)
           //metadataJsonCid state update takes time
+          //setting the state anyway, might use anywhere else
           setMetadaJsonCid(metaCid)
 
           //so using the cCid and metaCid instead.
-          addToBitverse(cCid, metaCid)
+          addToBitverse(cCid, metaCid, contentType)
         })
       })
     } else {
@@ -368,7 +370,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     and uploads the content and metadata CID 
     to the bitverse smart contract
   */
-  async function addToBitverse(contentHash: string, metadataHash: string) {
+  async function addToBitverse(contentHash: string, metadataHash: string, contentType: string) {
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
 
@@ -393,7 +395,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
 
     console.log(bitverse)
     try {
-      tx = await bitverse._addContent(contentHash, metadataHash)
+      tx = await bitverse._addContent(contentHash, metadataHash, contentType)
       console.log('*********  result ***********')
       console.log(tx)
 
@@ -490,7 +492,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
           <div className="font-bold text-red-500">Upload Failed</div>
         )}
         {uploadFailed && (
-          <div className="text-gray-400">Seems like the transaction failed</div>
+          <div className="text-gray-400">Looks like the transaction failed</div>
         )}
         {isUploadSuccessful && (
           <div className="flex flex-row">

@@ -16,8 +16,9 @@ contract Bitverse is ERC20 {
     /** TEMPORARY STUFF **/
     //eXAMPLE cID - QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
 
-    int public constant REWARD_POINT = 5;
-
+    //For every 10th like, the user gets 1 bitstone (ERC20-token)
+    int256 public constant REWARD_CHECKPOINT = 10;
+  
     // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
 
@@ -69,6 +70,8 @@ contract Bitverse is ERC20 {
         mapping(address => bool) usersDisliked;
         // The timestamp from the block when this content came into existence on the blockchain.
         uint256 timeStamp;
+        //the content type, eg: image, video etc.
+        string contentType;
     }
 
     /*  CONSTRUCTOR  */
@@ -98,9 +101,11 @@ contract Bitverse is ERC20 {
     /// and stores it.
     /// @notice Author can set/update metadata later as well via setMetadata() function.
     /// Pass empty string "" for no metadata.
-    function _addContent(string memory _cid, string memory _metadataCid)
-        public
-    {
+    function _addContent(
+        string memory _cid,
+        string memory _metadataCid,
+        string memory _contentType
+    ) public {
         //Make sure NON-EMPTY Cid is entered
         if (bytes(_cid).length <= 0) revert EmptyCid();
         //TODO Make sure Ipfs-Cid has the corrent format
@@ -114,6 +119,7 @@ contract Bitverse is ERC20 {
         c.metadataCid = _metadataCid;
         c.author = payable(msg.sender);
         c.timeStamp = block.timestamp;
+        c.contentType = _contentType;
 
         cidsArray.push(_cid);
         uint256 newIndex = cidsArray.length - 1;
@@ -152,12 +158,10 @@ contract Bitverse is ERC20 {
     /* Errors for like function */
     /// Already liked!
     error alreadyLiked();
-   
 
     /* Events for like function */
     event ContentLiked(string cid, address liker);
     event TokenMinted(address author, string cid);
-
 
     function like(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -174,25 +178,26 @@ contract Bitverse is ERC20 {
         c.netlikes++;
         emit ContentLiked(_cid, msg.sender);
 
-
-        //logic for rewarding ERC20 for every 100th netlike.
+        //reward 1 bitstone (ERC20-Token) to the author for every 100th netlike.
         //TODO check for exploit
         if (
-            c.netlikes % REWARD_POINT == 0 &&
-            uint256(c.netlikes / REWARD_POINT) == c.milestone + 1
+            c.netlikes % REWARD_CHECKPOINT == 0 &&
+            uint256(c.netlikes / REWARD_CHECKPOINT) ==
+            c.milestone + 1
         ) {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
             c.milestone++;
             emit TokenMinted(c.author, _cid);
         }
+
     }
 
     /* Errors for dislike function */
     /// Already disliked!
-    error alreadyDisliked(); 
+    error alreadyDisliked();
 
-     /* Events for dislike function */
+    /* Events for dislike function */
     event ContentDisliked(string cid, address disliker);
 
     function dislike(string memory _cid) public {
@@ -210,7 +215,6 @@ contract Bitverse is ERC20 {
         c.dislikes++;
         c.netlikes--;
         emit ContentDisliked(_cid, msg.sender);
-     
     }
 
     ///@dev Returns the total number of Content in existence.
@@ -230,20 +234,17 @@ contract Bitverse is ERC20 {
         return cidsArray;
     }
 
-
     // @notice Returns the length of the authorToCidIndices[] array
     //Also represents the content the author has uploaded so far.
-     function authorToCidIndicesLength() public view returns (uint256) {
+    function authorToCidIndicesLength() public view returns (uint256) {
         return authorToCidIndices[msg.sender].length;
     }
-
-
 
     // /// @dev Add multiple contents from a single transaction
     // function addMultipleContent(string[] memory _cid) public {}
 
     /// Can be used to burn the tokens
-    function burn(uint amount) public {       
-        _burn(msg.sender, amount); 
+    function burn(uint256 amount) public {
+        _burn(msg.sender, amount);
     }
 }

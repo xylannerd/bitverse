@@ -4,12 +4,10 @@ import Modal from './components/dashboard/modal'
 import Image from 'next/image'
 import Lottie from 'react-lottie'
 
-
 //interfaces
 import { Content } from './components/interfaces'
 //components
 import DisplayUserContent from './components/dashboard/displayUserContent'
-
 
 import loadingAnimation from '../public/79943-spiral-dots-preloader.json'
 //ethereum libraries
@@ -25,7 +23,6 @@ const Dashboard: React.FC = observer(() => {
   //ganache networkId - 5777
   //ganache chainID - 0x539 || 1337
   const RIGHT_NETWORK = 5777
-
 
   const [rightNetwork, setRightNetwork] = useState(false)
 
@@ -47,8 +44,6 @@ const Dashboard: React.FC = observer(() => {
   // const auth =
   //   'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
-  
-
   useEffect(() => {
     if (ethereum.selectedAddress) {
       store.setAddress(ethereum.selectedAddress)
@@ -59,6 +54,12 @@ const Dashboard: React.FC = observer(() => {
   useEffect(() => {
     initBitverseAndGetContent()
   }, [])
+
+  useEffect(() => {
+    console.log("contentMetadata: ")
+
+    console.log(contentMetadata)
+  }, [contentMetadata])
 
   async function initBitverseAndGetContent() {
     setIsLoadingNetwork(true)
@@ -119,6 +120,8 @@ const Dashboard: React.FC = observer(() => {
                 contentArray.push(content)
                 var res = await ipfsNode.cat(content.metadataCid)
                 // console.log(res)
+                //sets the metadata for every Cid
+
                 metadataMap.set(theCid, res)
               }
 
@@ -182,13 +185,10 @@ const Dashboard: React.FC = observer(() => {
     return <Lottie options={defaultOptions} height={200} width={200} />
   }
 
-
   function HandleDashboard() {
     if (store.address) {
       return (
         <>
-          {isModalOpen && <Modal closeModal={setisModalOpen} ipfs={ipfs} />}
-
           {isLoadingNetwork ? (
             <Loading />
           ) : (
@@ -197,7 +197,7 @@ const Dashboard: React.FC = observer(() => {
                 <div className="div">
                   <div className="flex flex-col items-center justify-center mt-8">
                     <div
-                      className="flex flex-col w-10/12 bg-black text-white border-dashed border-2 border-gray-400 select-none  cursor-pointer py-8 rounded-md items-center justify-center shadow-md"
+                      className="flex flex-col w-10/12 bg-black text-white border-dashed border-2 border-gray-400 select-none cursor-pointer py-8 rounded-md items-center justify-center shadow-md"
                       onClick={() => setisModalOpen(!isModalOpen)}
                     >
                       <p>+</p>
@@ -214,8 +214,13 @@ const Dashboard: React.FC = observer(() => {
                   {isLoadingContent ? (
                     <Loading />
                   ) : (
-                    <div className="flex mt-8 w-full h-full bg-yellow-500 bg-opacity-50 justify-center">
-                      <DisplayUserContent userContentCount={userContentCount} userContent={userContent} />
+                    <div className="flex mt-8 w-full h-full bg-opacity-50 justify-center">
+                      {/* {contentMetadata && <p>{contentMetadata.get(userContent[0].cid)}</p>} */}
+                      <DisplayUserContent
+                        userContentCount={userContentCount}
+                        userContent={userContent}
+                        userMetadata={contentMetadata}
+                      />
                     </div>
                   )}
                 </div>
@@ -242,9 +247,14 @@ const Dashboard: React.FC = observer(() => {
   }
 
   return (
-    <div className="bg-black">
+    <div className="div">
+      {isModalOpen && <Modal closeModal={setisModalOpen} ipfs={ipfs} />}
+
       <Navbar />
-      <HandleDashboard />
+
+      <div className="mx-8 mb-32">
+        <HandleDashboard />
+      </div>
     </div>
   )
 })

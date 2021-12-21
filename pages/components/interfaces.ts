@@ -1,10 +1,12 @@
+import { BigNumber } from "ethers";
+
 export interface Content {
     cid: string
     metadataCid: string
     author: string
-    likes: number
-    dislikes: number
-    netLikes: number
-    milestone: number
-    timeStamp: number
+    likes: BigNumber
+    dislikes: BigNumber
+    netlikes: BigNumber
+    milestone: BigNumber
+    timeStamp: BigNumber
   }
