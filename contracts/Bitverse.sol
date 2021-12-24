@@ -4,6 +4,34 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+//ERC721 INTERFACE
+interface IERC721 {
+    function ownerOf(uint256 tokenId) external view returns (address owner);
+
+    function balanceOf(address owner) external view returns (uint256 balance);
+}
+
+/**
+ * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
+ * @dev See https://eips.ethereum.org/EIPS/eip-721
+ */
+interface IERC721Metadata {
+    /**
+     * @dev Returns the token collection name.
+     */
+    function name() external view returns (string memory);
+
+    /**
+     * @dev Returns the token collection symbol.
+     */
+    function symbol() external view returns (string memory);
+
+    /**
+     * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
+     */
+    function tokenURI(uint256 tokenId) external view returns (string memory);
+}
+
 /// @title A decentralised platform for NFTs and content creators //TODO
 /// @author Xylan W. Reeves
 /// @notice You can use this contract for saving ipfs hashes, nfts and can do stuff with it //TODO
@@ -18,7 +46,7 @@ contract Bitverse is ERC20 {
 
     //For every 10th like, the user gets 1 bitstone (ERC20-token)
     int256 public constant REWARD_CHECKPOINT = 10;
-  
+
     // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
 
@@ -34,6 +62,65 @@ contract Bitverse is ERC20 {
     /// @dev This mapping returns all the indices of Cids (inside array cidsArray)
     /// owned by each author.
     mapping(address => uint256[]) public authorToCidIndices;
+
+    mapping(address => uint256[]) public uploaderToNftIndices;
+
+    //An array that contains all the Nfts
+    Nft[] public nftArray;
+
+    ///@dev The NFT struct
+    /// Every NFT in Bitverse is represented by a copy of this structure.
+    // TODO Not yet optimized for the byte-packing rules used by Ethereum.
+    struct Nft {
+        //The address of the contract the NFT is deployed.
+        string tokenAddress;
+        //The id of the NFT
+        //NOTE: "The ownership can be found out by calling the ownerOf(uint256 _tokenId) function inside the ERC721 contract"
+        //The owner can change, bitverse rewards the current owner, i.e. ownerOf(uint256 _tokenId).
+        string tokenId;
+        //Total likes the NFT got.
+        uint256 likes;
+        //Total dislikes the NFT got.
+        uint256 dislikes;
+        // This is the net number of likes
+        // netlikes = likes - dislikes.
+        // It can also be a negative number,
+        // hence a signed integer.
+        // The token rewarded are calculated upon the number of netlikes.
+        // Note: No tokens can be rewarded more than once for the same milestone,
+        // We use milestone below to keep track of the checkpoints.
+        int256 netlikes;
+        // This is used to make sure no author is rewarded a token more than once for the same milestone.
+        uint256 milestone;
+        // This mapping contains all the users who've liked this NFT.
+        // Also used to make sure no user likes the NFT more than once.
+        mapping(address => bool) usersLiked;
+        // This mapping contains all the users who've disliked this NFT.
+        // Also used to make sure no user dislikes the NFT more than once.
+        mapping(address => bool) usersDisliked;
+        // The timestamp from the block when this NFT came into existence on the bitverse.
+        uint256 timeStamp;
+    }
+
+    /* Errors for addNft function */
+
+    /// `uploader` is not the current NFT owner.
+    /// @param uploader Uploader's address.
+    error NotOwner(address uploader);
+
+    function addNft(address _tokenAddress, uint256 _tokenId) public {
+        //verify that the address is valid
+        //and that the nft indeed exist
+
+        address nftOwner = IERC721(_tokenAddress).ownerOf(_tokenId);
+
+        //only the owners can add their nfts
+        if (msg.sender != nftOwner) revert NotOwner(msg.sender);
+    }
+
+    function likeNft() public {}
+
+    function dislikeNft() public {}
 
     /// @dev The main 'Content' struct.
     /// Every content in Bitverse is represented by a copy of this structure.
@@ -58,7 +145,7 @@ contract Bitverse is ERC20 {
         // hence a signed integer.
         // The token rewarded are calculated upon the number of netlikes.
         // Note: No tokens can be rewarded more than once for the same milestone,
-        // We use milestone below to keep track of the milestones.
+        // We use milestone below to keep track of the checkpoints.
         int256 netlikes;
         // This is used to make sure no author is rewarded a token more than once for the same milestone.
         uint256 milestone;
@@ -68,7 +155,7 @@ contract Bitverse is ERC20 {
         // This mapping contains all the users who've disliked this content.
         // Also used to make sure no user dislikes the content more than once.
         mapping(address => bool) usersDisliked;
-        // The timestamp from the block when this content came into existence on the blockchain.
+        // The timestamp from the block when this content came into existence on the bitverse.
         uint256 timeStamp;
         //the content type, eg: image, video etc.
         string contentType;
@@ -182,15 +269,13 @@ contract Bitverse is ERC20 {
         //TODO check for exploit
         if (
             c.netlikes % REWARD_CHECKPOINT == 0 &&
-            uint256(c.netlikes / REWARD_CHECKPOINT) ==
-            c.milestone + 1
+            uint256(c.netlikes / REWARD_CHECKPOINT) == c.milestone + 1
         ) {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
             c.milestone++;
             emit TokenMinted(c.author, _cid);
         }
-
     }
 
     /* Errors for dislike function */

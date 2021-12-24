@@ -1,0 +1,7 @@
+{
+    "projectName": "Bitverse",
+    "namespace": "Bitverse.Contracts",
+    "lang": 0,
+    "autoCodeGen": true,
+    "projectPath": "../"
+}
