@@ -63,21 +63,34 @@ contract Bitverse is ERC20 {
     /// owned by each author.
     mapping(address => uint256[]) public authorToCidIndices;
 
+
+
+
+    /** NFTs **/
+
+    uint public numNfts;
+
     mapping(address => uint256[]) public uploaderToNftIndices;
 
-    //An array that contains all the Nfts
-    Nft[] public nftArray;
+    // This mapping contains all the nfts present in Bitverse
+    // Note: Use 'numNfts' to iterate
+    // The array can't be used as the struct 'Nft' contains storage mappings inside
+    mapping(uint256 => Nft) public nftMapping;
+    
 
     ///@dev The NFT struct
     /// Every NFT in Bitverse is represented by a copy of this structure.
     // TODO Not yet optimized for the byte-packing rules used by Ethereum.
     struct Nft {
+
+        //A unique id for every nft in the bitverse.
+        uint256 id;
         //The address of the contract the NFT is deployed.
-        string tokenAddress;
+        address tokenAddress;
         //The id of the NFT
         //NOTE: "The ownership can be found out by calling the ownerOf(uint256 _tokenId) function inside the ERC721 contract"
         //The owner can change, bitverse rewards the current owner, i.e. ownerOf(uint256 _tokenId).
-        string tokenId;
+        uint tokenId;
         //Total likes the NFT got.
         uint256 likes;
         //Total dislikes the NFT got.
@@ -102,25 +115,107 @@ contract Bitverse is ERC20 {
         uint256 timeStamp;
     }
 
+
+
+    /* Events for addNft function */
+    event NewNftAdded(address tokenAddress, uint256 tokenId, address owner, uint256 timeStamp);
+
     /* Errors for addNft function */
 
     /// `uploader` is not the current NFT owner.
     /// @param uploader Uploader's address.
     error NotOwner(address uploader);
 
+    /// Invalid token address
+    error InvalidTokenAddress();
+
     function addNft(address _tokenAddress, uint256 _tokenId) public {
         //verify that the address is valid
         //and that the nft indeed exist
 
-        address nftOwner = IERC721(_tokenAddress).ownerOf(_tokenId);
+        // address nftOwner = IERC721(_tokenAddress).ownerOf(_tokenId);
 
         //only the owners can add their nfts
-        if (msg.sender != nftOwner) revert NotOwner(msg.sender);
+        // if (msg.sender != nftOwner) revert NotOwner(msg.sender);
+
+
+        // if(_tokenAddress == address(0)) revert InvalidTokenAddress(); 
+
+        uint nftId = numNfts++;
+
+        Nft storage n = nftMapping[nftId];
+        n.id = nftId; 
+        n.tokenAddress = _tokenAddress;
+        n.tokenId = _tokenId;
+        n.timeStamp = block.timestamp;
+        
+        uploaderToNftIndices[msg.sender].push(nftId);
+
+        emit NewNftAdded(_tokenAddress, _tokenId, msg.sender, block.timestamp);
+
     }
 
-    function likeNft() public {}
+    event NftLiked(uint256 nftId, address liker, uint timeStamp);
+    event TokenRewarded(address nftOwner, uint _nftId); 
 
-    function dislikeNft() public {}
+
+    function likeNft(uint256 _nftId) public {
+
+        Nft storage n = nftMapping[_nftId];
+
+        if(n.usersLiked[msg.sender] == true) revert alreadyLiked();
+
+        if (n.usersDisliked[msg.sender] == true) {
+            n.usersDisliked[msg.sender] == false;
+            n.dislikes--;
+        }
+
+        n.usersLiked[msg.sender] = true;
+        n.likes++;
+        n.netlikes++;
+        emit NftLiked(_nftId, msg.sender, block.timestamp);
+
+
+        //reward 1 bitstone (ERC20-Token) to the nft-owner for every 10th (REWARD_CHECKPOINT) netlike.
+        //TODO check for exploit
+        if (
+            n.netlikes % REWARD_CHECKPOINT == 0 &&
+            uint256(n.netlikes / REWARD_CHECKPOINT) == n.milestone + 1
+        ) {
+
+            address nftOwner = IERC721(n.tokenAddress).ownerOf(n.tokenId);
+
+            //mint function to hit with every 100th netLike
+            _mint(nftOwner, 1);
+            n.milestone++;
+            emit TokenRewarded(nftOwner, _nftId);
+        }
+
+
+
+    }
+
+    event NftDisliked(uint256 nftId, address disliker, uint timeStamp);
+
+
+    function dislikeNft(uint256 _nftId) public {
+
+         Nft storage n = nftMapping[_nftId];
+
+        if (n.usersDisliked[msg.sender] == true) revert alreadyDisliked();
+
+        if (n.usersLiked[msg.sender] == true) {
+            n.usersLiked[msg.sender] == false;
+            n.likes--;
+            n.netlikes--;
+        }
+
+        n.usersDisliked[msg.sender] = true;
+        n.dislikes++;
+        n.netlikes--;
+        emit NftDisliked(_nftId, msg.sender, block.timestamp);
+
+    }
 
     /// @dev The main 'Content' struct.
     /// Every content in Bitverse is represented by a copy of this structure.
@@ -248,7 +343,7 @@ contract Bitverse is ERC20 {
 
     /* Events for like function */
     event ContentLiked(string cid, address liker);
-    event TokenMinted(address author, string cid);
+    event TokenRewarded(address author, string cid);
 
     function like(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -274,7 +369,7 @@ contract Bitverse is ERC20 {
             //mint function to hit with every 100th netLike
             _mint(c.author, 1);
             c.milestone++;
-            emit TokenMinted(c.author, _cid);
+            emit TokenRewarded(c.author, _cid);
         }
     }
 
