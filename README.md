@@ -1,5 +1,13 @@
 
-## Getting Started
+## WELCOME
+
+
+** THIS IS A DECENTRALISED AUTONOMOUS CONTENT/NFT CREATION AND REWARDS PLATFORM **
+
+* Built upon ethereum and ipfs *
+
+
+## Running the server
 
 First, run the development server:
 
