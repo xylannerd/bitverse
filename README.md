@@ -1,7 +1,7 @@
 
 ## welcome to bitverse
 
-THIS IS A DECENTRALISED AUTONOMOUS CONTENT/NFT CREATION AND REWARDS PLATFORM 🤍
+This is a Decentralised Autonomous Content/NFT and Rewards Platform 🤍
 
 ✔️ Built upon ethereum and ipfs
 
