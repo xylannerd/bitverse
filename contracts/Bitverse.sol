@@ -42,15 +42,21 @@ contract Bitverse is ERC20 {
     // Cid: Content Identifier.
 
     /** TEMPORARY STUFF **/
-    //eXAMPLE cID - QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
+    //eXAMPLE cID (string)- QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH
+    //ex token-address (address) - 0x495f947276749Ce646f68AC8c248420045cb7b5e
+    //eg tokenId (uint256)- 87877668847029793789970239573080198476427212176584630898879245679610566803457
+
 
     //For every 10th like, the user gets 1 bitstone (ERC20-token)
     int256 public constant REWARD_CHECKPOINT = 10;
 
+    /** Content state **/
+
+
     // @dev An array that contains all the Cids of IPFS Content in existence
     string[] public cidsArray;
 
-    /** 3 Global Mappings. **/
+    /** 3 Global Mappings for Content **/
 
     //@dev Mapping that contains all the Content in existence
     // Unique Cid to Content struct.
@@ -66,14 +72,18 @@ contract Bitverse is ERC20 {
 
 
 
-    /** NFTs **/
+    /** NFTs state **/
 
     uint public numNfts;
 
+    /** 2 Global Mappings for Content **/
+
+    /// @dev This mapping returns all the indices of NFTs (inside mapping nftMapping)
+    /// owned by each author.
     mapping(address => uint256[]) public uploaderToNftIndices;
 
     // This mapping contains all the nfts present in Bitverse
-    // Note: Use 'numNfts' to iterate
+    // Note: Use 'numNfts' to iterate, starts at 1.
     // The array can't be used as the struct 'Nft' contains storage mappings inside
     mapping(uint256 => Nft) public nftMapping;
     
