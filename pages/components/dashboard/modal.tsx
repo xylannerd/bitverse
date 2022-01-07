@@ -3,8 +3,6 @@ import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/8994-loading-circle.json'
 import IPFS from 'ipfs-core'
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
@@ -16,12 +14,13 @@ import store from '../../store/rootstore'
 import { Observer, observer } from 'mobx-react-lite'
 
 import Confirmation from './confirmation'
+import UploadProgress from './UploadProgress'
 
 import { saveAs } from 'file-saver'
 
 interface ModalProps {
-  closeModal: any;
-  ipfs: any;
+  closeModal: any
+  ipfs: any
 }
 
 const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
@@ -304,7 +303,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
 
     if (fileCaptured) {
       const fileToUpload = imageToUpload ? imageToUpload : videoToUpload
-      const contentType = imageToUpload ? "image" : "video"
+      const contentType = imageToUpload ? 'image' : 'video'
 
       setIpfsNodeInitializing(true)
 
@@ -347,8 +346,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
       ? ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
 
-   
-
     if (ipfsNode) {
       setIpfsNodeStarted(true)
       setIpfsNodeInitializing(false)
@@ -370,7 +367,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     and uploads the content and metadata CID 
     to the bitverse smart contract
   */
-  async function addToBitverse(contentHash: string, metadataHash: string, contentType: string) {
+  async function addToBitverse(
+    contentHash: string,
+    metadataHash: string,
+    contentType: string,
+  ) {
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
 
@@ -430,108 +431,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     saveAs(blob, `md_ ${contentCid}.json`)
   }
 
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: loadingAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  }
-
-  function UploadProgress() {
-    /* 
-      The final step in the upload process.
-      1. Add the metadata to ipfs
-      2. Add the content to ipfs
-      3. Add the ipfs-hash to the bitverse-contract.
-    */
-
-    return (
-      <div
-        id="uploadProgressContainer"
-        className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
-      >
-        {showSpinner && (
-          <Lottie options={defaultOptions} height={300} width={300} />
-        )}
-
-        {ipfsNodeInitializing && (
-          <div className="font-thin">Initiliazing ipfs node...</div>
-        )}
-        {uploadingToIpfs && <div className="font-thin">Adding to ipfs...</div>}
-        {addingToBitverse && (
-          <div className="font-thin">Adding to Bitverse...</div>
-        )}
-
-        {addingToBitverse && (
-          <div className="font-bold">Waiting For Confirmation</div>
-        )}
-        {addingToBitverse && (
-          <div className="text-gray-400">
-            Please confirm the transaction in your wallet
-          </div>
-        )}
-        {uploadFailed && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="grey"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-        )}
-        {uploadFailed && (
-          <div className="font-bold text-red-500">Upload Failed</div>
-        )}
-        {uploadFailed && (
-          <div className="text-gray-400">Looks like the transaction failed</div>
-        )}
-        {isUploadSuccessful && (
-          <div className="flex flex-row">
-            Upload Successful{' '}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="green"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        )}
-        {isUploadSuccessful && (
-          <button
-            className="w-2/4 mt-8 p-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600"
-            onClick={downloadMetaDataJsonFile}
-          >
-            Get Metadata JSON File
-          </button>
-        )}
-        {isUploadSuccessful && (
-          <button
-            className="w-2/4 mt-2 p-2 rounded-lg text-white bg-black hover:bg-gray-800"
-            onClick={exitAndRefresh}
-          >
-            All Done
-          </button>
-        )}
-      </div>
-    )
-  }
 
   return (
     <div
@@ -549,7 +448,21 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
             triggerUploading={initUpload}
           />
         )}
-        {isUploading ? <UploadProgress /> : <UploadDetailsInterface />}
+        {isUploading ? (
+          <UploadProgress 
+            showSpinner={showSpinner} 
+            ipfsNodeInitializing={ipfsNodeInitializing}
+            uploadingToIpfs={uploadingToIpfs}
+            addingToBitverse={addingToBitverse}
+            uploadFailed={uploadFailed}
+            exitModal={exitModal}
+            isUploadSuccessful={isUploadSuccessful}
+            exitAndRefresh={exitAndRefresh}
+            downloadMetaDataJsonFile={downloadMetaDataJsonFile}
+          />
+        ) : (
+          <UploadDetailsInterface />
+        )}
       </div>
     </div>
   )

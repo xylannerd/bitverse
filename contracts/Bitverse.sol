@@ -80,10 +80,10 @@ contract Bitverse is ERC20 {
 
     /// @dev This mapping returns all the indices of NFTs (inside mapping nftMapping)
     /// owned by each author.
-    mapping(address => uint256[]) public uploaderToNftIndices;
+    mapping(address => uint256[]) public ownerToNftIndices;
 
     // This mapping contains all the nfts present in Bitverse
-    // Note: Use 'numNfts' to iterate, starts at 1.
+    // Note: Use 'numNfts' to iterate, starts at 0.
     // The array can't be used as the struct 'Nft' contains storage mappings inside
     mapping(uint256 => Nft) public nftMapping;
     
@@ -143,13 +143,13 @@ contract Bitverse is ERC20 {
         //verify that the address is valid
         //and that the nft indeed exist
 
-        // address nftOwner = IERC721(_tokenAddress).ownerOf(_tokenId);
+        address nftOwner = IERC721(_tokenAddress).ownerOf(_tokenId);
 
         //only the owners can add their nfts
-        // if (msg.sender != nftOwner) revert NotOwner(msg.sender);
+        if (msg.sender != nftOwner) revert NotOwner(msg.sender);
 
 
-        // if(_tokenAddress == address(0)) revert InvalidTokenAddress(); 
+        if(_tokenAddress == address(0)) revert InvalidTokenAddress(); 
 
         uint nftId = numNfts++;
 
@@ -159,7 +159,7 @@ contract Bitverse is ERC20 {
         n.tokenId = _tokenId;
         n.timeStamp = block.timestamp;
         
-        uploaderToNftIndices[msg.sender].push(nftId);
+        ownerToNftIndices[msg.sender].push(nftId);
 
         emit NewNftAdded(_tokenAddress, _tokenId, msg.sender, block.timestamp);
 
@@ -208,6 +208,8 @@ contract Bitverse is ERC20 {
     event NftDisliked(uint256 nftId, address disliker, uint timeStamp);
 
 
+    ///@dev NFT dislike function
+    
     function dislikeNft(uint256 _nftId) public {
 
          Nft storage n = nftMapping[_nftId];
@@ -430,8 +432,13 @@ contract Bitverse is ERC20 {
         return authorToCidIndices[msg.sender].length;
     }
 
-    // /// @dev Add multiple contents from a single transaction
-    // function addMultipleContent(string[] memory _cid) public {}
+    // @notice Returns the length of the ownerToNftIndices[] array
+    //Also represents the NFTs the owner has uploaded so far.
+    function ownerToNftIndicesLength() public view returns (uint256) {
+        return ownerToNftIndices[msg.sender].length;
+    }
+
+
 
     /// Can be used to burn the tokens
     function burn(uint256 amount) public {

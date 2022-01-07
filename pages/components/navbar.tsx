@@ -15,13 +15,11 @@ import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 
 import store from '../store/rootstore'
-import { observer } from "mobx-react-lite"
-
+import { observer } from 'mobx-react-lite'
 
 const Navbar = observer(() => {
   const [mProvider, setmProvider] = useState(null)
   const [activeAccount, setActiveAccount] = useState(null)
-
 
   //popper.js for dropdown menu placement
   const [referenceElement, setReferenceElement] = useState(null)
@@ -105,7 +103,6 @@ const Navbar = observer(() => {
       // MetaMask is locked or the user has not connected any accounts
       console.log('Please connect to MetaMask.')
       store.setAddress(null)
-
     } else if (accounts[0] !== store.address) {
       store.setAddress(accounts[0])
 
@@ -185,14 +182,30 @@ const Navbar = observer(() => {
         id="navBar"
         className="flex items-center w-full h-16 bg-black shadow-md"
       >
-        <div id="leftSide" className="flex w-3/6 h-full items-center bg-black">
+        <div
+          id="leftSide"
+          className="flex w-3/6 h-full items-center bg-black text-white space-x-8"
+        >
           <Logo />
-          {store.chainId && <p>{store.chainId}</p>}
+          {/* {store.chainId && <p>{store.chainId}</p>} */}
         </div>
         <div
           id="rightSide"
           className="flex w-3/6 h-full bg-black items-center justify-end"
         >
+          <div className="text-white font-thin cursor-pointer flex flex-row gap-x-8 mr-16">
+            <div className="select-none cursor-pointer">
+              <Link href="/nft">NFTs</Link>
+            </div>
+            <div className="select-none cursor-pointer">
+              {' '}
+              <Link href="/images">IMAGES</Link>
+            </div>
+            <div className="select-none cursor-pointer">
+              {' '}
+              <Link href="/videos">VIDEOS</Link>
+            </div>
+          </div>
           <HandleMetamaskConnectionButton />
           {store.address && (
             <Popover className="relative">
