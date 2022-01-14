@@ -1,7 +1,7 @@
 import Navbar from './components/navbar'
 import { useEffect, useState } from 'react'
 import Modal from './components/dashboard/modal'
-import Image from 'next/image'
+import NftModal from './components/dashboard/nftModal'
 import Lottie from 'react-lottie'
 
 //interfaces
@@ -20,10 +20,15 @@ import { observer } from 'mobx-react-lite'
 import IPFS from 'ipfs-core'
 
 const Dashboard: React.FC = observer(() => {
-  //ganache networkId - 5777
   //ganache chainID - 0x539 || 1337
-  const RIGHT_NETWORK = 5777
+  const ganache_networkId = 5777
+  const ethereum_networkId = 1
 
+  //ENTER THE NETWORK HERE
+  //THE CONTRACT DEPLOYMENT NETWORK
+  const RIGHT_NETWORK = ethereum_networkId
+
+  //toggle rightNetwork when on other network
   const [rightNetwork, setRightNetwork] = useState(false)
 
   const [userContent, setUserContent] = useState([])
@@ -32,13 +37,16 @@ const Dashboard: React.FC = observer(() => {
   const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
 
+  //toggle isLoadingNetwork when on other network
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
-  const [isLoadingContent, setIsLoadingContent] = useState(true)
+  const [isLoadingContent, setIsLoadingContent] = useState(false)
   const [bitverse, setBitverse] = useState(null)
   const [ethProvider, setEthProvider] = useState(null)
   const [signer, setSigner] = useState(null)
   const [isModalOpen, setisModalOpen] = useState(false)
+  const [isNftModalOpen, setIsNftModalOpen] = useState(false)
 
+  setIsNftModalOpen
   // const projectId = ''
   // const projectSecret = ''
   // const auth =
@@ -56,7 +64,7 @@ const Dashboard: React.FC = observer(() => {
   }, [])
 
   useEffect(() => {
-    console.log("contentMetadata: ")
+    console.log('contentMetadata: ')
 
     console.log(contentMetadata)
   }, [contentMetadata])
@@ -68,8 +76,12 @@ const Dashboard: React.FC = observer(() => {
       ? ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
     if (provider && ipfsNode) {
+      setMetaProvider(provider)
+
       const ethersProvider = new ethers.providers.Web3Provider(provider)
       const network = await provider.networkVersion
+
+      setEthProvider(ethersProvider)
 
       console.log('network version: ' + network)
 
@@ -84,83 +96,83 @@ const Dashboard: React.FC = observer(() => {
           setRightNetwork(true)
           setIsLoadingNetwork(false)
 
-          var contractBitverse = new ethers.Contract(
-            bitverseAbi.networks[network].address,
-            bitverseAbi.abi,
-            ethersProvider,
-          )
+          // var contractBitverse = new ethers.Contract(
+          //   bitverseAbi.networks[network].address,
+          //   bitverseAbi.abi,
+          //   ethersProvider,
+          // )
 
-          if (contractBitverse) {
-            setIsLoadingContent(true)
-            //get all the indices that belongs to the user
-            //get all the cids
-            //then get all the content for those cids from the contentMapping
+          // if (contractBitverse) {
+          //   setIsLoadingContent(true)
+          //   setBitverse(contractBitverse)
 
-            //well the solidity mapping cannot return the whole array
-            //but it can return the length of the array
-            //so get array's length then iterate through it!
-            var authorToCidIndicesArrayLength = await contractBitverse.authorToCidIndicesLength()
-            // console.log('indices: ' + authorToCidIndicesArrayLength)
+          //   //get all the indices that belongs to the user
+          //   //get all the cids
+          //   //then get all the content for those cids from the contentMapping
 
-            if (authorToCidIndicesArrayLength > 0) {
-              setUserContentCount(authorToCidIndicesArrayLength)
+          //   //well the solidity mapping cannot return the whole array
+          //   //but it can return the length of the array
+          //   //so get array's length then iterate through it!
+          //   var authorToCidIndicesArrayLength = await contractBitverse.authorToCidIndicesLength()
+          //   // console.log('indices: ' + authorToCidIndicesArrayLength)
 
-              var contentArray = []
-              var metadataArray = []
-              const metadataMap = new Map()
+          //   if (authorToCidIndicesArrayLength > 0) {
+          //     setUserContentCount(authorToCidIndicesArrayLength)
 
-              for (var i = 0; i < authorToCidIndicesArrayLength; i++) {
-                var cidIndex = await contractBitverse.authorToCidIndices(
-                  store.address,
-                  i,
-                )
-                var theCid = await contractBitverse.cidsArray(cidIndex)
-                //now get the content from the contentsMapping[] array
-                var content = await contractBitverse.contentsMapping(theCid)
-                contentArray.push(content)
-                var res = await ipfsNode.cat(content.metadataCid)
-                // console.log(res)
-                //sets the metadata for every Cid
+          //     var contentArray = []
+          //     var metadataArray = []
+          //     const metadataMap = new Map()
 
-                metadataMap.set(theCid, res)
-              }
+          //     for (var i = 0; i < authorToCidIndicesArrayLength; i++) {
+          //       var cidIndex = await contractBitverse.authorToCidIndices(
+          //         store.address,
+          //         i,
+          //       )
+          //       var theCid = await contractBitverse.cidsArray(cidIndex)
+          //       //now get the content from the contentsMapping[] array
+          //       var content = await contractBitverse.contentsMapping(theCid)
+          //       contentArray.push(content)
+          //       var res = await ipfsNode.cat(content.metadataCid)
+          //       // console.log(res)
+          //       //sets the metadata for every Cid
 
-              if (contentArray) {
-                setUserContent(contentArray)
-                console.log(contentArray)
-                setIsLoadingContent(false)
-              }
+          //       metadataMap.set(theCid, res)
+          //     }
 
-              if (metadataMap) {
-                console.log('metadata map stuff: ')
+          //     if (contentArray) {
+          //       setUserContent(contentArray)
+          //       console.log(contentArray)
+          //       setIsLoadingContent(false)
+          //     }
 
-                console.log(metadataMap)
-                setContentMetadata(metadataMap)
-                // console.log(metadataMap.get(contentArray[0].cid))
-              }
-            } else {
-              //author has no content yet!
-              //message: Your dashboard looks empty, Lets add something!
-              console.log('NO CONTENT FOUND')
-              setIsLoadingContent(false)
-            }
-            //contentsMapping
-          } else {
-            setIsLoadingNetwork(false)
-            setRightNetwork(false)
+          //     if (metadataMap) {
+          //       console.log('metadata map stuff: ')
 
-            console.log('no contract found')
-          }
+          //       console.log(metadataMap)
+          //       setContentMetadata(metadataMap)
+          //       // console.log(metadataMap.get(contentArray[0].cid))
+          //     }
+          //   } else {
+          //     //author has no content yet!
+          //     //message: Your dashboard looks empty, Lets add something!
+          //     console.log('NO CONTENT FOUND')
+          //     setIsLoadingContent(false)
+          //   }
+          //   //contentsMapping
+          // } else {
+          //   setIsLoadingNetwork(false)
+          //   setRightNetwork(false)
+
+          //   console.log('no contract found')
+          // }
         } else {
           setRightNetwork(false)
           setIsLoadingNetwork(false)
+          setIsLoadingContent(false)
 
           console.log('please select the correct network')
         }
       }
-      setMetaProvider(provider)
-      setEthProvider(ethersProvider)
-      setBitverse(contractBitverse)
       if (!ipfs) {
         setIpfs(ipfsNode)
       }
@@ -182,7 +194,38 @@ const Dashboard: React.FC = observer(() => {
         preserveAspectRatio: 'xMidYMid slice',
       },
     }
-    return <Lottie options={defaultOptions} height={200} width={200} />
+    return <Lottie options={defaultOptions} height={180} width={180} />
+  }
+
+  function AddNft() {
+    return (
+      <div
+        className="flex py-4 flex-col w-10/12 lg:w-8/12 xl:w-7/12 select-none cursor-pointer  rounded-md items-center justify-center shadow-xl relative overflow-hidden"
+        onClick={() => setIsNftModalOpen(!isNftModalOpen)}
+      >
+        <img
+          className="-z-50 absolute"
+          src="/deer-nft.jpg"
+          object-fit="cover"
+        />
+        <div className="z-10 flex flex-col justify-center items-center text-white font-bold  ">
+          <p>+</p>
+          <p>Add NFT</p>
+        </div>
+      </div>
+    )
+  }
+
+  function AddContent() {
+    return (
+      <div
+        className="mt-4 py-4 flex flex-col w-10/12 lg:w-8/12 xl:w-7/12 bg-black text-white font-bold border-dashed border-2 border-gray-400 select-none cursor-pointer rounded-md items-center justify-center shadow-md"
+        onClick={() => setisModalOpen(!isModalOpen)}
+      >
+        <p>+</p>
+        <p>Add Content</p>
+      </div>
+    )
   }
 
   function HandleDashboard() {
@@ -196,15 +239,10 @@ const Dashboard: React.FC = observer(() => {
               {rightNetwork && (
                 <div className="div">
                   <div className="flex flex-col items-center justify-center mt-8">
-                    <div
-                      className="flex flex-col w-10/12 bg-black text-white border-dashed border-2 border-gray-400 select-none cursor-pointer py-8 rounded-md items-center justify-center shadow-md"
-                      onClick={() => setisModalOpen(!isModalOpen)}
-                    >
-                      <p>+</p>
-                      <p>Add Content</p>
-                    </div>
+                    <AddNft />
+                    <AddContent />
 
-                    <div className="w-10/12 mt-11">
+                    <div className="w-10/12 lg:w-8/12 xl:w-7/12  mt-11">
                       <h1 className="text-gray-200 font-bold text-xl">
                         My Uploads
                       </h1>
@@ -229,7 +267,7 @@ const Dashboard: React.FC = observer(() => {
               {!rightNetwork && (
                 <p className="text-white mt-8 text-center ">
                   {' '}
-                  Please connect to the Ganache Network{' '}
+                  Please connect to the Ganache Network
                 </p>
               )}
             </div>
@@ -248,7 +286,16 @@ const Dashboard: React.FC = observer(() => {
 
   return (
     <div className="div">
-      {isModalOpen && <Modal closeModal={setisModalOpen} ipfs={ipfs} />}
+      {isModalOpen && (
+        <Modal closeModal={setisModalOpen} ipfs={ipfs} bitverse={bitverse} />
+      )}
+      {isNftModalOpen && (
+        <NftModal
+          modalOpen={setIsNftModalOpen}
+          bitverse={bitverse}
+          ethProvider={ethProvider}
+        />
+      )}
 
       <Navbar />
 

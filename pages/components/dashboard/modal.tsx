@@ -3,27 +3,33 @@ import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import IPFS from 'ipfs-core'
 //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 
+import IPFS from 'ipfs-core'
+
 import bitverseAbi from '../../../build/contracts/Bitverse.json'
 
 import store from '../../store/rootstore'
-import { Observer, observer } from 'mobx-react-lite'
+import { Observer } from 'mobx-react-lite'
 
 import Confirmation from './confirmation'
-import UploadProgress from './UploadProgress'
 
 import { saveAs } from 'file-saver'
+import UploadProgress from './uploadProgress'
 
 interface ModalProps {
   closeModal: any
   ipfs: any
+  bitverse: any
 }
 
-const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
+const Modal: React.FC<ModalProps> = ({
+  closeModal,
+  ipfs,
+  bitverse,
+}: ModalProps) => {
   const [fileCaptured, setFileCaptured] = useState(false)
   const [imageToUpload, setImageToUpload] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -57,9 +63,14 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
   const captureImage = (event) => {
     event.preventDefault()
     console.log(event.target.files)
-    setImageToUpload(event.target.files[0])
-    setImagePreview(URL.createObjectURL(event.target.files[0]))
-    setFileCaptured(true)
+    //checks the mime type and only accepts image type.
+    if (event.target.files[0].type.substr(0, 5) === 'image') {
+      setImageToUpload(event.target.files[0])
+      setImagePreview(URL.createObjectURL(event.target.files[0]))
+      setFileCaptured(true)
+    } else {
+      alert('Please select a valid image file')
+    }
   }
 
   //coming soon
@@ -163,6 +174,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
                   />
                 </div>
 
+                {/* Input form starts here */}
                 <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
                   <form
                     onSubmit={handleSubmit(onSubmit)}
@@ -375,7 +387,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
 
-    var bitverse
+    var mBitverse
     var tx
 
     console.log('*** bitverse function ***')
@@ -383,20 +395,25 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     const provider = await detectEthereumProvider()
     const ethProvider = new ethers.providers.Web3Provider(provider)
     const ethSigner = ethProvider.getSigner()
+    const network = await provider.networkVersion
 
     //Can be initialised with a provider or a signer
-    bitverse = new ethers.Contract(
-      bitverseAbi.networks[5777].address,
-      bitverseAbi.abi,
-      ethSigner,
-    )
+    //use signer to write to blockchain
+    mBitverse = bitverse
+      ? bitverse
+      : new ethers.Contract(
+          bitverseAbi.networks[network].address,
+          bitverseAbi.abi,
+          ethSigner,
+        )
+
     console.log('*********  bitverse ***********')
     console.log(`contentCid - ${contentHash}
     metadataCid - ${metadataHash}`)
 
-    console.log(bitverse)
+    console.log(mBitverse)
     try {
-      tx = await bitverse._addContent(contentHash, metadataHash, contentType)
+      tx = await mBitverse._addContent(contentHash, metadataHash, contentType)
       console.log('*********  result ***********')
       console.log(tx)
 
@@ -431,7 +448,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
     saveAs(blob, `md_ ${contentCid}.json`)
   }
 
-
   return (
     <div
       id="modalBackground"
@@ -449,8 +465,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal, ipfs }: ModalProps) => {
           />
         )}
         {isUploading ? (
-          <UploadProgress 
-            showSpinner={showSpinner} 
+          <UploadProgress
+            showSpinner={showSpinner}
             ipfsNodeInitializing={ipfsNodeInitializing}
             uploadingToIpfs={uploadingToIpfs}
             addingToBitverse={addingToBitverse}

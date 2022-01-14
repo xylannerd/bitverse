@@ -73,7 +73,7 @@ const ContentCard: React.FC<Props> = ({ content, userMetadata }) => {
               <div className="">
                 Cid: {CID.parse(content.cid).toV1().toString()}
               </div>
-              <div className="flex flex-row space-x-4">
+              <div className="flex flex-row space-x-4 text-gray-500 text-sm">
                 <div className="div">
                   Netlikes: {content.netlikes.toNumber()}
                 </div>

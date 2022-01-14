@@ -19,7 +19,7 @@ const DisplayUserContent: React.FC<Props> = ({ userContentCount, userContent, us
     )
   } else {
     return (
-      <div className="text-white font-semibold text-center py-4 px-8  bg-red-400 rounded-md">
+      <div className="text-white mt-32 font-semibold text-center py-4 px-8  bg-red-400 rounded-md">
         Looks like you have no uploads yet
       </div>
     )
