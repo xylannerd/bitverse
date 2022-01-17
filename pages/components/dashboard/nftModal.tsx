@@ -54,10 +54,19 @@ const NftModal: React.FC<NftModalProps> = ({
   const [tokenPreview, setTokenPreview] = useState(false)
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
-  const [imageUrl, setImageUrl] = useState(null)
+  //ERC721
   const [tokenName, setTokenName] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('')
   const [ownerBalance, setOwnerBalance] = useState(null)
+
+  //data from metadata
+  const [imageUrl, setImageUrl] = useState(null)
+  const [mName, setmName] = useState(null)
+  const [mDescription, setmDescription] = useState(null)
+  const [externalLink, setExternalLink] = useState(null)
+  const [animationUrl, setAnimationUrl] = useState(null)
+
+
 
   useEffect(() => {
     console.log(selectedTokenStandard)
@@ -73,11 +82,11 @@ const NftModal: React.FC<NftModalProps> = ({
     console.log('*** bigint form ***')
     console.log(data.TokenId)
 
-    fetchTheNft(data.TokenAddress, Number(data.TokenId))
+    fetchTheNft(data.TokenAddress, data.TokenId)
 
   }
 
-  async function fetchTheNft(_tokenAddress: string, _tokenId: number) {
+  async function fetchTheNft(_tokenAddress: string, _tokenId: string) {
     setIsLoadingPreview(true)
 
     console.log('*** fetch_nft ***')
@@ -108,6 +117,8 @@ const NftModal: React.FC<NftModalProps> = ({
             const data = await res.json()
             console.log(data)
             setImageUrl(data.image)
+            setmName(data.name)
+            setmDescription(data.description)
 
             // console.log("header: " + d.header)
           } catch (error) {
@@ -154,15 +165,25 @@ const NftModal: React.FC<NftModalProps> = ({
         //hex form without 0x
         //example link: https://api.opensea.io/api/v1/metadata/0x495f947276749Ce646f68AC8c248420045cb7b5e/0x{id}
 
+
         if (mtokenUri) {
+
+        const theUri = `${mtokenUri.substr(0, mtokenUri.length - 4)}${toPaddedHex(_tokenId)}`
+          console.log(theUri)
+
           try {
-            const res = await fetch(mtokenUri)
+            const res = await fetch(theUri)
             const data = await res.json()
             console.log(data)
             setImageUrl(data.image)
+            setmName(data.name)
+            setmDescription(data.description)
+            setExternalLink(data.external_link)
+            setAnimationUrl(data.animation_url)
           } catch (error) {
             console.log(error)
           }
+
         }
 
         setIsLoadingPreview(false)
@@ -173,6 +194,17 @@ const NftModal: React.FC<NftModalProps> = ({
       setIsLoadingPreview(false)
       setTokenPreview(true)
     }
+  }
+
+  function toPaddedHex(_tokenString){
+    //converts the _tokenString to hexForm, leading with 0x
+    const hexForm = ethers.utils.hexValue(BigNumber.from(_tokenString))
+    console.log(hexForm)
+    //hexString with leading zero padded to 64 hex characters.
+    //also removes 0x from the beginning
+    const paddedHex = hexForm.substr(2, hexForm.length).padStart(64, '0')
+    console.log(paddedHex)
+    return paddedHex
   }
 
   const addNftToBitverse = () => {}
@@ -202,6 +234,10 @@ const NftModal: React.FC<NftModalProps> = ({
             addNftToBitverse={addNftToBitverse}
             tokenName={tokenName}
             tokenSymbol={tokenSymbol}
+            mName={mName}
+            mDescription={mDescription}
+            externalLink={externalLink}
+            animationUrl={animationUrl}
           />
         ) : (
           <NftForm

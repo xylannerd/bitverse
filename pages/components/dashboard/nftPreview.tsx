@@ -8,6 +8,10 @@ interface Props {
   tokenName: string
   tokenSymbol: string
   addNftToBitverse: any
+  mName: string
+  mDescription: string
+  externalLink: string
+  animationUrl: string
 }
 
 const NftPreview: React.FC<Props> = ({
@@ -17,9 +21,11 @@ const NftPreview: React.FC<Props> = ({
   tokenName,
   tokenSymbol,
   addNftToBitverse,
+  animationUrl,
+  externalLink,
+  mName,
+  mDescription,
 }) => {
-
-    
   if (isInvalidAddress) {
     return (
       <div className="text-center text-red-500 w-full h-full items-center justify-center">
@@ -41,16 +47,25 @@ const NftPreview: React.FC<Props> = ({
         ) : (
           <div
             id="LoadingPreviewBackground"
-            className="flex w-full h-96 shrink-0 items-center justify-center bg-gray-700 bg-opacity-25 rounded-sm overflow-hidden"
+            className="flex w-full h-96 shrink-0 items-center justify-center bg-gray-700 bg-opacity-20 overflow-hidden"
           >
             <div className="font-light">Loading Preview</div>
           </div>
         )}
         {nftOwner && <div className="mx-4 font-light">Owner: {nftOwner}</div>}
+        {tokenName && <div className="mx-4">Name: {tokenName}</div>}
+        {tokenSymbol && <div className="mx-4">Symbol: {tokenSymbol}</div>}
 
-        <div className="bg-red-100 mt-8 px-8 py-2 font-light">
-          {tokenName && <div className="div">Name: {tokenName}</div>}
-          {tokenSymbol && <div className="div">Symbol: {tokenSymbol}</div>}
+        <div className="flex items-center justify-center">
+          <div className=" bg-red-100 mt-8 px-8 py-2 font-light rounded-lg mx-16">
+            {mName && (
+              <div className="div">
+                <div className="font-logofont font-thin">{mName}</div>
+              </div>
+            )}
+            {mDescription && <div className="mt-4">{mDescription}</div>}
+            {/* {externalLink && <div className="div">{externalLink}</div>} */}
+          </div>
         </div>
 
         {nftOwner === store.address ? (
