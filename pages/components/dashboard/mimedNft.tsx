@@ -13,7 +13,7 @@ const MimedNft: React.FC<Props> = ({ url }) => {
       id="imageBackground"
       className="flex w-full h-96 shrink-0 items-center justify-center bg-gray-700 bg-opacity-20 rounded-lg overflow-hidden select-none"
     >
-      <img src={url} object-fit="contain" className="rounded-lg" />
+      <img src={url} className='w-full h-full object-cover rounded-lg'  />
     </div>
   )
 }

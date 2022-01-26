@@ -58,7 +58,7 @@ const NftPreview: React.FC<Props> = ({
 
         <div className="flex items-center justify-center">
           <div className=" bg-red-100 mt-8 px-8 py-2 font-light rounded-lg mx-16">
-            {mName && (
+            {mName && (  
               <div className="div">
                 <div className="font-logofont font-thin">{mName}</div>
               </div>
