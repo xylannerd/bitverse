@@ -1,5 +1,7 @@
 import ContentCard from './contentCard'
 import { Content } from '../interfaces'
+import 'dotenv/config'
+//use it using - process.env.API_KEY
 
 interface Props {
   userContentCount: number;
