@@ -16,13 +16,18 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true,
+    "useDefineForClassFields": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "truffle-config.js", "test/bitverse.test.js", "next.config.js"  ],
+    "**/*.tsx",
+    "truffle-config.js",
+    "test/bitverse.test.js",
+    "next.config.js"
+  ],
   "exclude": [
     "node_modules",
     "fonts.ts"

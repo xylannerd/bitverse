@@ -1,33 +1,53 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable } from 'mobx'
 
-class RootStore{
+export class RootStore {
+  private userAddress
+  private networkChainId
+  private networkId
 
-    userAddress;
-    networkChainId;
+  private bitverseContract
+  private ipfsNode
 
-    constructor() {
-        makeAutoObservable(this);
-      }
+  constructor() {
+    makeAutoObservable(this)
+  }
 
+  setAddress(_address) {
+    this.userAddress = _address
+    console.log("store arg: " + _address);
+    console.log("store local: " + this.address);
+    
+  }
 
-      setAddress(address){
-          this.userAddress = address;
-      }
+  setChainId(_chainId) {
+    this.networkChainId = _chainId
+  }
 
-      get address(){
-          return this.userAddress;
-      }
-
-      setChainId(_chainId){
-          this.networkChainId = _chainId
-      }
-
-      get chainId(){
-          return this.networkChainId
-      }
-
-
-
+  setNetworkId(_networkId){
+      this.networkId = _networkId
 }
 
-export default new RootStore()
+  setBitverseContract(_contractInstance) {
+    this.bitverseContract = _contractInstance
+  }
+
+  get address() {
+    return this.userAddress
+  }
+
+  get chainId() {
+    return this.networkChainId
+  }
+  
+  get network(){
+      return this.networkId
+  }
+
+  get bitverse() {
+    return this.bitverseContract
+  }
+
+  get ipfs() {
+    return this.ipfsNode
+  }
+}

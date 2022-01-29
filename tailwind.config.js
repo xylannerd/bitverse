@@ -1,6 +1,8 @@
 module.exports = {
-  purge: [],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+  ],
+  darkmode: 'media',
   theme: {
     minHeight: {
       '0': '0',
@@ -22,8 +24,6 @@ module.exports = {
       }
     },
   },
-  variants: {
-    extend: {},
-  },
+
   plugins: [],
 }

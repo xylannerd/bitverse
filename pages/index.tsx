@@ -1,4 +1,4 @@
-import Navbar from './components/navbar'
+import Navbar from './navbar'
 import Head from 'next/head'
 import Image from 'next/image'
 
@@ -14,27 +14,12 @@ import React from 'react'
 
 
 
-const bitverseAddress = '0x021b7D5FA4db1522b6ac3FEf6e96C6c8C831736E'
+const bitverseAddress = ''
 
 
 
 export default function Home() {
-  const [fileToUpload, setFileToUpload] = useState(null)
-  const [cidIpfs, setCidIpfs] = useState(null)
-  const [ipfs, setipfs] = useState(null)
-  const [bitverse, setBitverse] = useState(null)
-
-
-  // let ipfs
-  let chainId
-
-  useEffect(() => {
-    // initContract()
-  }, [])
-
-  useEffect(() => {
-    // initIpfs()
-  }, [])
+ 
 
 
   return (

@@ -1,21 +1,27 @@
 import ContentCard from './contentCard'
 import { Content } from '../interfaces'
-import 'dotenv/config'
-//use it using - process.env.API_KEY
 
 interface Props {
-  userContentCount: number;
-  userContent: Content[];
-  userMetadata: Map<any, any>;
+  userContentCount: number
+  userContent: Content[]
+  contentMetadata: Map<any, any>
 }
 
-const DisplayUserContent: React.FC<Props> = ({ userContentCount, userContent, userMetadata }) => {
+const DisplayUserContent: React.FC<Props> = ({
+  userContentCount,
+  userContent,
+  contentMetadata,
+}) => {
   if (userContentCount > 0 && userContent) {
     //fetch and display content
     return (
       <div className="div">
         {userContent.map((content: Content) => (
-          <ContentCard key={content.cid} content={content} userMetadata={userMetadata}/>
+          <ContentCard
+            key={content.cid}
+            content={content}
+            userMetadata={contentMetadata}
+          />
         ))}
       </div>
     )

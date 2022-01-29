@@ -1,25 +1,29 @@
 import Head from 'next/head'
 import Link from 'next/link'
-
-import Logo from './Logo/logo'
-import { useState, useEffect } from 'react'
+// // mobx
+import { observer, enableStaticRendering } from 'mobx-react-lite'
+// //
+import { RIGHT_NETWORK } from './constants'
+import Logo from './components/Logo/logo'
+import { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import Blockies from 'react-blockies'
 import { motion } from 'framer-motion'
-
-import MetaMaskOnboarding from '@metamask/onboarding'
+import bitverseAbi from '../build/contracts/Bitverse.json'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
-
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
+import { StoreContext } from './store.context'
+import { HandleMetamaskConnectionButton } from './components/navComponent/handleMetamaskButton'
 
-import store from '../store/rootstore'
-import { observer } from 'mobx-react-lite'
+const Navbar: React.FC = observer(() => {
+  enableStaticRendering(typeof window === 'undefined')
 
-const Navbar = observer(() => {
   const [mProvider, setmProvider] = useState(null)
   const [activeAccount, setActiveAccount] = useState(null)
+
+  const { rootStore } = useContext(StoreContext)
 
   //popper.js for dropdown menu placement
   const [referenceElement, setReferenceElement] = useState(null)
@@ -37,34 +41,56 @@ const Navbar = observer(() => {
     ],
   })
 
+  //keep this useEffect on the top!
+  useEffect(() => {
+    if (ethereum.selectedAddress) {
+      rootStore.setAddress(ethereum.selectedAddress)
+      setActiveAccount(ethereum.selectedAddress)
+      console.log('inside navbar: ' + rootStore.address)
+      console.log(ethereum.selectedAddress)
+
+      console.log('inside navbar local: ' + activeAccount)
+    }
+  }, [rootStore.address])
+
   //TODO
   //need refactoring
   useEffect(() => {
-    function initProvider() {
-      detectEthereumProvider().then((prv) => {
-        // setMmProvider(prv)
-        setmProvider(prv)
-        store.setChainId(prv.chainId)
-      })
+    async function initProvider() {
+      const prv = await detectEthereumProvider()
+      setmProvider(prv)
+      const network = prv.networkVersion
+      rootStore.setNetworkId(network)
+      rootStore.setChainId(prv.chainId)
     }
     initProvider()
-  }, [])
+  }, [mProvider])
 
-  const MyBlockies = () => (
-    <Blockies
-      seed={store.address}
-      size={11}
-      bgColor="#000000"
-      spotColor="#000000"
-    />
-  )
+  //HANDLES ACCOUNT CHANGES
+  function handleAccountsChanged(_accounts) {
+    if (_accounts.length === 0) {
+      // MetaMask is locked or the user has not connected any accounts
+      console.log('Please connect to MetaMask.')
+      // rootStore.setAddress(null)
+      // setActiveAccount(null)
+    } else if (_accounts[0] !== rootStore.address) {
+      rootStore.setAddress(_accounts[0])
+      setActiveAccount(_accounts[0])
+      console.log('r: ' + rootStore.address)
 
-  //runs with first render inside useEffect
+      // Do any other work!
+    }
+  }
 
+
+
+  //Link account button onClick
   function requestForAccount() {
     mProvider
       .request({ method: 'eth_requestAccounts' })
-      .then((accounts) => handleAccountsChanged(accounts))
+      .then((accounts) => {
+        handleAccountsChanged(accounts)
+      })
       .catch((err) => {
         if (err.code === 4001) {
           // EIP-1193 userRejectedRequest error
@@ -77,38 +103,19 @@ const Navbar = observer(() => {
   }
 
   useEffect(() => {
-    if (ethereum.selectedAddress) {
-      store.setAddress(ethereum.selectedAddress)
-    }
-  }, [store.address])
-
-  useEffect(() => {
     ethereum.on('accountsChanged', (accounts) => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
-
       handleAccountsChanged(accounts)
     })
-  }, [store.address])
+  }, [rootStore.address])
 
   useEffect(() => {
     ethereum.on('disconnect', (error) => {
       window.location.reload()
       console.log('Metamask Disconnected')
     })
-  }, [store.address])
-
-  function handleAccountsChanged(accounts) {
-    if (accounts.length === 0) {
-      // MetaMask is locked or the user has not connected any accounts
-      console.log('Please connect to MetaMask.')
-      store.setAddress(null)
-    } else if (accounts[0] !== store.address) {
-      store.setAddress(accounts[0])
-
-      // Do any other work!
-    }
-  }
+  }, [rootStore.address])
 
   useEffect(() => {
     ethereum.on('chainChanged', (_chainId) => {
@@ -117,52 +124,13 @@ const Navbar = observer(() => {
       // We recommend reloading the page unless you have good reason not to.
       handleChainChanged(_chainId)
     })
-  }, [store.chainId])
+  }, [rootStore.chainId])
 
   function handleChainChanged(_chainId) {
     // We recommend reloading the page, unless you must do otherwise
-    if (store.chainId !== _chainId) {
+    if (rootStore.chainId !== _chainId) {
       window.location.reload()
     }
-  }
-
-  function HandleMetamaskConnectionButton() {
-    if (mProvider) {
-      //metamask installed
-      if (store.address) {
-        //When the user hovers show the address
-        return (
-          <div className="flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 select-none">
-            <Image src="/greendot.svg" alt="Connected" width={16} height={16} />
-            <p className="font-thin text-sm ml-1">Connected</p>
-          </div>
-        )
-      } else {
-        return (
-          <button
-            onClick={requestForAccount}
-            className=" flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 cursor-pointer"
-          >
-            <p className="font-thin text-sm ml-1">Link Wallet</p>
-          </button>
-        )
-      }
-    } else {
-      //install metamask - link to metamask
-      return (
-        <button
-          onClick={handleOnboarding}
-          className="  flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 cursor-pointer"
-        >
-          <p className="font-thin text-sm ml-1">Install Metamask</p>
-        </button>
-      )
-    }
-  }
-
-  function handleOnboarding() {
-    const onboarding = new MetaMaskOnboarding()
-    onboarding.startOnboarding()
   }
 
   return (
@@ -187,7 +155,6 @@ const Navbar = observer(() => {
           className="flex w-3/6 h-full items-center bg-black text-white space-x-8"
         >
           <Logo />
-          {/* {store.chainId && <p>{store.chainId}</p>} */}
         </div>
         <div
           id="rightSide"
@@ -206,8 +173,12 @@ const Navbar = observer(() => {
               <Link href="/videos">VIDEOS</Link>
             </div>
           </div>
-          <HandleMetamaskConnectionButton />
-          {store.address && (
+          <HandleMetamaskConnectionButton
+            userAddress={rootStore.address}
+            provider={mProvider}
+            requestForAccount={requestForAccount}
+          />
+          {rootStore.address && (
             <Popover className="relative">
               {({ open }) => (
                 <>
@@ -220,7 +191,14 @@ const Navbar = observer(() => {
                         boxShadow: '0px 0px 10px white',
                       }}
                     >
-                      {store.address && <MyBlockies />}
+                      {rootStore.address && (
+                        <Blockies
+                          seed={rootStore.address}
+                          size={11}
+                          bgColor="#000000"
+                          spotColor="#000000"
+                        />
+                      )}
                     </motion.div>
                   </Popover.Button>
 

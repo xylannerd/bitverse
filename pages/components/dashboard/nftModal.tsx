@@ -9,7 +9,6 @@ import NftForm from './nftForm'
 interface NftModalProps {
   modalOpen: any
   bitverse: any
-  ethProvider: any
 }
 
 //ex token-address (address) - 0x495f947276749Ce646f68AC8c248420045cb7b5e
@@ -41,11 +40,7 @@ const options = [
   { value: 'erc1155', label: 'ERC1155' },
 ]
 
-const NftModal: React.FC<NftModalProps> = ({
-  modalOpen,
-  bitverse,
-  ethProvider,
-}) => {
+const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse }) => {
   const [selectedTokenStandard, setSelectedTokenStandard] = useState(null)
 
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
@@ -66,8 +61,6 @@ const NftModal: React.FC<NftModalProps> = ({
   const [externalLink, setExternalLink] = useState(null)
   const [animationUrl, setAnimationUrl] = useState(null)
 
-
-
   useEffect(() => {
     console.log(selectedTokenStandard)
   }, [selectedTokenStandard])
@@ -83,7 +76,6 @@ const NftModal: React.FC<NftModalProps> = ({
     console.log(data.TokenId)
 
     fetchTheNft(data.TokenAddress, data.TokenId)
-
   }
 
   async function fetchTheNft(_tokenAddress: string, _tokenId: string) {
@@ -101,93 +93,108 @@ const NftModal: React.FC<NftModalProps> = ({
       if (selectedTokenStandard.value === options[0].value) {
         console.log('inside erc721 fn')
 
-        const erc721contract = new ethers.Contract(
-          _tokenAddress,
-          erc721abi,
-          ethProvider,
-        )
-
-        const mtokenUri = await erc721contract.tokenURI(_tokenId)
-        setTokenUri(mtokenUri)
-        console.log('uri :' + mtokenUri)
-
-        if (mtokenUri) {
-          try {
-            const res = await fetch(mtokenUri)
-            const data = await res.json()
-            console.log(data)
-            setImageUrl(data.image)
-            setmName(data.name)
-            setmDescription(data.description)
-
-            // console.log("header: " + d.header)
-          } catch (error) {
-            console.log(error)
-          }
+        try {
+          var erc721contract = new ethers.Contract(
+            _tokenAddress,
+            erc721abi,
+            ethProvider,
+          )
+        } catch (error) {
+          console.error(error)
         }
 
-        const mNftOwner = await erc721contract.ownerOf(_tokenId)
-        setNftOwner(mNftOwner)
-        console.log('nft owner :' + mNftOwner)
+        if (erc721contract) {
+          const mtokenUri = await erc721contract.tokenURI(_tokenId)
+          setTokenUri(mtokenUri)
+          console.log('uri :' + mtokenUri)
 
-        const mtokenName = await erc721contract.name()
-        setTokenName(mtokenName)
-        console.log('token name: ' + mtokenName)
+          if (mtokenUri) {
+            try {
+              const res = await fetch(mtokenUri)
+              const data = await res.json()
+              console.log(data)
+              setImageUrl(data.image)
+              setmName(data.name)
+              setmDescription(data.description)
 
-        const mtokenSymbol = await erc721contract.symbol()
-        setTokenSymbol(mtokenSymbol)
-        console.log('token symbol: ' + mtokenSymbol)
+              // console.log("header: " + d.header)
+            } catch (error) {
+              console.log(error)
+            }
+          }
 
-        const mOwnerBalance = await erc721contract.balanceOf(mNftOwner)
-        setOwnerBalance(mOwnerBalance.toNumber())
-        console.log('owner balance: ' + mOwnerBalance.toNumber())
+          const mNftOwner = await erc721contract.ownerOf(_tokenId)
+          setNftOwner(mNftOwner)
+          console.log('nft owner :' + mNftOwner)
 
-        setIsLoadingPreview(false)
-        setTokenPreview(true)
+          const mtokenName = await erc721contract.name()
+          setTokenName(mtokenName)
+          console.log('token name: ' + mtokenName)
+
+          const mtokenSymbol = await erc721contract.symbol()
+          setTokenSymbol(mtokenSymbol)
+          console.log('token symbol: ' + mtokenSymbol)
+
+          const mOwnerBalance = await erc721contract.balanceOf(mNftOwner)
+          setOwnerBalance(mOwnerBalance.toNumber())
+          console.log('owner balance: ' + mOwnerBalance.toNumber())
+
+          setIsLoadingPreview(false)
+          setTokenPreview(true)
+        } else {
+          console.log('Cannot initialize erc721 contract')
+        }
       } else if (selectedTokenStandard.value === options[1].value) {
         console.log('inside erc1155 fn')
 
         /* For ERC1155 Token */
 
-        const erc1155contract = new ethers.Contract(
-          _tokenAddress,
-          erc1155abi,
-          ethProvider,
-        )
-
-        const mtokenUri = await erc1155contract.uri(_tokenId)
-        setTokenUri(mtokenUri)
-        console.log('uri :' + mtokenUri)
-
-
-        //get the uri 
-        //request the metadata by appending tokenId at the end
-        //hex form without 0x
-        //example link: https://api.opensea.io/api/v1/metadata/0x495f947276749Ce646f68AC8c248420045cb7b5e/0x{id}
-
-
-        if (mtokenUri) {
-
-        const theUri = `${mtokenUri.substr(0, mtokenUri.length - 4)}${toPaddedHex(_tokenId)}`
-          console.log(theUri)
-
-          try {
-            const res = await fetch(theUri)
-            const data = await res.json()
-            console.log(data)
-            setImageUrl(data.image)
-            setmName(data.name)
-            setmDescription(data.description)
-            setExternalLink(data.external_link)
-            setAnimationUrl(data.animation_url)
-          } catch (error) {
-            console.log(error)
-          }
-
+        try {
+          var erc1155contract = new ethers.Contract(
+            _tokenAddress,
+            erc1155abi,
+            ethProvider,
+          )
+        } catch (error) {
+          console.log(error)
         }
 
-        setIsLoadingPreview(false)
-        setTokenPreview(true)
+        if (erc1155contract) {
+          const mtokenUri = await erc1155contract.uri(_tokenId)
+          setTokenUri(mtokenUri)
+          console.log('uri :' + mtokenUri)
+
+          //get the uri
+          //request the metadata by appending tokenId at the end
+          //hex form without 0x
+          //example link: https://api.opensea.io/api/v1/metadata/0x495f947276749Ce646f68AC8c248420045cb7b5e/0x{id}
+
+          if (mtokenUri) {
+            const theUri = `${mtokenUri.substr(
+              0,
+              mtokenUri.length - 4,
+            )}${toPaddedHex(_tokenId)}`
+            console.log(theUri)
+
+            try {
+              const res = await fetch(theUri)
+              const data = await res.json()
+              console.log(data)
+              setImageUrl(data.image)
+              setmName(data.name)
+              setmDescription(data.description)
+              setExternalLink(data.external_link)
+              setAnimationUrl(data.animation_url)
+            } catch (error) {
+              console.log(error)
+            }
+          }
+
+          setIsLoadingPreview(false)
+          setTokenPreview(true)
+        } else {
+          console.log("Cannot init erc721 contract")
+        }
       }
     } else {
       setIsInvalidAddress(true)
@@ -196,7 +203,7 @@ const NftModal: React.FC<NftModalProps> = ({
     }
   }
 
-  function toPaddedHex(_tokenString){
+  function toPaddedHex(_tokenString) {
     //converts the _tokenString to hexForm, leading with 0x
     const hexForm = ethers.utils.hexValue(BigNumber.from(_tokenString))
     console.log(hexForm)
