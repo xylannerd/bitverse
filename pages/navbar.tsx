@@ -1,8 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
-// // mobx
-import { observer, enableStaticRendering } from 'mobx-react-lite'
-// //
+import { useSnapshot } from 'valtio'
+import store from './stateGlobal/blockchainState'
 import { RIGHT_NETWORK } from './constants'
 import Logo from './components/Logo/logo'
 import { useState, useEffect, useContext } from 'react'
@@ -14,16 +13,15 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
-import { StoreContext } from './store.context'
 import { HandleMetamaskConnectionButton } from './components/navComponent/handleMetamaskButton'
 
-const Navbar: React.FC = observer(() => {
-  enableStaticRendering(typeof window === 'undefined')
+const Navbar: React.FC = () => {
+  const snapshot = useSnapshot(store)
 
   const [mProvider, setmProvider] = useState(null)
   const [activeAccount, setActiveAccount] = useState(null)
 
-  const { rootStore } = useContext(StoreContext)
+  // const { rootStore } = useContext(StoreContext)
 
   //popper.js for dropdown menu placement
   const [referenceElement, setReferenceElement] = useState(null)
@@ -44,14 +42,11 @@ const Navbar: React.FC = observer(() => {
   //keep this useEffect on the top!
   useEffect(() => {
     if (ethereum.selectedAddress) {
-      rootStore.setAddress(ethereum.selectedAddress)
-      setActiveAccount(ethereum.selectedAddress)
-      console.log('inside navbar: ' + rootStore.address)
+      store.userAddress = ethereum.selectedAddress
+      console.log('inside navbar: ' + snapshot.userAddress)
       console.log(ethereum.selectedAddress)
-
-      console.log('inside navbar local: ' + activeAccount)
     }
-  }, [rootStore.address])
+  }, [snapshot.userAddress])
 
   //TODO
   //need refactoring
@@ -59,9 +54,8 @@ const Navbar: React.FC = observer(() => {
     async function initProvider() {
       const prv = await detectEthereumProvider()
       setmProvider(prv)
-      const network = prv.networkVersion
-      rootStore.setNetworkId(network)
-      rootStore.setChainId(prv.chainId)
+      store.networkId = prv.networkVersion
+      store.chainId = prv.chainId
     }
     initProvider()
   }, [mProvider])
@@ -73,16 +67,14 @@ const Navbar: React.FC = observer(() => {
       console.log('Please connect to MetaMask.')
       // rootStore.setAddress(null)
       // setActiveAccount(null)
-    } else if (_accounts[0] !== rootStore.address) {
-      rootStore.setAddress(_accounts[0])
-      setActiveAccount(_accounts[0])
-      console.log('r: ' + rootStore.address)
+      store.userAddress = ''
+    } else if (_accounts[0] !== snapshot.userAddress) {
+      store.userAddress = _accounts[0]
+      console.log('r: ' + snapshot.userAddress)
 
       // Do any other work!
     }
   }
-
-
 
   //Link account button onClick
   function requestForAccount() {
@@ -108,14 +100,14 @@ const Navbar: React.FC = observer(() => {
       // "accounts" will always be an array, but it can be empty.
       handleAccountsChanged(accounts)
     })
-  }, [rootStore.address])
+  }, [snapshot.userAddress])
 
   useEffect(() => {
     ethereum.on('disconnect', (error) => {
       window.location.reload()
       console.log('Metamask Disconnected')
     })
-  }, [rootStore.address])
+  }, [snapshot.userAddress])
 
   useEffect(() => {
     ethereum.on('chainChanged', (_chainId) => {
@@ -124,11 +116,11 @@ const Navbar: React.FC = observer(() => {
       // We recommend reloading the page unless you have good reason not to.
       handleChainChanged(_chainId)
     })
-  }, [rootStore.chainId])
+  }, [snapshot.userAddress])
 
   function handleChainChanged(_chainId) {
     // We recommend reloading the page, unless you must do otherwise
-    if (rootStore.chainId !== _chainId) {
+    if (snapshot.chainId !== _chainId) {
       window.location.reload()
     }
   }
@@ -174,11 +166,11 @@ const Navbar: React.FC = observer(() => {
             </div>
           </div>
           <HandleMetamaskConnectionButton
-            userAddress={rootStore.address}
+            userAddress={snapshot.userAddress}
             provider={mProvider}
             requestForAccount={requestForAccount}
           />
-          {rootStore.address && (
+          {snapshot.userAddress && (
             <Popover className="relative">
               {({ open }) => (
                 <>
@@ -191,9 +183,9 @@ const Navbar: React.FC = observer(() => {
                         boxShadow: '0px 0px 10px white',
                       }}
                     >
-                      {rootStore.address && (
+                      {snapshot.userAddress && (
                         <Blockies
-                          seed={rootStore.address}
+                          seed={snapshot.userAddress}
                           size={11}
                           bgColor="#000000"
                           spotColor="#000000"
@@ -222,6 +214,6 @@ const Navbar: React.FC = observer(() => {
       </div>
     </>
   )
-})
+}
 
 export default Navbar

@@ -9,6 +9,7 @@ import NftForm from './nftForm'
 interface NftModalProps {
   modalOpen: any
   bitverse: any
+  userAddress: string
 }
 
 //ex token-address (address) - 0x495f947276749Ce646f68AC8c248420045cb7b5e
@@ -40,7 +41,7 @@ const options = [
   { value: 'erc1155', label: 'ERC1155' },
 ]
 
-const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse }) => {
+const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress }) => {
   const [selectedTokenStandard, setSelectedTokenStandard] = useState(null)
 
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
@@ -245,6 +246,7 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse }) => {
             mDescription={mDescription}
             externalLink={externalLink}
             animationUrl={animationUrl}
+            userAddress={userAddress}
           />
         ) : (
           <NftForm

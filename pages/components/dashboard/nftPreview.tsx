@@ -1,7 +1,7 @@
 import MimedNft from './mimedNft'
-import store from './../../store/rootstore'
 
-interface Props {
+interface PropType {
+  userAddress: string
   isInvalidAddress: boolean
   imageUrl: string
   nftOwner: string
@@ -14,7 +14,8 @@ interface Props {
   animationUrl: string
 }
 
-const NftPreview: React.FC<Props> = ({
+const NftPreview: React.FC<PropType> = ({
+  userAddress,
   isInvalidAddress,
   imageUrl,
   nftOwner,
@@ -68,7 +69,7 @@ const NftPreview: React.FC<Props> = ({
           </div>
         </div>
 
-        {nftOwner === store.address ? (
+        {nftOwner === userAddress ? (
           <button
             className="bg-black text-white rounded-md py-2 px-4 mb-8 mt-8 w-72 place-self-center"
             onClick={addNftToBitverse}

@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import { useSnapshot } from 'valtio'
+import store from '../../stateGlobal/blockchainState'
+
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
@@ -10,9 +13,6 @@ import { ethers } from 'ethers'
 import IPFS from 'ipfs-core'
 
 import bitverseAbi from '../../../build/contracts/Bitverse.json'
-
-import store from '../../store/rootstore'
-import { Observer } from 'mobx-react-lite'
 
 import Confirmation from './confirmation'
 
@@ -30,6 +30,8 @@ const Modal: React.FC<ModalProps> = ({
   ipfs,
   bitverse,
 }: ModalProps) => {
+  const snapshot = useSnapshot(store)
+
   const [fileCaptured, setFileCaptured] = useState(false)
   const [imageToUpload, setImageToUpload] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -147,79 +149,68 @@ const Modal: React.FC<ModalProps> = ({
           proceed with user input 
         */
         return (
-          <Observer>
-            {() => (
-              <div
-                id="imagePreviewContainer"
-                className="flex flex-col w-full h-full items-center overflow-y-auto"
+          <div
+            id="imagePreviewContainer"
+            className="flex flex-col w-full h-full items-center overflow-y-auto"
+          >
+            <div id="cancel_bt" className="w-full relative">
+              <button
+                className="absolute z-10 top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white bg-red-500 hover:bg-red-700"
+                onClick={exitModal}
               >
-                <div id="cancel_bt" className="w-full relative">
-                  <button
-                    className="absolute z-10 top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white bg-red-500 hover:bg-red-700"
-                    onClick={exitModal}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                Cancel
+              </button>
+            </div>
 
-                <div
-                  id="imageBackground"
-                  className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
-                >
-                  <Image
-                    className="object-contain"
-                    src={imagePreview}
-                    unoptimized={true}
-                    layout="fill"
-                  />
-                </div>
+            <div
+              id="imageBackground"
+              className="mt-8 flex items-center justify-center w-5/6 h-96 min-h-96 bg-gray-100 rounded-md overflow-hidden relative"
+            >
+              <Image
+                className="object-contain"
+                src={imagePreview}
+                unoptimized={true}
+                layout="fill"
+              />
+            </div>
 
-                {/* Input form starts here */}
-                <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
-                  <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col"
-                  >
-                    <label className="select-none">Title:</label>
-                    <input
-                      {...register('Title')}
-                      className="px-1 border shadow-inner rounded-sm focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
-                    />
-                    <p className="text-red-500"> {errors.Title?.message} </p>
+            {/* Input form starts here */}
+            <div id="inputForm" className="mt-4 w-7/12 max-w-lg">
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+                <label className="select-none">Title:</label>
+                <input
+                  {...register('Title')}
+                  className="px-1 border shadow-inner rounded-sm focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
+                />
+                <p className="text-red-500"> {errors.Title?.message} </p>
 
-                    <label className="mt-4 select-none">Description:</label>
-                    <textarea
-                      {...register('Description')}
-                      rows={4}
-                      className="px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
-                    />
-                    <p className="text-red-500">
-                      {errors.Description?.message}{' '}
-                    </p>
+                <label className="mt-4 select-none">Description:</label>
+                <textarea
+                  {...register('Description')}
+                  rows={4}
+                  className="px-1 rounded-sm border shadow-inner focus:outline-none focus:ring-2 focus:border-transparent hover:border-blue-400"
+                />
+                <p className="text-red-500">{errors.Description?.message} </p>
 
-                    <label className="mt-4 select-none">
-                      Author's address:
-                    </label>
-                    <p className="text-blue-500">
-                      {store.address ? (
-                        store.address
-                      ) : (
-                        <div className="text-yellow-600">
-                          Make sure Metamask is properly linked.
-                        </div>
-                      )}
-                    </p>
+                <label className="mt-4 select-none">Author's address:</label>
+                <p className="text-blue-500">
+                  {snapshot.userAddress ? (
+                    snapshot.userAddress
+                  ) : (
+                    <div className="text-yellow-600">
+                      Make sure Metamask is properly linked.
+                    </div>
+                  )}
+                </p>
 
-                    <input
-                      type="submit"
-                      value="Add To Bitverse"
-                      className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
-                    />
-                  </form>
-                </div>
-              </div>
-            )}
-          </Observer>
+                <input
+                  type="submit"
+                  value="Add To Bitverse"
+                  className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
+                />
+              </form>
+            </div>
+          </div>
         )
       } else if (videoToUpload) {
         return <div>Video Captured!</div>
@@ -395,7 +386,7 @@ const Modal: React.FC<ModalProps> = ({
     const provider = await detectEthereumProvider()
     const ethProvider = new ethers.providers.Web3Provider(provider)
     const ethSigner = ethProvider.getSigner()
-    const network = await provider.networkVersion
+    const network = provider.networkVersion
 
     //Can be initialised with a provider or a signer
     //use signer to write to blockchain

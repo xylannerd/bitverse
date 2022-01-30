@@ -4,6 +4,8 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import bitverseAbi from '../build/contracts/Bitverse.json'
 // // //
+import {useSnapshot} from 'valtio'
+import store from './stateGlobal/blockchainState'
 import Navbar from './navbar'
 import { useContext, useEffect, useState } from 'react'
 import Modal from './components/dashboard/modal'
@@ -14,15 +16,14 @@ import { Content } from './components/interfaces'
 //components
 import DisplayUserContent from './components/dashboard/displayUserContent'
 
-import { Observer, observer, enableStaticRendering } from 'mobx-react-lite'
-import { StoreContext } from './store.context'
 import { RIGHT_NETWORK } from './constants'
 import { HandleDashboard } from './components/dashboard/handleDashboard'
 
 const DashboardPage: React.FC = () => {
-  enableStaticRendering(typeof window === 'undefined')
 
-  const { rootStore } = useContext(StoreContext)
+const snapshot = useSnapshot(store)
+
+  // const { rootStore } = useContext(StoreContext)
 
   //toggle rightNetwork when on other network
   const [rightNetwork, setRightNetwork] = useState(false)
@@ -45,16 +46,16 @@ const DashboardPage: React.FC = () => {
   // keep this useEffect
   useEffect(() => {
     if (ethereum.selectedAddress) {
-      rootStore.setAddress(ethereum.selectedAddress)
-      console.log('inside dashboard: ' + rootStore.address)
+      store.userAddress = ethereum.selectedAddress
+      console.log('inside dashboard: ' + snapshot.userAddress)
       console.log(ethereum.selectedAddress)
     }
-  }, [rootStore.address])
+  }, [snapshot.userAddress])
 
   // init bitverse contract here
   useEffect(() => {
     initBitverseAndGetContent()
-  }, [rootStore.address])
+  }, [snapshot.userAddress])
 
   useEffect(() => {
     console.log('contentMetadata: ')
@@ -78,7 +79,7 @@ const DashboardPage: React.FC = () => {
       console.log('network version: ' + network)
 
       //only move forward if the user has linked their wallet
-      if (rootStore.address) {
+      if (snapshot.userAddress) {
         //Only fetch if the user is connected to a network where the contract is deployed
         //else it may throw an ambiguous error
         //ganache networkId - 5777
@@ -124,7 +125,7 @@ const DashboardPage: React.FC = () => {
 
               for (var i = 0; i < authorToCidIndicesArrayLength; i++) {
                 var cidIndex = await contractBitverse.authorToCidIndices(
-                  rootStore.address,
+                  snapshot.userAddress,
                   i,
                 )
                 var theCid = await contractBitverse.cidsArray(cidIndex)
@@ -190,7 +191,7 @@ const DashboardPage: React.FC = () => {
         <Modal closeModal={setisModalOpen} ipfs={ipfs} bitverse={bitverse} />
       )}
       {isNftModalOpen && (
-        <NftModal modalOpen={setIsNftModalOpen} bitverse={bitverse} />
+        <NftModal modalOpen={setIsNftModalOpen} bitverse={bitverse} userAddress={snapshot.userAddress} />
       )}
 
       <Navbar />
@@ -200,7 +201,7 @@ const DashboardPage: React.FC = () => {
           contentMetadata={contentMetadata}
           isLoadingNetwork={isLoadingNetwork}
           rightNetwork={rightNetwork}
-          userAddress={rootStore.address}
+          userAddress={snapshot.userAddress}
           userContent={userContent}
           userContentCount={userContentCount}
           setIsNftModalOpen={setIsNftModalOpen}
@@ -213,5 +214,4 @@ const DashboardPage: React.FC = () => {
   )
 }
 
-const Dashboard = observer(DashboardPage)
-export default Dashboard
+export default DashboardPage
