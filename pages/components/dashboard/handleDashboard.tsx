@@ -1,54 +1,43 @@
 import DisplayUserContent from './displayUserContent'
-import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/79943-spiral-dots-preloader.json'
 import { AddNft } from './addNft'
 import { AddContent } from './addContent'
+import DisplayUserNfts from './displayUserNfts'
+import { useState } from 'react'
+import LoadingAnimation from './LoadingAnimation'
 
 interface Props {
+  bitverse: any
+  ipfs: any
   userAddress: string
   isLoadingNetwork: boolean
   rightNetwork: boolean
-  isLoadingContent: boolean
 
   setIsNftModalOpen: any
   isNftModalOpen: boolean
 
   isModalOpen: boolean
-
-  userContentCount: number
-  userContent: any[]
-  contentMetadata: Map<any, any>
+  setisModalOpen: any
 }
 
 export const HandleDashboard: React.FC<Props> = ({
-  contentMetadata,
+  bitverse,
+  ipfs,
   isLoadingNetwork,
   isNftModalOpen,
   rightNetwork,
   userAddress,
   setIsNftModalOpen,
-  userContent,
-  userContentCount,
-  isLoadingContent,
   isModalOpen,
+  setisModalOpen,
 }) => {
-  function Loading() {
-    const defaultOptions = {
-      loop: true,
-      autoplay: true,
-      animationData: loadingAnimation,
-      rendererSettings: {
-        preserveAspectRatio: 'xMidYMid slice',
-      },
-    }
-    return <Lottie options={defaultOptions} height={180} width={180} />
-  }
+  const [showNft, setShowNft] = useState(false)
+  const [showContent, setShowContent] = useState(false)
 
   if (userAddress) {
     return (
       <>
         {isLoadingNetwork ? (
-          <Loading />
+          <LoadingAnimation />
         ) : (
           <div className="div">
             {rightNetwork && (
@@ -59,26 +48,52 @@ export const HandleDashboard: React.FC<Props> = ({
                     setIsNftModalOpen={setIsNftModalOpen}
                   />
                   <AddContent
-                    setisModalOpen={setIsNftModalOpen}
+                    setisModalOpen={setisModalOpen}
                     isModalOpen={isModalOpen}
                   />
 
-                  <div className="w-10/12 lg:w-8/12 xl:w-7/12  mt-11">
-                    <h1 className="text-gray-200 font-bold text-xl">
+                  <div className="flex flex-row items-baseline w-10/12 lg:w-8/12 xl:w-7/12  mt-11">
+                    <h1 className="mr-4 text-gray-200 font-bold text-xl">
                       My Uploads
                     </h1>
+                    <div className="flex flex-row space-x-2">
+                      <h1
+                        className="text-gray-200 font-thin cursor-pointer"
+                        onClick={() => {
+                          setShowNft(true)
+                          setShowContent(false)
+                        }}
+                      >
+                        NFTs
+                      </h1>
+                      <div className="text-gray-200 font-thin select-none">
+                        |
+                      </div>
+                      <h1
+                        className="text-gray-200 font-thin cursor-pointer"
+                        onClick={() => {
+                          setShowNft(false)
+                          setShowContent(true)
+                        }}
+                      >
+                        Content
+                      </h1>
+                    </div>
                   </div>
                 </div>
 
-                {isLoadingContent ? (
-                  <Loading />
+                {showNft ? (
+                  <DisplayUserNfts
+                    bitverse={bitverse}
+                    ipfs={ipfs}
+                    userAddress={userAddress}
+                  />
                 ) : (
                   <div className="flex mt-8 w-full h-full bg-opacity-50 justify-center">
-                    {/* {contentMetadata && <p>{contentMetadata.get(userContent[0].cid)}</p>} */}
                     <DisplayUserContent
-                      userContentCount={userContentCount}
-                      userContent={userContent}
-                      contentMetadata={contentMetadata}
+                      bitverse={bitverse}
+                      ipfs={ipfs}
+                      userAddress={userAddress}
                     />
                   </div>
                 )}

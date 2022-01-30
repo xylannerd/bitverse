@@ -35,9 +35,8 @@ const ContentCard: React.FC<Props> = ({ content, userMetadata }) => {
 
   if (userMetadata) {
     metadata = userMetadata.get(content.cid)
-    console.log("** CARD **")
+    console.log('** CARD **')
     console.log(metadata)
-
   }
 
   //hover:bg-gray-900 hover:bg-opacity-50 cursor-pointer
@@ -46,9 +45,9 @@ const ContentCard: React.FC<Props> = ({ content, userMetadata }) => {
       <div className="flex flex-row items-center">
         <div
           id="imageBackground"
-          className="flex w-44 h-5/6 shrink-0 items-center justify-center z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-sm overflow-hidden "
+          className="flex w-44 h-5/6 shrink-0 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden"
         >
-          <img object-fit="cover" src={imageSource} />
+          <img className="object-cover" src={imageSource} />
 
           {/* next.js Image doesn't work nicely with ipfs! */}
           {/* <div className="relative">
