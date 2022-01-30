@@ -15,7 +15,6 @@ const DisplayUserContent: React.FC<PropType> = ({
   userAddress,
 }) => {
   const [isLoadingContent, setIsLoadingContent] = useState(false)
-
   const [userContent, setUserContent] = useState([])
   const [contentMetadata, setContentMetadata] = useState(null)
   const [userContentCount, setUserContentCount] = useState(0)
@@ -78,7 +77,6 @@ const DisplayUserContent: React.FC<PropType> = ({
       }
       //contentsMapping
     } else {
-      setIsLoadingContent(false)
       console.log('no contract found')
     }
   }

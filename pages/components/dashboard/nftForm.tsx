@@ -1,6 +1,5 @@
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import options from 'got/dist/source/core/options'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import Lottie from 'react-lottie'

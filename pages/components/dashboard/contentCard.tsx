@@ -6,12 +6,12 @@ const IPFS_GATEWAY = 'ipfs.io'
 const IPFS_PUBLIC_GATEWAY = 'dweb.link'
 const PINATA_PUBLIC_GATEWAY = 'gateway.pinata.cloud'
 
-interface Props {
+interface PropType {
   content: Content
   userMetadata: any
 }
 
-const ContentCard: React.FC<Props> = ({ content, userMetadata }) => {
+const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
   //`https://${IPFS_PUBLIC_GATEWAY}/ipfs/${content.cid}`
   // `ipfs://${content.cid}`
   //`http://localhost:48084/ipfs/${content.cid}`

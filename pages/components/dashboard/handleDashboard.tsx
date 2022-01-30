@@ -83,11 +83,13 @@ export const HandleDashboard: React.FC<Props> = ({
                 </div>
 
                 {showNft ? (
-                  <DisplayUserNfts
-                    bitverse={bitverse}
-                    ipfs={ipfs}
-                    userAddress={userAddress}
-                  />
+                  <div className="flex mt-8 w-full h-full bg-opacity-50 justify-center">
+                    <DisplayUserNfts
+                      bitverse={bitverse}
+                      ipfs={ipfs}
+                      userAddress={userAddress}
+                    />
+                  </div>
                 ) : (
                   <div className="flex mt-8 w-full h-full bg-opacity-50 justify-center">
                     <DisplayUserContent

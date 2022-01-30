@@ -98,7 +98,7 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
           var erc721contract = new ethers.Contract(
             _tokenAddress,
             erc721abi,
-            ethProvider,
+            ethSigner,
           )
         } catch (error) {
           console.error(error)
@@ -154,7 +154,7 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
           var erc1155contract = new ethers.Contract(
             _tokenAddress,
             erc1155abi,
-            ethProvider,
+            ethSigner,
           )
         } catch (error) {
           console.log(error)

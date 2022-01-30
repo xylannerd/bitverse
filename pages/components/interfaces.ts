@@ -10,3 +10,14 @@ export interface Content {
     milestone: BigNumber
     timeStamp: BigNumber
   }
+
+  export interface Nft{
+    id: BigNumber
+    tokenAddress: string
+    tokenId: string
+    likes: BigNumber
+    dislikes: BigNumber
+    netlikes: BigNumber
+    milestone: BigNumber
+    timeStamp: BigNumber
+  }
