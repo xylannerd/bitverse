@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
-import store from '../../stateGlobal/blockchainState'
+import store from '../../stateGlobal/blockchain.state'
 
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'

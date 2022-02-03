@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Nft } from '../interfaces'
 import LoadingAnimation from './LoadingAnimation'
+import UserNftCard from './userNftCard'
 
 interface PropType {
   bitverse: any
@@ -13,7 +14,7 @@ const DisplayUserNfts: React.FC<PropType> = ({
   ipfs,
   userAddress,
 }) => {
-  const [isLoadingNfts, setIsLoadingNfts] = useState(false)
+  const [isLoadingNfts, setIsLoadingNfts] = useState(true)
   const [userNfts, setUserNfts] = useState([])
   const [nftsMetadata, setNftsMetadata] = useState(null)
   const [userNftCount, setUserNftCount] = useState(0)
@@ -59,20 +60,19 @@ const DisplayUserNfts: React.FC<PropType> = ({
     }
   }
 
-  function showNfts() {
+  function ShowNfts() {
     if (userNftCount > 0 && userNfts) {
+      return (
         <div className="div">
-{
-    userNfts.map((nft: Nft) => (
-        <UserNftCard />
-    ))
-}
-
+          {userNfts.map((nft: Nft) => (
+            <UserNftCard key={nft.id.toNumber()} nft={nft} ipfs={ipfs} />
+          ))}
         </div>
+      )
     } else {
       return (
         <div className="text-white mt-32 font-semibold text-center py-4 px-8  bg-red-400 rounded-md">
-          Looks like you have no uploads yet
+          Looks like you have not added any NFT yet
         </div>
       )
     }

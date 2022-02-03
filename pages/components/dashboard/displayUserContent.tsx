@@ -14,7 +14,7 @@ const DisplayUserContent: React.FC<PropType> = ({
   ipfs,
   userAddress,
 }) => {
-  const [isLoadingContent, setIsLoadingContent] = useState(false)
+  const [isLoadingContent, setIsLoadingContent] = useState(true)
   const [userContent, setUserContent] = useState([])
   const [contentMetadata, setContentMetadata] = useState(null)
   const [userContentCount, setUserContentCount] = useState(0)
@@ -24,7 +24,7 @@ const DisplayUserContent: React.FC<PropType> = ({
   }, [bitverse])
 
   async function getUserContent() {
-    if (bitverse) {
+    if (bitverse && ipfs) {
       setIsLoadingContent(true)
 
       //get all the indices that belongs to the user
@@ -104,7 +104,7 @@ const DisplayUserContent: React.FC<PropType> = ({
     } else {
       return (
         <div className="text-white mt-32 font-semibold text-center py-4 px-8  bg-red-400 rounded-md">
-          Looks like you have no uploads yet
+          Looks like you have no content uploads yet
         </div>
       )
     }

@@ -2,11 +2,13 @@ import * as IPFS from 'ipfs-core'
 // // //ethereum libraries
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
-import bitverseAbi from '../build/contracts/Bitverse.json'
+//change to '../build/contracts/Bitverse.json'
+import bitverseAbi from '../temporaryStuff/bitverse.json'
+import { contractAddress } from '../temporaryStuff/contractAddress'
 // // //
 import { useSnapshot } from 'valtio'
-import store from './stateGlobal/blockchainState'
-import Navbar from './navbar'
+import store from './stateGlobal/blockchain.state'
+import Navbar from './components/navComponent/navbar'
 import { useContext, useEffect, useState } from 'react'
 import Modal from './components/dashboard/modal'
 import NftModal from './components/dashboard/nftModal'
@@ -16,7 +18,7 @@ import { Content } from './components/interfaces'
 //components
 import DisplayUserContent from './components/dashboard/displayUserContent'
 
-import { RIGHT_NETWORK } from './constants'
+import { RIGHT_NETWORK } from './utils/constants'
 import { HandleDashboard } from './components/dashboard/handleDashboard'
 
 const DashboardPage: React.FC = () => {
@@ -67,6 +69,9 @@ const DashboardPage: React.FC = () => {
     var ipfsNode = ipfs
       ? ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
+    if (!ipfs) {
+      setIpfs(ipfsNode)
+    }
 
     if (provider) {
       setMetaProvider(provider)
@@ -88,7 +93,6 @@ const DashboardPage: React.FC = () => {
           setRightNetwork(true)
           setIsLoadingNetwork(false)
 
-          const contractAddress = '0xaFEd7206fd95689edf4eFc0A718146bbb028ABC0'
           //bitverseAbi.networks[network].address,
 
           var contractBitverse = new ethers.Contract(
@@ -103,9 +107,6 @@ const DashboardPage: React.FC = () => {
 
           console.log('please select the correct network')
         }
-      }
-      if (!ipfs) {
-        setIpfs(ipfsNode)
       }
     }
   }

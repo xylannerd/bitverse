@@ -5,6 +5,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import Inputs from './inputs'
 import NftPreview from './nftPreview'
 import NftForm from './nftForm'
+import toPaddedHex from '../../utils/toPaddedHex'
 
 interface NftModalProps {
   modalOpen: any
@@ -204,17 +205,7 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
     }
   }
 
-  function toPaddedHex(_tokenString) {
-    //converts the _tokenString to hexForm, leading with 0x
-    const hexForm = ethers.utils.hexValue(BigNumber.from(_tokenString))
-    console.log(hexForm)
-    //hexString with leading zero padded to 64 hex characters.
-    //also removes 0x from the beginning
-    const paddedHex = hexForm.substr(2, hexForm.length).padStart(64, '0')
-    console.log(paddedHex)
-    return paddedHex
-  }
-
+ 
   const addNftToBitverse = () => {}
 
   return (

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Navbar from './navbar'
+import Navbar from './components/navComponent/navbar'
 
 export default function Images() {
 

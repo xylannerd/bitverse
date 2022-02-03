@@ -14,7 +14,10 @@ interface IERC721 {
 
 /// @title A decentralised platform for NFTs and content creators //TODO
 /// @author Xylan W. Reeves
-/// @notice You can use this contract for saving ipfs hashes, nfts and can do stuff with it //TODO
+/// @notice You can use this contract for saving ipfs hashes, adding nfts
+/// The contract can track their likes/dislikes and reward the creator accordingly
+/// feel free to build on it and stuff!
+
 /// @dev //TODO
 contract Bitverse is ERC20 {
     /* Abbreviations used */
@@ -103,6 +106,9 @@ contract Bitverse is ERC20 {
 
     /** NFTs state **/
 
+    //@notice Can be used to know how many NFTs exist on bitverse
+    //@dev Use this to iterate through the mapping 'nftMapping'
+    // Starts at '0'
     uint public numNfts;
 
 
@@ -370,7 +376,7 @@ contract Bitverse is ERC20 {
 
 
     event NftLiked(uint256 nftId, address liker, uint timeStamp);
-    event TokenRewarded(address nftOwner, uint _nftId); 
+    event TokenRewardedForNft(address nftOwner, uint _nftId); 
 
 
     //event alreadyLiked is already defined under content fn.
@@ -445,6 +451,25 @@ contract Bitverse is ERC20 {
     function uploaderToNftIndicesLength() public view returns (uint256) {
         return uploaderToNftIndices[msg.sender].length;
     }
+
+    //@notice Returns if the user has liked or disliked an Nft
+    //@param _nftId - the unique id given to every nft on bitverse
+    //NOTE: Not the token-id of the nft!
+    function checkIfUserLikedOrDislikedNft(uint256 _nftId) public view returns (bool likedNft, bool dislikedNft){
+        Nft storage n = nftMapping(_nftId);
+        likedNft = n.usersLiked[msg.sender];
+        dislikedNft = n.usersDisliked[msg.sender];
+    }
+
+
+//@notice Returns if the user has liked or disliked a content
+// @param _cid - the cid of the content
+function checkIfUserLikedOrDislikedContent(string memory _cid) public view returns(bool likedContent, bool dislikedContent){
+     Content storage c = contentsMapping[_cid];
+     likedContent = c.usersLiked[msg.sender];
+     dislikedContent = c.usersDisliked[msg.sender];
+
+}
 
 
 
