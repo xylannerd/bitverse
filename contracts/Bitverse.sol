@@ -413,7 +413,7 @@ contract Bitverse is ERC20 {
             //mint function to hit with every (REWARD_CHECKPOINT) netLike
             _mint(nftOwner, 1);
             n.milestone++;
-            emit TokenRewarded(nftOwner, _nftId);
+            emit TokenRewardedForNft(nftOwner, _nftId);
         }
 
 
@@ -456,7 +456,7 @@ contract Bitverse is ERC20 {
     //@param _nftId - the unique id given to every nft on bitverse
     //NOTE: Not the token-id of the nft!
     function checkIfUserLikedOrDislikedNft(uint256 _nftId) public view returns (bool likedNft, bool dislikedNft){
-        Nft storage n = nftMapping(_nftId);
+        Nft storage n = nftMapping[_nftId];
         likedNft = n.usersLiked[msg.sender];
         dislikedNft = n.usersDisliked[msg.sender];
     }

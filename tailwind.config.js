@@ -1,6 +1,7 @@
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
+    './node_modules/tw-elements/dist/js/**/*.js'
   ],
   darkmode: 'media',
   theme: {
@@ -25,5 +26,7 @@ module.exports = {
     },
   },
 
-  plugins: [],
+  plugins: [
+    require('tw-elements/dist/plugin')
+  ]
 }

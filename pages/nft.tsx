@@ -10,7 +10,7 @@ import { ethers } from 'ethers'
 import bitverseAbi from '../temporaryStuff/bitverse.json'
 import { contractAddress } from '../temporaryStuff/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
-import LoadingAnimation from './components/dashboard/LoadingAnimation'
+import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Nft } from './components/interfaces'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
@@ -51,7 +51,7 @@ export default function Nfts() {
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchNfts()
-    console.log("useEffect nftPage")
+    console.log('useEffect nftPage')
   }, [])
 
   // just init bitverse and ipfs here
@@ -77,31 +77,29 @@ export default function Nfts() {
 
       console.log('network version nftPage: ' + network)
 
-    
-        //ganache networkId - 5777
-        //ganache chainID - 0x539 || 1337
-        //CHECK FOR THE RIGHT NETWORK HERE!
-        if (network == RIGHT_NETWORK) {
-          setRightNetwork(true)
-          setIsLoadingNetwork(false)
+      //ganache networkId - 5777
+      //ganache chainID - 0x539 || 1337
+      //CHECK FOR THE RIGHT NETWORK HERE!
+      if (network == RIGHT_NETWORK) {
+        setRightNetwork(true)
+        setIsLoadingNetwork(false)
 
-          //bitverseAbi.networks[network].address,
+        //bitverseAbi.networks[network].address,
 
-          var contractBitverse = new ethers.Contract(
-            contractAddress,
-            bitverseAbi.abi,
-            ethSigner,
-          )
-          setBitverse(contractBitverse)
-          console.log('bitverse initialised')
-          //CALL FETCH NFTS HERE
-          fetchTheNfts(contractBitverse)
-        } else {
-          setRightNetwork(false)
-          setIsLoadingNetwork(false)
-          console.log('please select the correct network')
-        }
-      
+        var contractBitverse = new ethers.Contract(
+          contractAddress,
+          bitverseAbi.abi,
+          ethSigner,
+        )
+        setBitverse(contractBitverse)
+        console.log('bitverse initialised')
+        //CALL FETCH NFTS HERE
+        fetchTheNfts(contractBitverse)
+      } else {
+        setRightNetwork(false)
+        setIsLoadingNetwork(false)
+        console.log('please select the correct network')
+      }
     }
   }
 
@@ -170,11 +168,35 @@ export default function Nfts() {
         <div className="div">Welcome to NFTs</div>
       </div>
 
-      {!isLoadingNfts ? (
-        <ShowNfts />
-      ) : (
-        <div className="flex flex-col items-center justify-center">
-          <LoadingAnimation />
+//show loading-animation when the network is loading
+      {isLoadingNetwork && (
+        <div className="div">
+          <div className="flex flex-col items-center justify-center">
+            <LoadingAnimation />
+          </div>
+        </div>
+      )}
+
+//network is loaded but the user has chosen the wrong network
+      {!isLoadingNetwork && !rightNetwork && (
+        <div className="text-white text-center mt-16">
+          Please connect to right Network - Ganache!
+        </div>
+      )}
+
+
+//right network
+//let's fetch nft 
+//shows loading-animation while fetching nfts from the blockchain
+      {rightNetwork && (
+        <div className="div">
+          {!isLoadingNfts ? (
+            <ShowNfts />
+          ) : (
+            <div className="flex flex-col items-center justify-center">
+              <LoadingAnimation />
+            </div>
+          )}
         </div>
       )}
     </div>

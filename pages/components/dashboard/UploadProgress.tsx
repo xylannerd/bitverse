@@ -1,5 +1,5 @@
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/8994-loading-circle.json'
+import gradient_spinner from '../../../public/loading-circle-gradient.json'
 
 
 
@@ -32,7 +32,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({
     const defaultOptions = {
         loop: true,
         autoplay: true,
-        animationData: loadingAnimation,
+        animationData: gradient_spinner,
         rendererSettings: {
           preserveAspectRatio: 'xMidYMid slice',
         },

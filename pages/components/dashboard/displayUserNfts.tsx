@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Nft } from '../interfaces'
-import LoadingAnimation from './LoadingAnimation'
+import LoadingAnimation from '../sharedComponents/loadingAnimation'
 import UserNftCard from './userNftCard'
 
 interface PropType {

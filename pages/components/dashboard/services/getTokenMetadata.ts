@@ -90,9 +90,11 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
             console.log('721 isIpfs url ')
             console.log(isIPFS.urlOrPath(mtokenUri))
             // example ccid = 'QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9'
-            res = await ipfs.cat(mtokenUri)
-            data = await res.json()
+            const cid_eg2 = "bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json"
+            res = await ipfs.cat(cid_eg2)
+            // data = await res.json()
             console.log(res)
+            //shows: cat {<suspended>}
           } else {
             res = await fetch(mtokenUri)
             data = await res.json()

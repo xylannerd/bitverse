@@ -3,7 +3,7 @@ import { AddNft } from './addNft'
 import { AddContent } from './addContent'
 import DisplayUserNfts from './displayUserNfts'
 import { useState } from 'react'
-import LoadingAnimation from './LoadingAnimation'
+import LoadingAnimation from '../sharedComponents/loadingAnimation'
 
 interface Props {
   bitverse: any

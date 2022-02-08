@@ -1,5 +1,5 @@
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/79943-spiral-dots-preloader.json'
+import loadingAnimation from '../../../public/spiral-dots-preloader.json'
 
 
 function LoadingAnimation() {

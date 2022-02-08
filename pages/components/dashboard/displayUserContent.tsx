@@ -1,7 +1,7 @@
 import ContentCard from './contentCard'
 import { Content } from '../interfaces'
 import { useEffect, useState } from 'react'
-import LoadingAnimation from './LoadingAnimation'
+import LoadingAnimation from '../sharedComponents/loadingAnimation'
 
 interface PropType {
   bitverse: any
