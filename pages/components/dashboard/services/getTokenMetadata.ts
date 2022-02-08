@@ -80,33 +80,53 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
       console.log('uri :' + mtokenUri)
 
       if (mtokenUri) {
-        try {
-          var res
-          var data
-          if (isIPFS.urlOrPath(mtokenUri)) {
-            console.log('inside erc721 ipfs: ')
+        var res
+        var data
 
-            isIpfsUrl = true
-            console.log('721 isIpfs url ')
-            console.log(isIPFS.urlOrPath(mtokenUri))
-            // example ccid = 'QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9'
-            const cid_eg2 = "bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json"
+        console.log('### ipfs url check ###')
+        console.log(
+          isIPFS.urlOrPath(
+            'ipfs://bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json',
+          ),
+        )
+        // false for "ipfs://bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json"
+
+        if (isIPFS.urlOrPath(mtokenUri)) {
+          //gives false even for a valid ipfs-url
+          console.log('inside erc721 ipfs: ')
+
+          isIpfsUrl = true
+          console.log('*** 721 isIpfs url ***')
+          console.log(isIPFS.urlOrPath(mtokenUri))
+          // example ccid = 'QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9'
+          const cid_eg2 =
+            'bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json'
+          try {
             res = await ipfs.cat(cid_eg2)
-            // data = await res.json()
+            data = await res.json()
             console.log(res)
-            //shows: cat {<suspended>}
-          } else {
+          } catch (error) {
+            console.log(error)
+          }
+
+          //shows:cat {<suspended>}
+        } else {
+          //do normal fetch
+
+          try {
             res = await fetch(mtokenUri)
             data = await res.json()
+
             console.log('erc721 normal fetch')
+            console.log('*** Normal fetch data *** ')
+
             console.log(data)
             _imageUrl = data.image
             _name = data.name
             _description = data.description
+          } catch (error) {
+            console.log(error)
           }
-          // console.log("header: " + d.header)
-        } catch (error) {
-          console.log(error)
         }
       }
 
@@ -161,38 +181,40 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
         )}${toPaddedHex(_nft.tokenId)}`
         console.log(theUri)
 
-        try {
-          var res
-          var data
+        var res
+        var data
 
-          if (isIPFS.urlOrPath(theUri)) {
-            console.log('1155 isIpfs url' + isIPFS.urlOrPath(mtokenUri))
-
+        if (isIPFS.urlOrPath(theUri)) {
+          console.log('1155 isIpfs url' + isIPFS.urlOrPath(mtokenUri))
+          try {
             res = await ipfs.cat(mtokenUri)
             data = await res.json()
-            console.log('inside erc1155 ipfs: ')
-            console.log(res)
-          } else {
+          } catch (error) {
+            console.log(error)
+          }
+          console.log('inside erc1155 ipfs: ')
+          console.log(res)
+        } else {
+          try {
             res = await fetch(theUri)
             data = await res.json()
-            console.log('erc1155 normal fetch')
-            console.log(data)
+          } catch (error) {
+            console.log(error)
           }
-
-          _imageUrl = data.image
-          _name = data.name
-          _description = data.description
-          _externalLink = data.external_link
-          _animationUrl = data.animation_url
-        } catch (error) {
-          console.log(error)
+          console.log('erc1155 normal fetch')
+          console.log(data)
         }
+
+        _imageUrl = data.image
+        _name = data.name
+        _description = data.description
+        _externalLink = data.external_link
+        _animationUrl = data.animation_url
       }
 
       const mNftOwner = await erc1155contract.ownerOf(_nft.tokenId)
       _nftOwner = mNftOwner
       console.log('nft owner :' + mNftOwner)
-
     }
   }
 
@@ -205,7 +227,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
     _animationUrl,
     _tokenUri,
     isIpfsUrl,
-    _nftOwner
+    _nftOwner,
   }
 }
 

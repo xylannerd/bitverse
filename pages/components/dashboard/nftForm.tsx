@@ -3,7 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/79943-spiral-dots-preloader.json'
+import loadingAnimation from '../../../public/spiral-dots-preloader.json'
 
 import Inputs from './inputs'
 

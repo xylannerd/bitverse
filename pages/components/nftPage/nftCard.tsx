@@ -8,6 +8,7 @@ interface Props {
   nft: Nft
   ipfs: any
   bitverse: any
+  userAddress: string
 }
 
 //DONT FORGET - the link/redirect to opensea wouldn't work if your contract is deployed in ganache/remix/locally
@@ -16,7 +17,7 @@ interface Props {
 //const opensea_asset_url = 'https://opensea.io/assets/{tokenAddress}/{tokenId}'
 //const openesea_profile_url = 'https://opensea.io/{address}'
 
-export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
+export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse, userAddress }) => {
   //LOCAL_STATE
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
@@ -39,11 +40,16 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
   const [userDisliked, setUserDisliked] = useState(false)
   const [likeTxProcessing, setLikeTxProcessing] = useState(false)
   const [dislikeTxProcessing, setdislikeTxProcessing] = useState(false)
+  //flip this to update nft like/dislike status
+  const [updateLikeStatus, setUpdateLikeStatus] = useState(false)
+
+  const [nftNetlike, setNftNetlike] = useState(0)
 
   useEffect(() => {
     getUserLikeOrDislike()
+    refreshNftNetlike()
     console.log('useEffect - getUserLikeOrDislike')
-  }, [nft])
+  }, [nft, updateLikeStatus])
 
   //fetch tokenMetadata here
   //prepare preview
@@ -58,14 +64,19 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
       //   mDisliked,
       // }
 
-      const wtf = await bitverse.checkIfUserLikedOrDislikedNft(nft.id)
+      const tx = await bitverse.checkIfUserLikedOrDislikedNft(nft.id)
       console.log('getUserLikeOrDislike')
-      console.log(wtf)
-      // setUserLiked(mLiked)
-      // setUserDisliked(mDisliked)
+      console.log(tx)
+      setUserLiked(tx.likedNft)
+      setUserDisliked(tx.dislikedNft)
     } else {
       console.log('contract not found: NFT-Page \ngetUserLikeOrDislike fn')
     }
+  }
+
+  async function refreshNftNetlike(){
+    const _nft = await bitverse.nftMapping(nft.id)
+    setNftNetlike(_nft.netlikes.toNumber())
   }
 
   async function getNftMetadata() {
@@ -102,12 +113,18 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
       console.log(bitverse)
 
       //invoke likeNft(uint256 _nftId) fn on bitverse contract
-      const tx = await bitverse.likeNft(nft.id)
-      console.log(tx)
+      try {
+        const tx = await bitverse.likeNft(nft.id)
+        console.log(tx)
 
-      await tx.wait()
-      setUserLiked(true)
-      setLikeTxProcessing(false)
+        await tx.wait()
+        setUserLiked(true)
+        setLikeTxProcessing(false)
+        setUpdateLikeStatus(!updateLikeStatus)
+      } catch (error) {
+        console.log(error)
+        setLikeTxProcessing(false)
+      }
     }
   }
 
@@ -126,6 +143,9 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
 
         await tx.wait()
         setdislikeTxProcessing(false)
+        setUpdateLikeStatus(!updateLikeStatus)
+
+
       } catch (error) {
         console.log(error)
         setdislikeTxProcessing(false)
@@ -150,7 +170,7 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
           id="nftImage"
           className="flex w-full h-80 bg-gray-900 relative cursor-pointer"
         >
-          <div className="text-white pl-4 pr-2 absolute bottom-1 left-0 bg-blue-900 font-thin bg-opacity-50 rounded-r-md">
+          <div className="text-white pl-2 pr-2 absolute bottom-1 left-0 bg-blue-900 font-thin bg-opacity-50 rounded-r-md">
             {name}
           </div>
 
@@ -186,27 +206,23 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
           )}
         </div>
 
-        <div className="flex justify-center items-center bg-red-400">
-          <div className="flex flex-row h-full items-center justify-center space-x-4 px-4 bg-blue-400">
+        <div className="flex justify-center items-center">
+          <div className="flex flex-row h-full items-center justify-center space-x-4 px-4">
             {' '}
             {userLiked ? (
-
-<div className="flex items-center justify-center w-8 h-full cursor-pointer bg-green-400">
-
-              <svg
-                id="likeIconFilled"
-                className="w-8 h-full"
-                fill="white"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-              </svg>
-</div>
-
+              <div className="flex items-center justify-center w-8 h-full cursor-pointer">
+                <svg
+                  id="likeIconFilled"
+                  className="w-8 h-full"
+                  fill="white"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                </svg>
+              </div>
             ) : !likeTxProcessing ? (
-              <div className="flex items-center justify-center w-8 h-full cursor-pointer bg-green-400">
-
+              <div className="flex items-center justify-center w-8 h-full cursor-pointer">
                 <svg
                   id="likeIconVacant"
                   className="w-8 h-full "
@@ -225,21 +241,20 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
                 </svg>
               </div>
             ) : (
-              <div className="flex items-center justify-center bg-gray-600 h-8 w-8">
+              <div className="flex items-center justify-centerh-8 w-8">
                 <TxSpinner size={40} />
               </div>
             )}
             {/*  */}
             <div
               id="netlikes"
-              className="flex items-center justify-center text-white text-center h-full w-4 bg-blue-700"
+              className="flex items-center justify-center text-white text-center h-full w-4"
             >
-              {nft.netlikes.toNumber()}
+              {nftNetlike}
             </div>
             {/*  */}
             {userDisliked ? (
-           <div className="flex items-center justify-center w-8 h-full cursor-pointer bg-green-400">
-
+              <div className="flex items-center justify-center w-8 h-full cursor-pointer">
                 <svg
                   id="dislikeIconFill"
                   className="w-8 h-full"
@@ -257,7 +272,7 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
               >
                 <svg
                   id="dislikeIconVacant"
-                  className="w-8 h-full cursor-pointer bg-purple-300"
+                  className="w-8 h-full cursor-pointer"
                   fill="none"
                   stroke="white"
                   viewBox="0 0 24 24"
@@ -272,7 +287,7 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse }) => {
                 </svg>
               </div>
             ) : (
-              <div className="flex items-center justify-center bg-gray-600 h-8 w-8">
+              <div className="flex items-center justify-center h-8 w-8">
                 <TxSpinner size={40} />
               </div>
             )}

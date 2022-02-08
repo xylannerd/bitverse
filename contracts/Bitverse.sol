@@ -181,7 +181,7 @@ contract Bitverse is ERC20 {
     error contentAlreadyExist(string cid);
 
     /* Events for _addContent function  */
-    event NewContentAdded(string cid, address author, uint256 timeStamp);
+    event NewContentAdded(string indexed cid, address indexed author, uint256 timeStamp);
 
     //  Add single content
     /// @dev Generate a new Content for the provided Ipfs-Cid
@@ -223,9 +223,9 @@ contract Bitverse is ERC20 {
 
     /* Events for updateMetadata function */
     event MetadataUpdated(
-        string contentCid,
-        string updatedMetadataCid,
-        address author
+        string indexed contentCid,
+        string indexed updatedMetadataCid,
+        address indexed author
     );
 
     /// @notice Author can use it to set/update metadata for their Content.
@@ -247,8 +247,8 @@ contract Bitverse is ERC20 {
     error alreadyLiked();
 
     /* Events for like function */
-    event ContentLiked(string cid, address liker);
-    event TokenRewarded(address author, string cid);
+    event ContentLiked(string indexed cid, address indexed liker);
+    event TokenRewarded(address indexed author, string indexed cid);
 
     function like(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -258,6 +258,7 @@ contract Bitverse is ERC20 {
         if (c.usersDisliked[msg.sender] == true) {
             c.usersDisliked[msg.sender] == false;
             c.dislikes--;
+            c.netlikes++;
         }
 
         c.usersLiked[msg.sender] = true;
@@ -285,7 +286,7 @@ contract Bitverse is ERC20 {
     /* Events for dislike function */
 
     //Emitted when someone dislikes a content
-    event ContentDisliked(string cid, address disliker);
+    event ContentDisliked(string indexed cid, address indexed disliker);
 
     function dislike(string memory _cid) public {
         Content storage c = contentsMapping[_cid];
@@ -333,7 +334,7 @@ contract Bitverse is ERC20 {
     // ***  NFTs Functions *** //
 
     /* Events for addNft function */
-    event NewNftAdded(address tokenAddress, uint256 tokenId, address owner, uint256 timeStamp);
+    event NewNftAdded(address indexed tokenAddress, uint256 indexed tokenId, address indexed owner, uint256 timeStamp);
 
     /* Errors for addNft function */
 
@@ -375,8 +376,8 @@ contract Bitverse is ERC20 {
 
 
 
-    event NftLiked(uint256 nftId, address liker, uint timeStamp);
-    event TokenRewardedForNft(address nftOwner, uint _nftId); 
+    event NftLiked(uint256 indexed nftId, address indexed liker, uint timeStamp);
+    event TokenRewardedForNft(address indexed nftOwner, uint indexed _nftId); 
 
 
     //event alreadyLiked is already defined under content fn.
@@ -393,6 +394,7 @@ contract Bitverse is ERC20 {
         if (n.usersDisliked[msg.sender] == true) {
             n.usersDisliked[msg.sender] == false;
             n.dislikes--;
+            n.netlikes++;
         }
 
         n.usersLiked[msg.sender] = true;
@@ -421,9 +423,7 @@ contract Bitverse is ERC20 {
     }
 
     //Event emitted when someone dislikes the nft.
-    event NftDisliked(uint256 nftId, address disliker, uint timeStamp);
-
-    //event alreadyDisliked is already defined under content fn.
+    event NftDisliked(uint256 indexed nftId, address indexed disliker, uint timeStamp);
 
     function dislikeNft(uint256 _nftId) public {
 
@@ -464,7 +464,7 @@ contract Bitverse is ERC20 {
 
 //@notice Returns if the user has liked or disliked a content
 // @param _cid - the cid of the content
-function checkIfUserLikedOrDislikedContent(string memory _cid) public view returns(bool likedContent, bool dislikedContent){
+function checkIfUserLikedOrDislikedContent(string memory _cid) public view returns (bool likedContent, bool dislikedContent){
      Content storage c = contentsMapping[_cid];
      likedContent = c.usersLiked[msg.sender];
      dislikedContent = c.usersDisliked[msg.sender];

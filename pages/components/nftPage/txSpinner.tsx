@@ -5,7 +5,7 @@ interface PropType {
   size: number
 }
 
-const TxSpinner: React.FC<PropType> = (size) => {
+const TxSpinner: React.FC<PropType> = ({ size }) => {
   const defaultOptions = {
     loop: true,
     autoplay: true,

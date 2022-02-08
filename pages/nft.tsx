@@ -17,6 +17,8 @@ import { Nft } from './components/interfaces'
 //ipfs_gateway_url:
 
 export default function Nfts() {
+
+  
   //make sure the wallet is connected
   //check if the user is connected to the right network
 
@@ -146,6 +148,7 @@ export default function Nfts() {
               nft={nft}
               ipfs={ipfs}
               bitverse={bitverse}
+              userAddress={snapshot.userAddress}
             />
           ))}
         </div>
