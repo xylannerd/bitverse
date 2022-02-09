@@ -30,8 +30,9 @@ export const HandleDashboard: React.FC<Props> = ({
   isModalOpen,
   setisModalOpen,
 }) => {
-  const [showNft, setShowNft] = useState(true)
-  const [showContent, setShowContent] = useState(false)
+  //flip the state to set the default tab
+  const [showNft, setShowNft] = useState(false)
+  const [showContent, setShowContent] = useState(true)
 
   if (userAddress) {
     return (

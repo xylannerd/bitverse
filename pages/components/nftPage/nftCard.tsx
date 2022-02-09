@@ -7,7 +7,8 @@ import TxSpinner from './txSpinner'
 interface Props {
   nft: Nft
   ipfs: any
-  bitverse: any
+  bitverseSigner: any
+  bitverseProvider: any
   userAddress: string
 }
 
@@ -17,7 +18,13 @@ interface Props {
 //const opensea_asset_url = 'https://opensea.io/assets/{tokenAddress}/{tokenId}'
 //const openesea_profile_url = 'https://opensea.io/{address}'
 
-export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse, userAddress }) => {
+export const NftCard: React.FC<Props> = ({
+  nft,
+  ipfs,
+  bitverseProvider,
+  bitverseSigner,
+  userAddress,
+}) => {
   //LOCAL_STATE
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
@@ -58,25 +65,35 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse, userAddress }) =
   }, [nft])
 
   async function getUserLikeOrDislike() {
-    if (bitverse) {
-      // const {
-      //   mLiked,
-      //   mDisliked,
-      // }
-
-      const tx = await bitverse.checkIfUserLikedOrDislikedNft(nft.id)
-      console.log('getUserLikeOrDislike')
-      console.log(tx)
-      setUserLiked(tx.likedNft)
-      setUserDisliked(tx.dislikedNft)
+    if (bitverseSigner) {
+      console.log(bitverseSigner);
+      
+      try {
+        const tx = await bitverseSigner.checkIfUserLikedOrDislikedNft(nft.id)
+        console.log('getUserLikeOrDislike')
+        console.log(tx)
+        setUserLiked(tx.likedNft)
+        setUserDisliked(tx.dislikedNft)
+      } catch (error) {
+        console.log(
+          'error in nftCard component\ncheckIfUserLikedOrDislikedNft fn',
+        )
+        console.log(error)
+      }
     } else {
       console.log('contract not found: NFT-Page \ngetUserLikeOrDislike fn')
     }
   }
 
-  async function refreshNftNetlike(){
-    const _nft = await bitverse.nftMapping(nft.id)
-    setNftNetlike(_nft.netlikes.toNumber())
+  async function refreshNftNetlike() {
+    try {
+      const _nft = await bitverseProvider.nftMapping(nft.id)
+      setNftNetlike(_nft.netlikes.toNumber())
+    } catch (error) {
+      console.log('error on refreshNftNetlike fn')
+
+      console.log(error)
+    }
   }
 
   async function getNftMetadata() {
@@ -106,15 +123,15 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse, userAddress }) =
   }
 
   const likeNft = async () => {
-    if (bitverse) {
+    if (userAddress) {
       setLikeTxProcessing(true)
 
       console.log('like clicked!')
-      console.log(bitverse)
+      console.log(bitverseSigner)
 
       //invoke likeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverse.likeNft(nft.id)
+        const tx = await bitverseSigner.likeNft(nft.id)
         console.log(tx)
 
         await tx.wait()
@@ -125,31 +142,33 @@ export const NftCard: React.FC<Props> = ({ nft, ipfs, bitverse, userAddress }) =
         console.log(error)
         setLikeTxProcessing(false)
       }
+    } else {
+      alert('Please link your account to Like an NFT 🍭')
     }
   }
 
   const dislikeNft = async () => {
-    if (bitverse) {
+    if (userAddress) {
       setdislikeTxProcessing(true)
 
       console.log('dislike clicked!')
-      console.log(bitverse)
+      console.log(bitverseSigner)
 
       //invoke dislikeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverse.dislikeNft(nft.id)
+        const tx = await bitverseSigner.dislikeNft(nft.id)
 
         console.log(tx)
 
         await tx.wait()
         setdislikeTxProcessing(false)
         setUpdateLikeStatus(!updateLikeStatus)
-
-
       } catch (error) {
         console.log(error)
         setdislikeTxProcessing(false)
       }
+    } else {
+      alert('Please link your account to Dislike an NFT 🍭')
     }
   }
 

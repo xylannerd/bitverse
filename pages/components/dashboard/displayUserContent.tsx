@@ -48,23 +48,26 @@ const DisplayUserContent: React.FC<PropType> = ({
           var cidIndex = await bitverse.authorToCidIndices(userAddress, i)
           var theCid = await bitverse.cidsArray(cidIndex)
           //now get the content from the contentsMapping[] array
+
+          //theCid (eg.) =
           var content = await bitverse.contentsMapping(theCid)
           contentArray.push(content)
           var res = await ipfs.cat(content.metadataCid)
-          // console.log(res)
-          //sets the metadata for every Cid
-
+          // var data = await res.Json()
+          console.log("** Metadata from Cid **")
+          console.log(res)
+          //sets the metadata for each Content
           metadataMap.set(theCid, res)
         }
 
         if (contentArray) {
           setUserContent(contentArray)
-          console.log(contentArray)
+          // console.log(contentArray)
           setIsLoadingContent(false)
         }
 
         if (metadataMap) {
-          console.log('metadata map stuff: ')
+          console.log('**metadata map**')
           console.log(metadataMap)
           setContentMetadata(metadataMap)
           // console.log(metadataMap.get(contentArray[0].cid))

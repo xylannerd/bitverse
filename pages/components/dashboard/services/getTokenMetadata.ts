@@ -56,10 +56,17 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
 
   // const fetch = await makeIpfsFetch({ipfs})
 
-  const provider = await detectEthereumProvider()
-  const ethProvider = new ethers.providers.Web3Provider(provider)
-  const ethSigner = ethProvider.getSigner()
+  var provider
+  var ethProvider
+  // var ethSigner
 
+  try {
+    provider = await detectEthereumProvider()
+    ethProvider = new ethers.providers.Web3Provider(provider)
+    // ethSigner = ethProvider.getSigner()
+  } catch (error) {
+    console.log(error)
+  }
   if (_nft.tokenStandard.toNumber() === ERC_721) {
     console.log('Fetching erc721 token')
 
@@ -68,7 +75,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
       var erc721contract = new ethers.Contract(
         _nft.tokenAddress,
         erc721abi,
-        ethSigner,
+        ethProvider,
       )
     } catch (error) {
       console.error(error)
@@ -83,27 +90,31 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
         var res
         var data
 
-        console.log('### ipfs url check ###')
-        console.log(
-          isIPFS.urlOrPath(
-            'ipfs://bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json',
-          ),
-        )
+        // console.log('### ipfs url check ###')
+        // console.log(
+        //   isIPFS.urlOrPath(
+        //     'ipfs://bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json',
+        //   ),
+        // )
         // false for "ipfs://bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json"
 
-        if (isIPFS.urlOrPath(mtokenUri)) {
+        if (
+          isIPFS.urlOrPath(mtokenUri) ||
+          mtokenUri.startsWith('ipfs://') ||
+          mtokenUri.includes('/ipfs/') ||
+          mtokenUri.includes('/bafy')
+        ) {
           //gives false even for a valid ipfs-url
-          console.log('inside erc721 ipfs: ')
+          console.log('*** inside erc721 ipfs *** ')
 
           isIpfsUrl = true
           console.log('*** 721 isIpfs url ***')
-          console.log(isIPFS.urlOrPath(mtokenUri))
           // example ccid = 'QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9'
           const cid_eg2 =
             'bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json'
           try {
-            res = await ipfs.cat(cid_eg2)
-            data = await res.json()
+            res = await ipfs.cat(mtokenUri)
+            // data = await res.json()
             console.log(res)
           } catch (error) {
             console.log(error)
@@ -121,12 +132,16 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
             console.log('*** Normal fetch data *** ')
 
             console.log(data)
-            _imageUrl = data.image
-            _name = data.name
-            _description = data.description
           } catch (error) {
             console.log(error)
           }
+        }
+        try {
+          _imageUrl = data.image
+          _name = data.name
+          _description = data.description
+        } catch (error) {
+          console.log(error)
         }
       }
 
@@ -157,7 +172,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
       var erc1155contract = new ethers.Contract(
         _nft.tokenAddress,
         erc1155abi,
-        ethSigner,
+        ethProvider,
       )
     } catch (error) {
       console.log(error)
@@ -184,7 +199,12 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
         var res
         var data
 
-        if (isIPFS.urlOrPath(theUri)) {
+        if (
+          isIPFS.urlOrPath(theUri) ||
+          mtokenUri.startsWith('ipfs://') ||
+          mtokenUri.includes('/ipfs/') ||
+          mtokenUri.includes('/bafy')
+        ) {
           console.log('1155 isIpfs url' + isIPFS.urlOrPath(mtokenUri))
           try {
             res = await ipfs.cat(mtokenUri)

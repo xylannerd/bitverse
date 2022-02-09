@@ -20,6 +20,8 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
   ///SUB-DOMAIN Format
   //https://{CID}.ipfs.{gatewayURL}/{optional path to resource}
 
+  //const IPFS_GATEWAY_URL = `ipfs://`
+
   let cid
   let metadata
   let title
@@ -35,8 +37,8 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
 
   if (userMetadata) {
     metadata = userMetadata.get(content.cid)
-    console.log('** CARD **')
-    console.log(metadata)
+    // console.log('** CARD **')
+    // console.log(metadata)
   }
 
   //hover:bg-gray-900 hover:bg-opacity-50 cursor-pointer
@@ -63,15 +65,46 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
         <div id="cardBody" className="h-full grow pt-8 pb-8 pl-4 pr-64">
           <div className="flex flex-col h-full grow text-white justify-between flex-nowrap overflow-hidden truncate">
             <div className="div">
-              <div className="text-gray-500 text-sm">meta:</div>
+              <div className="text-gray-500 text-sm">Name:</div>
               {metadata && <div></div>}
               <div className="text-gray-500 text-sm">Description:</div>
             </div>
 
             <div className="flex flex-col">
-              <div className="">
-                Cid: {CID.parse(content.cid).toV1().toString()}
-              </div>
+              
+              
+           
+            <div className="flex flex-row space-x-1 text-gray-500 text-sm">
+                <div>Content-Cid:</div>{' '}
+                <a
+                  href={`ipfs://${CID.parse(content.cid)
+                    .toV1()
+                    .toString()}`}
+                  target="_blank"
+                >
+                  <div className="hover:opacity-75">
+                    {CID.parse(content.cid).toV1().toString()}
+                  </div>
+                </a>
+              </div>{' '}
+           
+           
+              <div className="flex flex-row space-x-1 text-gray-500 text-sm">
+                <div>Metadata-Cid:</div>{' '}
+                <a
+                  href={`ipfs://${CID.parse(content.metadataCid)
+                    .toV1()
+                    .toString()}`}
+                  target="_blank"
+                >
+                  <div className="hover:opacity-75">
+                    {CID.parse(content.metadataCid).toV1().toString()}
+                  </div>
+                </a>
+              </div>{' '}
+
+
+
               <div className="flex flex-row space-x-4 text-gray-500 text-sm">
                 <div className="div">
                   Netlikes: {content.netlikes.toNumber()}

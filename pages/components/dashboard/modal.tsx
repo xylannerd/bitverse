@@ -10,7 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 
-import IPFS from 'ipfs-core'
+import IPFS, { CID } from 'ipfs-core'
+
 
 import bitverseAbi from '../../../build/contracts/Bitverse.json'
 
@@ -435,8 +436,10 @@ const Modal: React.FC<ModalProps> = ({
     if (!metadataJson) {
       console.log('No Metadata JSON file')
     }
+
+    //CID.parse(content.cid)
     var blob = new Blob([metadataJson], { type: 'text/plain;charset=utf-8' })
-    saveAs(blob, `md_ ${contentCid}.json`)
+    saveAs(blob, `md_${CID.parse(contentCid).toV1().toString()}.json`)
   }
 
   return (
