@@ -8,6 +8,7 @@ export interface Content {
   dislikes: BigNumber
   netlikes: BigNumber
   milestone: BigNumber
+  contentType: string
   timeStamp: BigNumber
 }
 

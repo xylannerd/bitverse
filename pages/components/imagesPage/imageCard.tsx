@@ -1,137 +1,108 @@
 import { useEffect, useState } from 'react'
-import getTokenMetadata from '../dashboard/services/getTokenMetadata'
-import { Nft } from '../interfaces'
+import { Content } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
+import { CID } from 'multiformats'
+import { IPFS_GATEWAY_URL } from '../../utils/constants'
 
-interface Props {
-  nft: Nft
+interface PropType {
+  image: Content
   ipfs: any
   bitverseSigner: any
   bitverseProvider: any
   userAddress: string
 }
 
-//DONT FORGET - the link/redirect to opensea wouldn't work if your contract is deployed in ganache/remix/locally
-//it will show 404 error which is fine
-//redirect to opensea asset page will work in production/mainnet where contract has a mainnet address
-//const opensea_asset_url = 'https://opensea.io/assets/{tokenAddress}/{tokenId}'
-//const openesea_profile_url = 'https://opensea.io/{address}'
-
-export const NftCard: React.FC<Props> = ({
-  nft,
-  ipfs,
+const ImageCard: React.FC<PropType> = ({
+  image,
   bitverseProvider,
   bitverseSigner,
+  ipfs,
   userAddress,
 }) => {
-  //LOCAL_STATE
-  const [nftOwner, setNftOwner] = useState(null)
-  const [tokenUri, setTokenUri] = useState('')
-  const [isIpfsUrl, setIsIpfsUrl] = useState<boolean>(false)
-
-  //ERC721
-  const [tokenName, setTokenName] = useState('')
-  const [tokenSymbol, setTokenSymbol] = useState('')
-  const [ownerBalance, setOwnerBalance] = useState(null)
-
-  //data from metadata
-  const [imageUrl, setImageUrl] = useState(null)
-  const [name, setName] = useState(null)
-  const [description, setDescription] = useState(null)
-  const [externalLink, setExternalLink] = useState(null)
-  const [animationUrl, setAnimationUrl] = useState(null)
+  //
+  const [imageName, setImageName] = useState(null)
+  const [imageDescription, setImageDescription] = useState(null)
 
   //has user liked or disliked the nft
   const [userLiked, setUserLiked] = useState(false)
   const [userDisliked, setUserDisliked] = useState(false)
   const [likeTxProcessing, setLikeTxProcessing] = useState(false)
   const [dislikeTxProcessing, setdislikeTxProcessing] = useState(false)
-  //flip this to update nft like/dislike status
+  //flip this to update image like/dislike status
   const [updateLikeStatus, setUpdateLikeStatus] = useState(false)
+  const [imageNetlike, setImageNetlike] = useState(0)
 
-  const [nftNetlike, setNftNetlike] = useState(0)
+  //ipfs image url
+  let cid
+  //cid v1 is new and better than cid v0, lookup up the reasons yourself
+  if (CID.parse(image.cid).version == 0) {
+    cid = CID.parse(image.cid).toV1().toString()
+  } else {
+    cid = image.cid
+  }
+
+  const imageSource = `https://${cid}.${IPFS_GATEWAY_URL}`
+  //   const imageSource = `ipfs://${cid}`
 
   useEffect(() => {
     getUserLikeOrDislike()
-    refreshNftNetlike()
-    console.log('useEffect - getUserLikeOrDislike')
-  }, [nft, updateLikeStatus])
+    refreshImageNetlike()
+    console.log('useEffect_imageCard - getUserLikeOrDislike')
+  }, [image, updateLikeStatus])
 
   //fetch tokenMetadata here
   //prepare preview
   useEffect(() => {
-    getNftMetadata()
-  }, [nft])
+    getImageMetadata()
+  }, [image])
 
   async function getUserLikeOrDislike() {
     if (bitverseSigner) {
-      console.log(bitverseSigner);
-      
+      console.log(bitverseSigner)
+
       try {
-        const tx = await bitverseSigner.checkIfUserLikedOrDislikedNft(nft.id)
-        console.log('getUserLikeOrDislike')
+        const tx = await bitverseSigner.checkIfUserLikedOrDislikedContent(image.cid)
+        console.log('getUserLikeOrDislike_Image')
         console.log(tx)
-        setUserLiked(tx.likedNft)
-        setUserDisliked(tx.dislikedNft)
+        setUserLiked(tx.likedContent)
+        setUserDisliked(tx.dislikedContent)
       } catch (error) {
         console.log(
-          'error in nftCard component\ncheckIfUserLikedOrDislikedNft fn',
+          'error in imageCard component\ncheckIfUserLikedOrDislikedImage fn',
         )
         console.log(error)
       }
     } else {
-      console.log('contract not found: NFT-Page \ngetUserLikeOrDislike fn')
+      console.log(
+        'contract not found: Image-Page \ngetUserLikeOrDislike_Image fn',
+      )
     }
   }
 
-  async function refreshNftNetlike() {
+  async function refreshImageNetlike() {
     try {
-      const _nft = await bitverseProvider.nftMapping(nft.id)
-      setNftNetlike(_nft.netlikes.toNumber())
+      const _image = await bitverseProvider.contentsMapping(image.cid)
+      setImageNetlike(_image.netlikes.toNumber())
     } catch (error) {
-      console.log('error on refreshNftNetlike fn')
-
+      console.log('error on refreshImageNetlike fn')
       console.log(error)
     }
   }
 
-  async function getNftMetadata() {
-    const {
-      _tokenName,
-      _tokenSymbol,
-      _name,
-      _description,
-      _imageUrl,
-      _animationUrl,
-      _tokenUri,
-      isIpfsUrl,
-      _nftOwner,
-    } = await getTokenMetadata(nft, ipfs)
+  //TODO
+  async function getImageMetadata() {}
 
-    setIsIpfsUrl(isIpfsUrl)
-    setTokenName(_tokenName)
-    setTokenSymbol(_tokenSymbol)
-    setName(_name)
-    setDescription(_description)
-    setImageUrl(_imageUrl)
-    setAnimationUrl(_animationUrl)
-    setTokenUri(tokenUri)
-    setNftOwner(_nftOwner)
-
-    console.log(await getTokenMetadata(nft, ipfs))
-  }
-
-  const likeNft = async () => {
+  const likeImage = async () => {
     if (userAddress) {
       setLikeTxProcessing(true)
 
       console.log('like clicked!')
-      console.log(bitverseSigner)
+      //   console.log(bitverseSigner)
 
       //invoke likeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverseSigner.likeNft(nft.id)
+        const tx = await bitverseSigner.like(image.cid)
         console.log(tx)
 
         await tx.wait()
@@ -143,23 +114,19 @@ export const NftCard: React.FC<Props> = ({
         setLikeTxProcessing(false)
       }
     } else {
-      alert('Loda Please link your account to Like an NFT 🍭')
+      alert('Please link your account to Like an NFT 🍭')
     }
   }
 
-  const dislikeNft = async () => {
+  const dislikeImage = async () => {
     if (userAddress) {
       setdislikeTxProcessing(true)
-
       console.log('dislike clicked!')
-      console.log(bitverseSigner)
+      //   console.log(bitverseSigner)
 
-      //invoke dislikeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverseSigner.dislikeNft(nft.id)
-
+        const tx = await bitverseSigner.dislike(image.cid)
         console.log(tx)
-
         await tx.wait()
         setdislikeTxProcessing(false)
         setUpdateLikeStatus(!updateLikeStatus)
@@ -172,53 +139,53 @@ export const NftCard: React.FC<Props> = ({
     }
   }
 
-  //show nft-tokenName
-  //else show metadata name
-  //else
-
   return (
     <div
-      id="nftCard"
+      id="imageCard"
       className="flex flex-col w-72 h-96 justify-start rounded-xl overflow-hidden bg-gray-800 shadow-xl"
     >
-      <a
-        href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
-        target="_blank"
-      >
+      <a href={`ipfs://${image.cid}`} target="_blank">
         <div
-          id="nftImage"
+          id="imagePreview"
           className="flex w-full h-80 bg-gray-900 relative cursor-pointer"
         >
           <div className="text-white pl-2 pr-2 absolute bottom-1 left-0 bg-blue-900 font-thin bg-opacity-50 rounded-r-md">
-            {name}
+            {imageName}
           </div>
 
-          <img className="w-full h-full object-cover" src={imageUrl} />
+          <img className="w-full h-full object-cover" src={imageSource} />
         </div>
       </a>
 
       <div className="flex flex-row justify-between w-full h-16">
         <div className="flex flex-row ml-4 justify-center items-center">
-          {nftOwner && (
+          {image.author && (
             <div className="flex flex-row items-center space-x-2">
               <div className="flex items-center rounded-full overflow-hidden cursor-pointer">
-                <a href={`https://opensea.io/${nftOwner}`} target="_blank">
+                {/* puth link to author etherscan here */}
+                <a
+                  href={`https://etherscan.io/address/${image.author}`}
+                  target="_blank"
+                >
                   {' '}
                   <Blockies
-                    seed={nftOwner}
+                    seed={image.author}
                     size={8}
                     bgColor="#000000"
                     spotColor="#000000"
                   />
                 </a>
               </div>
-              <a href={`https://opensea.io/${nftOwner}`} target="_blank">
-                <div className="text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${nftOwner.substr(
+              <a
+                href={`https://etherscan.io/address/${image.author}`}
+                target="_blank"
+              >
+                <div className="text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${image.author.substr(
                   0,
                   3,
-                )}...${nftOwner.substr(
-                  nftOwner.length - 4,
-                  nftOwner.length,
+                )}...${image.author.substr(
+                  image.author.length - 4,
+                  image.author.length,
                 )}`}</div>
               </a>
             </div>
@@ -249,7 +216,7 @@ export const NftCard: React.FC<Props> = ({
                   stroke="white"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
-                  onClick={likeNft}
+                  onClick={likeImage}
                 >
                   <path
                     strokeLinecap="round"
@@ -269,7 +236,7 @@ export const NftCard: React.FC<Props> = ({
               id="netlikes"
               className="flex items-center justify-center text-white text-center h-full w-4"
             >
-              {nftNetlike}
+              {imageNetlike}
             </div>
             {/*  */}
             {userDisliked ? (
@@ -287,7 +254,7 @@ export const NftCard: React.FC<Props> = ({
             ) : !dislikeTxProcessing ? (
               <div
                 className="w-8 h-full flex items-center justify-center"
-                onClick={dislikeNft}
+                onClick={dislikeImage}
               >
                 <svg
                   id="dislikeIconVacant"
@@ -316,3 +283,5 @@ export const NftCard: React.FC<Props> = ({
     </div>
   )
 }
+
+export default ImageCard

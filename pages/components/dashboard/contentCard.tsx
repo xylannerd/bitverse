@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { CID } from 'multiformats/cid'
 import { Content } from '../interfaces'
+import { IPFS_GATEWAY_URL } from '../../utils/constants'
 
 const IPFS_GATEWAY = 'ipfs.io'
 const IPFS_PUBLIC_GATEWAY = 'dweb.link'
@@ -33,7 +34,7 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
     cid = content.cid
   }
 
-  const imageSource = `https://${cid}.ipfs.dweb.link`
+  const imageSource = `https://${cid}.${IPFS_GATEWAY_URL}`
 
   if (userMetadata) {
     metadata = userMetadata.get(content.cid)
