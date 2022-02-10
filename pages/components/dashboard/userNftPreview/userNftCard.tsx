@@ -101,16 +101,16 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
               <div className="text-gray-500 text-xs">
                 Token Name: {tokenName}
               </div>
-              <div className="text-gray-500 text-xs">
+              <div className="slashed-zero text-gray-500 text-xs">
                 Token Address: {nft.tokenAddress}
               </div>
 
               <div className="font-thin"></div>
               <div className="flex flex-row space-x-4 text-gray-500 text-sm">
-                <div className="div">Netlikes: {nft.netlikes.toNumber()}</div>
+                <div className="slashed-zero">Netlikes: {nft.netlikes.toNumber()}</div>
 
-                <div className="div">Likes: {nft.likes.toNumber()}</div>
-                <div className="div">Dislikes: {nft.dislikes.toNumber()}</div>
+                <div className="slashed-zero">Likes: {nft.likes.toNumber()}</div>
+                <div className="slashed-zero">Dislikes: {nft.dislikes.toNumber()}</div>
               </div>
             </div>
           </div>

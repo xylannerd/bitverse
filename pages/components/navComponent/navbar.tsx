@@ -14,8 +14,11 @@ import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
 import { HandleMetamaskConnectionButton } from './handleMetamaskButton'
+import { useRouter } from 'next/router'
 
 const Navbar: React.FC = () => {
+  const router = useRouter()
+
   const snapshot = useSnapshot(store)
 
   const [mProvider, setmProvider] = useState(null)
@@ -152,18 +155,30 @@ const Navbar: React.FC = () => {
           id="rightSide"
           className="flex w-3/6 h-full bg-black items-center justify-end"
         >
-          <div className="text-white font-thin cursor-pointer flex flex-row gap-x-8 mr-16">
-            <div className="select-none cursor-pointer">
-              <Link href="/nft">NFTs</Link>
-            </div>
-            <div className="select-none cursor-pointer">
-              {' '}
-              <Link href="/images">IMAGES</Link>
-            </div>
-            <div className="select-none cursor-pointer">
-              {' '}
-              <Link href="/videos">VIDEOS</Link>
-            </div>
+          <div className="flex flex-row space-x-8 text-white mr-16">
+            <Link href="/nft">
+              <div
+                className={`select-none cursor-pointer ${
+                  router.pathname === '/nft' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                }`}
+              >
+                NFTs
+              </div>
+            </Link>
+            <Link href="/images">
+            <div
+                className={`select-none cursor-pointer ${
+                  router.pathname === '/images' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                }`}
+              >IMAGES</div>
+            </Link>
+            <Link href="/videos">
+            <div
+                className={`select-none cursor-pointer ${
+                  router.pathname === '/videos' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                }`}
+              >VIDEOS</div>
+            </Link>
           </div>
           <HandleMetamaskConnectionButton
             userAddress={snapshot.userAddress}

@@ -107,12 +107,12 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
 
 
               <div className="flex flex-row space-x-4 text-gray-500 text-sm">
-                <div className="div">
+                <div className="slashed-zero">
                   Netlikes: {content.netlikes.toNumber()}
                 </div>
 
-                <div className="div">Likes: {content.likes.toNumber()}</div>
-                <div className="div">
+                <div className="slashed-zero">Likes: {content.likes.toNumber()}</div>
+                <div className="slashed-zero">
                   Dislikes: {content.dislikes.toNumber()}
                 </div>
               </div>

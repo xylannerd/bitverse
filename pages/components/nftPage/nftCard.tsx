@@ -213,7 +213,7 @@ export const NftCard: React.FC<Props> = ({
                 </a>
               </div>
               <a href={`https://opensea.io/${nftOwner}`} target="_blank">
-                <div className="text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${nftOwner.substr(
+                <div className="slashed-zero text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${nftOwner.substr(
                   0,
                   3,
                 )}...${nftOwner.substr(
