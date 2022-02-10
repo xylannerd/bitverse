@@ -26,7 +26,7 @@ export default function Nfts() {
 
   const [rightNetwork, setRightNetwork] = useState(false)
 
-  const [ipfs, setIpfs] = useState(null)
+  // const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
 
   //toggle isLoadingNetwork when on other network
@@ -51,6 +51,11 @@ export default function Nfts() {
   }, [snapshot.userAddress])
 
   useEffect(() => {
+    console.log("snapshot.ipfs status nft page:")
+    console.log(snapshot.ipfs)
+  },[snapshot.ipfs])
+
+  useEffect(() => {
     initBitverseAndIpfsAndFetchNfts()
     console.log('useEffect nftPage')
   }, [])
@@ -61,11 +66,11 @@ export default function Nfts() {
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
 
-    var ipfsNode = ipfs
-      ? ipfs
+    var ipfsNode = snapshot.ipfs
+      ? snapshot.ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
-    if (!ipfs) {
-      setIpfs(ipfsNode)
+    if (!snapshot.ipfs) {
+      store.ipfs = ipfsNode
       console.log('ipfs-node initialised nftPage')
     }
 
@@ -169,7 +174,7 @@ export default function Nfts() {
             <NftCard
               key={nft.id.toNumber()}
               nft={nft}
-              ipfs={ipfs}
+              ipfs={snapshot.ipfs}
               bitverseSigner={bitverseWithSigner}
               bitverseProvider={bitverseWithProvider}
               userAddress={snapshot.userAddress}
@@ -191,10 +196,10 @@ export default function Nfts() {
   return (
     <div className="div">
       <Navbar />
-      <div className="flex mt-4 font-logofont text-logowhite font-bold text-2xl ml-8 cursor-pointer items-center justify-center">
-        <div className="div">Welcome to NFTs</div>
+      <div className="flex mt-4 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+        <div className="cursor-pointer">Welcome to NFTs</div>
       </div>
-      //show loading-animation when the network is loading
+      {/* show loading-animation when the network is loading */}
       {isLoadingNetwork && (
         <div className="div">
           <div className="flex flex-col items-center justify-center">
@@ -202,14 +207,14 @@ export default function Nfts() {
           </div>
         </div>
       )}
-      //network is loaded but the user has chosen the wrong network
+      {/* network is loaded but the user has chosen the wrong network */}
       {!isLoadingNetwork && !rightNetwork && (
-        <div className="text-white text-center mt-16">
+        <div className="text-white text-center mt-16 font-thin">
           Please connect to right Network - Ganache!
         </div>
       )}
-      //right network //let's fetch nft //shows loading-animation while fetching
-      nfts from the blockchain
+      {/* //right network //let's fetch nft //shows loading-animation while fetching
+      nfts from the blockchain */}
       {rightNetwork && (
         <div className="div">
           {!isLoadingNfts ? (

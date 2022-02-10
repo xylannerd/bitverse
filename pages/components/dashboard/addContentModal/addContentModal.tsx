@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
-import store from '../../stateGlobal/blockchain.state'
+import store from '../../../stateGlobal/blockchain.state'
 
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -13,7 +13,7 @@ import { ethers } from 'ethers'
 import IPFS, { CID } from 'ipfs-core'
 
 
-import bitverseAbi from '../../../build/contracts/Bitverse.json'
+import bitverseAbi from '../../../../build/contracts/Bitverse.json'
 
 import Confirmation from './confirmation'
 

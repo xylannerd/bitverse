@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Nft } from '../interfaces'
-import getTokenMetadata from './services/getTokenMetadata'
+import { Nft } from '../../interfaces'
+import getTokenMetadata from '../services/getTokenMetadata'
 
 /* 
   TODO:
@@ -72,7 +72,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
       <div className="flex flex-row items-center">
         <div
           id="imageBackground"
-          className="flex items-center justify-center w-44 h-5/6 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden cursor-pointer relative"
+          className="flex justify-center w-44 h-5/6 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden cursor-pointer relative"
         >
           <a
             href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
@@ -81,7 +81,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
             <div className="text-white px-2 absolute bottom-1 left-0 bg-blue-900 font-thin text-sm bg-opacity-50 rounded-r-md">
             {name}
           </div>
-            <img className="w-full h-full object-cover" src={imageUrl} />
+            <img className="w-full object-cover" src={imageUrl} />
           </a>
         </div>
 

@@ -5,7 +5,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import Inputs from './inputs'
 import NftPreview from './nftPreview'
 import NftForm from './nftForm'
-import toPaddedHex from '../../utils/toPaddedHex'
+import toPaddedHex from '../../../utils/toPaddedHex'
 
 interface NftModalProps {
   modalOpen: any

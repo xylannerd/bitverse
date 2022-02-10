@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { CID } from 'multiformats/cid'
-import { Content } from '../interfaces'
-import { IPFS_GATEWAY_URL } from '../../utils/constants'
+import { Content } from '../../interfaces'
+import { IPFS_GATEWAY_URL } from '../../../utils/constants'
 
 const IPFS_GATEWAY = 'ipfs.io'
 const IPFS_PUBLIC_GATEWAY = 'dweb.link'
@@ -48,9 +48,9 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
       <div className="flex flex-row items-center">
         <div
           id="imageBackground"
-          className="flex w-44 h-5/6 shrink-0 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden"
+          className="flex justify-center w-44 h-5/6 shrink-0 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden"
         >
-          <img className="object-cover" src={imageSource} />
+          <img className="w-full object-cover" src={imageSource} />
 
           {/* next.js Image doesn't work nicely with ipfs! */}
           {/* <div className="relative">

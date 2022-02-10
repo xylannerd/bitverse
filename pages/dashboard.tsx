@@ -10,13 +10,13 @@ import { useSnapshot } from 'valtio'
 import store from './stateGlobal/blockchain.state'
 import Navbar from './components/navComponent/navbar'
 import { useContext, useEffect, useState } from 'react'
-import Modal from './components/dashboard/modal'
-import NftModal from './components/dashboard/nftModal'
+import Modal from './components/dashboard/addContentModal/addContentModal'
+import NftModal from './components/dashboard/addNftModal/addNftModal'
 
 //interfaces
 import { Content } from './components/interfaces'
 //components
-import DisplayUserContent from './components/dashboard/displayUserContent'
+import DisplayUserContent from './components/dashboard/userContentPreview/displayUserContent'
 
 import { RIGHT_NETWORK } from './utils/constants'
 import { HandleDashboard } from './components/dashboard/handleDashboard'
@@ -30,7 +30,7 @@ const DashboardPage: React.FC = () => {
   const [userContent, setUserContent] = useState([])
   const [contentMetadata, setContentMetadata] = useState(null)
   const [userContentCount, setUserContentCount] = useState(0)
-  const [ipfs, setIpfs] = useState(null)
+  // const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
 
   //toggle isLoadingNetwork when on other network
@@ -66,11 +66,11 @@ const DashboardPage: React.FC = () => {
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
 
-    var ipfsNode = ipfs
-      ? ipfs
+    var ipfsNode = snapshot.ipfs
+      ? snapshot.ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
-    if (!ipfs) {
-      setIpfs(ipfsNode)
+    if (!snapshot.ipfs) {
+      store.ipfs = ipfsNode
     }
 
     if (provider) {
@@ -114,7 +114,7 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="div">
       {isModalOpen && (
-        <Modal closeModal={setisModalOpen} ipfs={ipfs} bitverse={bitverse} />
+        <Modal closeModal={setisModalOpen} ipfs={snapshot.ipfs} bitverse={bitverse} />
       )}
       {isNftModalOpen && (
         <NftModal
@@ -129,7 +129,7 @@ const DashboardPage: React.FC = () => {
       <div className="mx-8 mb-32">
         <HandleDashboard
           bitverse={bitverse}
-          ipfs={ipfs}
+          ipfs={snapshot.ipfs}
           isLoadingNetwork={isLoadingNetwork}
           rightNetwork={rightNetwork}
           userAddress={snapshot.userAddress}

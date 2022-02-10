@@ -1,5 +1,5 @@
 import Lottie from 'react-lottie'
-import gradient_spinner from '../../../public/loading-circle-gradient.json'
+import gradient_spinner from '../../../../public/loading-circle-gradient.json'
 
 
 

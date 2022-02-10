@@ -21,7 +21,7 @@ export default function Images() {
 
   const [rightNetwork, setRightNetwork] = useState(false)
 
-  const [ipfs, setIpfs] = useState(null)
+  // const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
 
   //toggle isLoadingNetwork when on other network
@@ -56,11 +56,11 @@ export default function Images() {
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
 
-    var ipfsNode = ipfs
-      ? ipfs
+    var ipfsNode = snapshot.ipfs
+      ? snapshot.ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
-    if (!ipfs) {
-      setIpfs(ipfsNode)
+    if (!snapshot.ipfs) {
+      store.ipfs = ipfsNode
       console.log('ipfs-node initialised imagePage')
     }
 
@@ -177,7 +177,7 @@ export default function Images() {
             <ImageCard
               key={image.cid}
               image={image}
-              ipfs={ipfs}
+              ipfs={snapshot.ipfs}
               bitverseSigner={bitverseWithSigner}
               bitverseProvider={bitverseWithProvider}
               userAddress={snapshot.userAddress}
@@ -197,10 +197,10 @@ export default function Images() {
   }
 
   return (
-    <div className="div">
+    <div className="">
       <Navbar />
-      <div className="flex flex-col mt-4  font-logofont text-logowhite font-bold text-2xl ml-8 cursor-pointer items-center justify-center">
-        <div className="div">Welcome to Images</div>
+      <div className="flex flex-col mt-4 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+        <div className="cursor-pointer">Welcome to Images</div>
       </div>
       {isLoadingNetwork && (
         <div className="div">
@@ -209,15 +209,15 @@ export default function Images() {
           </div>
         </div>
       )}
-      //network is loaded but the user has chosen the wrong network
+      {/* //network is loaded but the user has chosen the wrong network */}
       {!isLoadingNetwork && !rightNetwork && (
         <div className="text-white text-center mt-16">
           Please connect to right Network - Ganache!
         </div>
       )}
 
-      //right network //let's fetch images //shows loading-animation while
-      //fetching images from the blockchain
+      {/* //right network //let's fetch images //shows loading-animation while
+      //fetching images from the blockchain */}
       {rightNetwork && (
         <div className="div">
           {!isLoadingImages ? (

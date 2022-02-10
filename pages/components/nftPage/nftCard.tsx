@@ -187,13 +187,13 @@ export const NftCard: React.FC<Props> = ({
       >
         <div
           id="nftImage"
-          className="flex w-full h-80 bg-gray-900 relative cursor-pointer"
+          className="flex w-full justify-center h-80 bg-gray-900 relative cursor-pointer"
         >
           <div className="text-white pl-2 pr-2 absolute bottom-1 left-0 bg-blue-900 font-thin bg-opacity-50 rounded-r-md">
             {name}
           </div>
 
-          <img className="w-full h-full object-cover" src={imageUrl} />
+          <img className="w-full object-cover" src={imageUrl} />
         </div>
       </a>
 

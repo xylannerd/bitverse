@@ -1,7 +1,7 @@
-import DisplayUserContent from './displayUserContent'
+import DisplayUserContent from './userContentPreview/displayUserContent'
 import { AddNft } from './addNft'
 import { AddContent } from './addContent'
-import DisplayUserNfts from './displayUserNfts'
+import DisplayUserNfts from './userNftPreview/displayUserNfts'
 import { useState } from 'react'
 import LoadingAnimation from '../sharedComponents/loadingAnimation'
 
