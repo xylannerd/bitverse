@@ -199,7 +199,7 @@ export default function Images() {
   return (
     <div className="">
       <Navbar />
-      <div className="flex flex-col mt-4 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+      <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
         <div className="cursor-pointer">Welcome to Images</div>
       </div>
       {isLoadingNetwork && (

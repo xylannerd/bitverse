@@ -196,7 +196,7 @@ export default function Nfts() {
   return (
     <div className="div">
       <Navbar />
-      <div className="flex mt-4 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+      <div className="flex mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
         <div className="cursor-pointer">Welcome to NFTs</div>
       </div>
       {/* show loading-animation when the network is loading */}

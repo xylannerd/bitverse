@@ -18,6 +18,7 @@ module.exports = {
       colors: {
         logowhite: '#ffffffe5',
         backgroundwhite: "#E9F2FF",
+        backgroundBlack: "#111111"
       },
       fontFamily: {
         bodyfont: ['Roboto'],

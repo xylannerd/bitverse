@@ -42,7 +42,11 @@ const options = [
   { value: 'erc1155', label: 'ERC1155' },
 ]
 
-const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress }) => {
+const NftModal: React.FC<NftModalProps> = ({
+  modalOpen,
+  bitverse,
+  userAddress,
+}) => {
   const [selectedTokenStandard, setSelectedTokenStandard] = useState(null)
 
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
@@ -83,14 +87,22 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
   async function fetchTheNft(_tokenAddress: string, _tokenId: string) {
     setIsLoadingPreview(true)
 
+    var provider
+    var ethProvider
+    var ethSigner
+
     console.log('*** fetch_nft ***')
     console.log('tokenAddress: ' + _tokenAddress)
     console.log('tokenId: ' + _tokenId)
 
     if (ethers.utils.isAddress(_tokenAddress)) {
-      const provider = await detectEthereumProvider()
-      const ethProvider = new ethers.providers.Web3Provider(provider)
-      const ethSigner = ethProvider.getSigner()
+      try {
+        provider = await detectEthereumProvider()
+        ethProvider = new ethers.providers.Web3Provider(provider)
+        ethSigner = ethProvider.getSigner()
+      } catch (error) {
+        console.error(error)
+      }
 
       if (selectedTokenStandard.value === options[0].value) {
         console.log('inside erc721 fn')
@@ -195,7 +207,7 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
           setIsLoadingPreview(false)
           setTokenPreview(true)
         } else {
-          console.log("Cannot init erc721 contract")
+          console.log('Cannot init erc721 contract')
         }
       }
     } else {
@@ -205,7 +217,6 @@ const NftModal: React.FC<NftModalProps> = ({ modalOpen, bitverse, userAddress })
     }
   }
 
- 
   const addNftToBitverse = () => {}
 
   return (
