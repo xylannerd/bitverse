@@ -256,7 +256,7 @@ contract Bitverse is ERC20 {
         if (c.usersLiked[msg.sender] == true) revert alreadyLiked();
 
         if (c.usersDisliked[msg.sender] == true) {
-            c.usersDisliked[msg.sender] == false;
+            c.usersDisliked[msg.sender] = false;
             c.dislikes--;
             c.netlikes++;
         }
@@ -294,7 +294,7 @@ contract Bitverse is ERC20 {
         if (c.usersDisliked[msg.sender] == true) revert alreadyDisliked();
 
         if (c.usersLiked[msg.sender] == true) {
-            c.usersLiked[msg.sender] == false;
+            c.usersLiked[msg.sender] = false;
             c.likes--;
             c.netlikes--;
         }
@@ -319,8 +319,31 @@ contract Bitverse is ERC20 {
     */
 
     // @notice Function that returns entire cid array.
+    // @dev Theres a pagination function too for the cidsArray below.
     function getCidArray() public view returns (string[] memory) {
         return cidsArray;
+    }
+
+    // *** Good idea to paginate than to return the whole array! ***
+
+    // TODO
+    // @dev Pagination function for the array.
+    function getCidArrayPaginated(uint256 cursor, uint256 howMany)
+    public
+    view
+    returns (string[] memory cids, uint256 newCursor)
+    {
+        uint256 length = howMany;
+        if (length > cidsArray.length - cursor) {
+            length = cidsArray.length - cursor;
+        }
+
+        cids = new string[](length);
+        for (uint256 i = 0; i < length; i++) {
+            cids[i] = cidsArray[cursor + i];
+        }
+
+        return (cids, cursor + length);
     }
 
     // @notice Returns the length of the array[] inside the mapping authorToCidIndices[].
@@ -392,7 +415,7 @@ contract Bitverse is ERC20 {
         if(n.usersLiked[msg.sender] == true) revert alreadyLiked();
 
         if (n.usersDisliked[msg.sender] == true) {
-            n.usersDisliked[msg.sender] == false;
+            n.usersDisliked[msg.sender] = false;
             n.dislikes--;
             n.netlikes++;
         }
@@ -432,7 +455,7 @@ contract Bitverse is ERC20 {
         if (n.usersDisliked[msg.sender] == true) revert alreadyDisliked();
 
         if (n.usersLiked[msg.sender] == true) {
-            n.usersLiked[msg.sender] == false;
+            n.usersLiked[msg.sender] = false;
             n.likes--;
             n.netlikes--;
         }
