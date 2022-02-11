@@ -143,7 +143,7 @@ export const NftCard: React.FC<Props> = ({
         setLikeTxProcessing(false)
       }
     } else {
-      alert('Loda Please link your account to Like an NFT 🍭')
+      alert('Please link your account to Like an NFT 🍭')
     }
   }
 
