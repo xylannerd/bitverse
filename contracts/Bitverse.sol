@@ -40,7 +40,7 @@ contract Bitverse is ERC20 {
     /// The constructor for this smart contract
     /// Initializes the name, symbol and initial supply of the token.
     constructor(uint256 initialSupply) ERC20("Bitstone", "BIT") {
-        _mint(msg.sender, initialSupply);
+        _mint(msg.sender, initialSupply * 10^18);
     }
 
 
@@ -273,7 +273,7 @@ contract Bitverse is ERC20 {
             uint256(c.netlikes / REWARD_CHECKPOINT) == c.milestone + 1
         ) {
             //mint function to hit with every REWARD_CHECKPOINT (i.e., 10) netLike
-            _mint(c.author, 1);
+            _mint(c.author, 1 * 10^18);
             c.milestone++;
             emit TokenRewarded(c.author, _cid);
         }
@@ -436,7 +436,7 @@ contract Bitverse is ERC20 {
             address nftOwner = IERC721(n.tokenAddress).ownerOf(n.tokenId);
 
             //mint function to hit with every (REWARD_CHECKPOINT) netLike
-            _mint(nftOwner, 1);
+            _mint(nftOwner, 1 * 10^18);
             n.milestone++;
             emit TokenRewardedForNft(nftOwner, _nftId);
         }
@@ -475,7 +475,7 @@ contract Bitverse is ERC20 {
         return uploaderToNftIndices[msg.sender].length;
     }
 
-    //@notice Returns if the user has liked or disliked an Nft
+    //@notice Returns whether the user has liked or disliked an Nft
     //@param _nftId - the unique id given to every nft on bitverse
     //NOTE: Not the token-id of the nft!
     function checkIfUserLikedOrDislikedNft(uint256 _nftId) public view returns (bool likedNft, bool dislikedNft){
@@ -485,7 +485,7 @@ contract Bitverse is ERC20 {
     }
 
 
-//@notice Returns if the user has liked or disliked a content
+//@notice Returns whether the user has liked or disliked a content
 // @param _cid - the cid of the content
 function checkIfUserLikedOrDislikedContent(string memory _cid) public view returns (bool likedContent, bool dislikedContent){
      Content storage c = contentsMapping[_cid];
