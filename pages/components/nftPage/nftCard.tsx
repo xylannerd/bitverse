@@ -9,6 +9,7 @@ interface Props {
   ipfs: any
   bitverseSigner: any
   bitverseProvider: any
+  bitverseAlchemy: any
   userAddress: string
 }
 
@@ -23,6 +24,7 @@ export const NftCard: React.FC<Props> = ({
   ipfs,
   bitverseProvider,
   bitverseSigner,
+  bitverseAlchemy,
   userAddress,
 }) => {
   //LOCAL_STATE
@@ -87,7 +89,7 @@ export const NftCard: React.FC<Props> = ({
 
   async function refreshNftNetlike() {
     try {
-      const _nft = await bitverseProvider.nftMapping(nft.id)
+      const _nft = await bitverseAlchemy.nftMapping(nft.id)
       setNftNetlike(_nft.netlikes.toNumber())
     } catch (error) {
       console.log('error on refreshNftNetlike fn')

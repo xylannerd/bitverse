@@ -12,11 +12,14 @@ import { contractAddress } from '../temporaryStuff/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Nft } from './components/interfaces'
+import { NextPage } from 'next'
+import { AlchemyProvider } from '@ethersproject/providers'
+import { changeChain } from './functions/changeEthereumChain'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
 
-export default function Nfts() {
+export default function Nfts({ alchemy_key, alchemy_url }) {
   //make sure the wallet is connected
   //check if the user is connected to the right network
 
@@ -28,6 +31,7 @@ export default function Nfts() {
 
   // const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
+  const [alchemyProvider, setAlchemyProvider] = useState(null)
 
   //toggle isLoadingNetwork when on other network
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
@@ -35,6 +39,7 @@ export default function Nfts() {
 
   const [bitverseWithProvider, setBitverseWithProvider] = useState(null)
   const [bitverseWithSigner, setBitverseWithSigner] = useState(null)
+  const [bitverseWithAlchemy, setBitverseWithAlchemy] = useState(null)
 
   const [nfts, setNfts] = useState([])
   const [noNftYet, setNoNftYet] = useState(false)
@@ -51,13 +56,13 @@ export default function Nfts() {
   }, [snapshot.userAddress])
 
   useEffect(() => {
-    console.log("snapshot.ipfs status nft page:")
+    console.log('snapshot.ipfs status nft page:')
     console.log(snapshot.ipfs)
-  },[snapshot.ipfs])
+  }, [])
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchNfts()
-    console.log('useEffect nftPage')
+    console.log('## useEffect nftPage ##')
   }, [])
 
   // just init bitverse and ipfs here
@@ -65,6 +70,28 @@ export default function Nfts() {
     setIsLoadingNfts(true)
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
+
+    var ethersAlchemyProvider
+    var bitverseAlchemy
+
+    //init alchemyProvider here
+    //use this to read from the contract
+    //use signer from metamask to sign and send transactions.
+    try {
+      ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+      bitverseAlchemy = new ethers.Contract(
+        contractAddress,
+        bitverseAbi.abi,
+        ethersAlchemyProvider,
+      )
+    } catch (error) {
+      console.log(error)
+    }
+
+    console.log('** ethersAlchemyProvider **')
+    console.log(ethersAlchemyProvider)
+
+    setAlchemyProvider(ethersAlchemyProvider)
 
     var ipfsNode = snapshot.ipfs
       ? snapshot.ipfs
@@ -83,6 +110,10 @@ export default function Nfts() {
       try {
         ethersProvider = new ethers.providers.Web3Provider(provider)
         ethSigner = ethersProvider.getSigner()
+        // console.log("** ethersAlchemyProvider **")
+        // const ethersAlchemyProvider =  new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_URL)
+        // console.log(ALCHEMY_URL)
+        // console.log(ethersAlchemyProvider)
 
         network = await provider.networkVersion
       } catch (error) {
@@ -124,7 +155,7 @@ export default function Nfts() {
         setBitverseWithSigner(contractWithSigner)
         console.log('bitverse initialised')
         //CALL FETCH NFTS HERE
-        fetchTheNfts(contractBitverse)
+        fetchTheNfts(bitverseAlchemy)
       } else {
         setRightNetwork(false)
         setIsLoadingNetwork(false)
@@ -177,6 +208,7 @@ export default function Nfts() {
               ipfs={snapshot.ipfs}
               bitverseSigner={bitverseWithSigner}
               bitverseProvider={bitverseWithProvider}
+              bitverseAlchemy={bitverseWithAlchemy}
               userAddress={snapshot.userAddress}
             />
           ))}
@@ -196,7 +228,7 @@ export default function Nfts() {
   return (
     <div className="div">
       <Navbar />
-      <div className="flex mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+      <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
         <div className="cursor-pointer">Welcome to NFTs</div>
       </div>
       {/* show loading-animation when the network is loading */}
@@ -209,8 +241,13 @@ export default function Nfts() {
       )}
       {/* network is loaded but the user has chosen the wrong network */}
       {!isLoadingNetwork && !rightNetwork && (
-        <div className="text-white text-center mt-16 font-thin">
-          Please connect to right Network - Ganache!
+        <div className="flex flex-col text-white items-center">
+          <div className="text-white text-center mt-16 font-thin">
+            Please connect to right Network - Ganache!
+          </div>
+          <div className="div">
+            <button className="mt-16" onClick={changeChain}>Change Chain</button>
+          </div>
         </div>
       )}
       {/* //right network //let's fetch nft //shows loading-animation while fetching
@@ -228,4 +265,13 @@ export default function Nfts() {
       )}
     </div>
   )
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      alchemy_key: process.env.ALCHEMY_KEY,
+      alchemy_url: process.env.ALCHEMY_URL,
+    },
+  }
 }
