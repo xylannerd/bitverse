@@ -14,7 +14,7 @@ import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Nft } from './components/interfaces'
 import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
-import { changeChain } from './functions/changeEthereumChain'
+import { changeChain } from './sharedFunctions/changeEthereumChain'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
@@ -155,7 +155,8 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
         setBitverseWithSigner(contractWithSigner)
         console.log('bitverse initialised')
         //CALL FETCH NFTS HERE
-        fetchTheNfts(bitverseAlchemy)
+        // fetchTheNfts(bitverseAlchemy)
+        fetchTheNfts(contractBitverse)
       } else {
         setRightNetwork(false)
         setIsLoadingNetwork(false)

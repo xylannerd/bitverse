@@ -2,14 +2,14 @@ import { proxy } from 'valtio'
 
 
 interface IStore {
-userAddress: string
+userAddress: any
 chainId: number
 networkId: number
 ipfs: any
 }
 
 const store = proxy<IStore>({
-    userAddress: '',
+    userAddress: null,
     chainId: null,
     networkId: null,
     ipfs: null

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import getTokenMetadata from '../dashboard/services/getTokenMetadata'
+import getTokenMetadata from '../../sharedFunctions/getTokenMetadata'
 import { Nft } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
@@ -89,7 +89,8 @@ export const NftCard: React.FC<Props> = ({
 
   async function refreshNftNetlike() {
     try {
-      const _nft = await bitverseAlchemy.nftMapping(nft.id)
+      // const _nft = await bitverseAlchemy.nftMapping(nft.id)
+      const _nft = await bitverseProvider.nftMapping(nft.id)
       setNftNetlike(_nft.netlikes.toNumber())
     } catch (error) {
       console.log('error on refreshNftNetlike fn')

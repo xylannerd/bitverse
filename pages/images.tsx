@@ -113,7 +113,7 @@ export default function Images() {
         setBitverseWithProvider(contractBitverse)
         setBitverseWithSigner(contractWithSigner)
         console.log('bitverse initialised')
-        //CALL FETCH NFTS HERE
+        //CALL FETCH IMAGES HERE
         fetchTheImages(contractBitverse)
       } else {
         setRightNetwork(false)
@@ -189,7 +189,7 @@ export default function Images() {
       return (
         <div className="flex flex-col items-center justify-center">
           <div className="text-white mt-32 font-semibold text-center py-4 px-8  bg-red-400 rounded-md">
-            No NFTs uploaded yet!
+            No image uploaded yet!
           </div>
         </div>
       )

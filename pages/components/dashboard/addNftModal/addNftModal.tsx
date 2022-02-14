@@ -51,6 +51,7 @@ const NftModal: React.FC<NftModalProps> = ({
 
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
   const [isInvalidAddress, setIsInvalidAddress] = useState(false)
+  const [errorOccured, setErrorOccured] = useState(false)
 
   const [tokenPreview, setTokenPreview] = useState(false)
   const [nftOwner, setNftOwner] = useState(null)
@@ -102,6 +103,7 @@ const NftModal: React.FC<NftModalProps> = ({
         ethSigner = ethProvider.getSigner()
       } catch (error) {
         console.error(error)
+        setErrorOccured(true)
       }
 
       if (selectedTokenStandard.value === options[0].value) {
@@ -115,13 +117,22 @@ const NftModal: React.FC<NftModalProps> = ({
           )
         } catch (error) {
           console.error(error)
+          setIsLoadingPreview(false)
+          setErrorOccured(true)
         }
 
         if (erc721contract) {
-          const mtokenUri = await erc721contract.tokenURI(_tokenId)
-          setTokenUri(mtokenUri)
-          console.log('uri :' + mtokenUri)
+          var mtokenUri
 
+          try {
+            mtokenUri = await erc721contract.tokenURI(_tokenId)
+            setTokenUri(mtokenUri)
+            console.log('uri :' + mtokenUri)
+          } catch (error) {
+            console.log(error)
+            setErrorOccured(true)
+            setIsLoadingPreview(false)
+          }
           if (mtokenUri) {
             try {
               const res = await fetch(mtokenUri)
@@ -134,6 +145,8 @@ const NftModal: React.FC<NftModalProps> = ({
               // console.log("header: " + d.header)
             } catch (error) {
               console.log(error)
+              setIsLoadingPreview(false)
+              setErrorOccured(true)
             }
           }
 
@@ -157,6 +170,8 @@ const NftModal: React.FC<NftModalProps> = ({
           setTokenPreview(true)
         } else {
           console.log('Cannot initialize erc721 contract')
+          setTokenPreview(true)
+          setErrorOccured(true)
         }
       } else if (selectedTokenStandard.value === options[1].value) {
         console.log('inside erc1155 fn')
@@ -171,13 +186,22 @@ const NftModal: React.FC<NftModalProps> = ({
           )
         } catch (error) {
           console.log(error)
+          setIsLoadingPreview(false)
+          setErrorOccured(true)
         }
 
         if (erc1155contract) {
-          const mtokenUri = await erc1155contract.uri(_tokenId)
-          setTokenUri(mtokenUri)
-          console.log('uri :' + mtokenUri)
+          var mtokenUri
 
+          try {
+            mtokenUri = await erc1155contract.uri(_tokenId)
+            setTokenUri(mtokenUri)
+            console.log('uri :' + mtokenUri)
+          } catch (error) {
+            console.log(error)
+            setIsLoadingPreview(false)
+            setErrorOccured(true)
+          }
           //get the uri
           //request the metadata by appending tokenId at the end
           //hex form without 0x
@@ -201,6 +225,7 @@ const NftModal: React.FC<NftModalProps> = ({
               setAnimationUrl(data.animation_url)
             } catch (error) {
               console.log(error)
+              setErrorOccured(true)
             }
           }
 
@@ -235,10 +260,10 @@ const NftModal: React.FC<NftModalProps> = ({
           Cancel
         </button>
 
-        {/* Input form starts here */}
-        {tokenPreview ? (
+        {tokenPreview && (
           <NftPreview
             isInvalidAddress={isInvalidAddress}
+            errorOccured={errorOccured}
             imageUrl={imageUrl}
             nftOwner={nftOwner}
             addNftToBitverse={addNftToBitverse}
@@ -250,15 +275,22 @@ const NftModal: React.FC<NftModalProps> = ({
             animationUrl={animationUrl}
             userAddress={userAddress}
           />
-        ) : (
+        )}
+
+        {!tokenPreview && (
           <NftForm
             selectedTokenStandard={selectedTokenStandard}
             setSelectedTokenStandard={setSelectedTokenStandard}
             onSubmit={onSubmit}
             options={options}
             isLoadingPreview={isLoadingPreview}
+            errorOccured={errorOccured}
+            setErrorOccured={setErrorOccured}
           />
         )}
+
+
+
       </div>
     </div>
   )

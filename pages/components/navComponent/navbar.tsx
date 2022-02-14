@@ -68,12 +68,11 @@ const Navbar: React.FC = () => {
     if (_accounts.length === 0) {
       // MetaMask is locked or the user has not connected any accounts
       console.log('Please connect to MetaMask.')
-      // rootStore.setAddress(null)
-      // setActiveAccount(null)
-      store.userAddress = ''
     } else if (_accounts[0] !== snapshot.userAddress) {
       store.userAddress = _accounts[0]
-      console.log('r: ' + snapshot.userAddress)
+      // console.log("+++++ accounts +++++")
+      // console.log(_accounts[0])
+      // console.log('=== handleAccountschanged: ===' + snapshot.userAddress)
 
       // Do any other work!
     }
@@ -159,25 +158,35 @@ const Navbar: React.FC = () => {
             <Link href="/nft">
               <div
                 className={`select-none cursor-pointer ${
-                  router.pathname === '/nft' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                  router.pathname === '/nft'
+                    ? 'font-extrabold underline underline-offset-auto'
+                    : 'font-extrabold'
                 }`}
               >
                 NFTs
               </div>
             </Link>
             <Link href="/images">
-            <div
+              <div
                 className={`select-none cursor-pointer ${
-                  router.pathname === '/images' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                  router.pathname === '/images'
+                    ? 'font-extrabold underline underline-offset-auto'
+                    : 'font-extrabold'
                 }`}
-              >IMAGES</div>
+              >
+                IMAGES
+              </div>
             </Link>
             <Link href="/videos">
-            <div
+              <div
                 className={`select-none cursor-pointer ${
-                  router.pathname === '/videos' ? 'font-extrabold underline underline-offset-auto' : 'font-extrabold'
+                  router.pathname === '/videos'
+                    ? 'font-extrabold underline underline-offset-auto'
+                    : 'font-extrabold'
                 }`}
-              >VIDEOS</div>
+              >
+                VIDEOS
+              </div>
             </Link>
           </div>
           <HandleMetamaskConnectionButton

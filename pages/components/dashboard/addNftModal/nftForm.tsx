@@ -6,6 +6,7 @@ import Lottie from 'react-lottie'
 import loadingAnimation from '../../../../public/spiral-dots-preloader.json'
 
 import Inputs from './inputs'
+import { useEffect } from 'react'
 
 interface Props {
   selectedTokenStandard: any
@@ -16,7 +17,8 @@ interface Props {
     label: string
   }[]
   isLoadingPreview: boolean
-
+  errorOccured: boolean
+  setErrorOccured: any
 }
 
 const defaultOptions = {
@@ -28,15 +30,25 @@ const defaultOptions = {
   },
 }
 
+const NftForm: React.FC<Props> = ({
+  selectedTokenStandard,
+  setSelectedTokenStandard,
+  onSubmit,
+  options,
+  isLoadingPreview,
+  errorOccured,
+  setErrorOccured,
+}) => {
+  useEffect(() => {
+    console.log('error occured: ')
+    console.log(errorOccured)
+  }, [errorOccured])
 
-const NftForm: React.FC<Props> = ({selectedTokenStandard, setSelectedTokenStandard, onSubmit, options, isLoadingPreview}) => {
-
-    
-var schema = yup.object().shape({
+  var schema = yup.object().shape({
     TokenId: yup.string().required(),
     TokenAddress: yup.string().required(),
   })
-  
+
   const {
     register,
     handleSubmit,
@@ -46,7 +58,6 @@ var schema = yup.object().shape({
     resolver: yupResolver(schema),
   })
 
-  
   return (
     <div
       id="nftFetchForm"
@@ -79,11 +90,18 @@ var schema = yup.object().shape({
           <p className="text-red-500"> {errors.TokenId?.message} </p>
 
           {!isLoadingPreview ? (
-            <input
-              type="submit"
-              value="Fetch NFT"
-              className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
-            />
+            errorOccured ? (
+              <div className="div">
+                <div className="text-red-400">Error</div>
+                <div className="text-gray-500">Please try again</div>
+              </div>
+            ) : (
+              <input
+                type="submit"
+                value="Fetch NFT"
+                className="bg-black text-white rounded-md py-2 mb-8 mt-8 w-4/6 place-self-center"
+              />
+            )
           ) : (
             <div className="py-2 mb-8 mt-8 w-4/6 place-self-center">
               <Lottie options={defaultOptions} height={150} width={150} />

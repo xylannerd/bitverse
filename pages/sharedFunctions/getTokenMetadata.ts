@@ -1,8 +1,8 @@
-import { Nft } from './../../interfaces'
+import { Nft } from '../components/interfaces'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import { useState } from 'react'
-import toPaddedHex from '../../../utils/toPaddedHex'
+import toPaddedHex from '../utils/toPaddedHex'
 // import makeIpfsFetch from 'js-ipfs-fetch'
 const isIPFS = require('is-ipfs')
 
