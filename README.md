@@ -1,19 +1,9 @@
+**Bitverse**
 
-## welcome to bitverse
-
-This is a Decentralised Autonomous Content/NFT and Rewards Platform 🤍
-
-✔️ Built upon ethereum and ipfs
+creators first.
 
 
-## Running the server
+In Open-web, content creators would be creating value without capturing it.
 
-First, run the development server:
+Bitverse creates a reward mechanism to correct the asymmetry between value created and value captured.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
