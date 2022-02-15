@@ -6,10 +6,11 @@ import Inputs from './inputs'
 import NftPreview from './nftPreview'
 import NftForm from './nftForm'
 import toPaddedHex from '../../../utils/toPaddedHex'
+import AddingNftToBitverseProgress from './addingNftToBitverseProgress'
 
 interface NftModalProps {
-  modalOpen: any
-  bitverse: any
+  setIsNftModalOpen: any
+  bitverseSigner: any
   userAddress: string
 }
 
@@ -43,8 +44,8 @@ const options = [
 ]
 
 const NftModal: React.FC<NftModalProps> = ({
-  modalOpen,
-  bitverse,
+  setIsNftModalOpen,
+  bitverseSigner,
   userAddress,
 }) => {
   const [selectedTokenStandard, setSelectedTokenStandard] = useState(null)
@@ -53,9 +54,18 @@ const NftModal: React.FC<NftModalProps> = ({
   const [isInvalidAddress, setIsInvalidAddress] = useState(false)
   const [errorOccured, setErrorOccured] = useState(false)
 
+  const [addingToBitverse, setAddingToBitverse] = useState(false)
+
   const [tokenPreview, setTokenPreview] = useState(false)
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
+
+  //tokenId, tokenAddress and tokenStandard
+  const [tokenId, setTokenId] = useState(null)
+  const [tokenAddress, setTokenAddress] = useState(null)
+  //can be 721 or 1155
+  const [tokenStandard, setTokenStandard] = useState<number>(null)
+
   //ERC721
   const [tokenName, setTokenName] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('')
@@ -67,6 +77,12 @@ const NftModal: React.FC<NftModalProps> = ({
   const [mDescription, setmDescription] = useState(null)
   const [externalLink, setExternalLink] = useState(null)
   const [animationUrl, setAnimationUrl] = useState(null)
+
+  //upload status
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadSuccessful, setUploadSuccessful] = useState(false)
+  const [uploadfailed, setUploadFailed] = useState(false)
+  const [showSpinner, setShowSpinner] = useState(false)
 
   useEffect(() => {
     console.log(selectedTokenStandard)
@@ -87,6 +103,8 @@ const NftModal: React.FC<NftModalProps> = ({
 
   async function fetchTheNft(_tokenAddress: string, _tokenId: string) {
     setIsLoadingPreview(true)
+    setTokenAddress(_tokenAddress)
+    setTokenId(_tokenId)
 
     var provider
     var ethProvider
@@ -108,6 +126,7 @@ const NftModal: React.FC<NftModalProps> = ({
 
       if (selectedTokenStandard.value === options[0].value) {
         console.log('inside erc721 fn')
+        setTokenStandard(721)
 
         try {
           var erc721contract = new ethers.Contract(
@@ -175,6 +194,7 @@ const NftModal: React.FC<NftModalProps> = ({
         }
       } else if (selectedTokenStandard.value === options[1].value) {
         console.log('inside erc1155 fn')
+        setTokenStandard(1155)
 
         /* For ERC1155 Token */
 
@@ -242,7 +262,48 @@ const NftModal: React.FC<NftModalProps> = ({
     }
   }
 
-  const addNftToBitverse = () => {}
+  const addNftToBitverse = async () => {
+    setShowSpinner(true)
+    setAddingToBitverse(true)
+    setIsUploading(true)
+    try {
+      var addNftTx = await bitverseSigner.addNft(
+        tokenAddress,
+        tokenId,
+        tokenStandard,
+      )
+    } catch (error) {
+      console.error(error)
+      setIsUploading(false)
+      setUploadFailed(true)
+      setShowSpinner(false)
+    }
+
+    await addNftTx.wait()
+    console.log('********* result ***********')
+    console.log(addNftTx)
+
+    setShowSpinner(false)
+    setIsUploading(false)
+    setUploadSuccessful(true)
+
+
+  }
+
+  //Closes the modal
+  const exitModal = (e) => {
+    setIsNftModalOpen(false)
+
+    //this part stops the click from propagating
+    if (!e) var e = window.event
+    e.cancelBubble = true
+    if (e.stopPropagation) e.stopPropagation()
+  }
+
+  const exitAndRefresh = (e: any) => {
+    exitModal(e)
+    window.location.reload()
+  }
 
   return (
     <div
@@ -255,12 +316,24 @@ const NftModal: React.FC<NftModalProps> = ({
       >
         <button
           className="absolute z-10 top-0 right-0 mt-1 mr-2 p-2 rounded-lg text-white bg-red-500 hover:bg-red-700"
-          onClick={() => modalOpen(false)}
+          onClick={() => setIsNftModalOpen(false)}
         >
           Cancel
         </button>
 
-        {tokenPreview && (
+        {!tokenPreview && !addingToBitverse && (
+          <NftForm
+            selectedTokenStandard={selectedTokenStandard}
+            setSelectedTokenStandard={setSelectedTokenStandard}
+            onSubmit={onSubmit}
+            options={options}
+            isLoadingPreview={isLoadingPreview}
+            errorOccured={errorOccured}
+            setErrorOccured={setErrorOccured}
+          />
+        )}
+
+        {tokenPreview && !addingToBitverse && (
           <NftPreview
             isInvalidAddress={isInvalidAddress}
             errorOccured={errorOccured}
@@ -277,23 +350,25 @@ const NftModal: React.FC<NftModalProps> = ({
           />
         )}
 
-        {!tokenPreview && (
-          <NftForm
-            selectedTokenStandard={selectedTokenStandard}
-            setSelectedTokenStandard={setSelectedTokenStandard}
-            onSubmit={onSubmit}
-            options={options}
-            isLoadingPreview={isLoadingPreview}
-            errorOccured={errorOccured}
-            setErrorOccured={setErrorOccured}
+        {addingToBitverse && (
+          <AddingNftToBitverseProgress
+            bitverseSigner={bitverseSigner}
+            userAddress={userAddress}
+            tokenId={tokenId}
+            tokenAddress={tokenAddress}
+
+            isUploading={isUploading}
+            uploadSuccessful={uploadSuccessful}
+            uploadfailed={uploadfailed}
+            showSpinner={showSpinner}
+            exitAndRefresh={exitAndRefresh}
+            setIsNftModalOpen={setIsNftModalOpen}
           />
         )}
-
-
-
       </div>
     </div>
   )
 }
+
 
 export default NftModal

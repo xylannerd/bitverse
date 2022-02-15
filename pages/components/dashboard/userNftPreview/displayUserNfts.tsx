@@ -4,13 +4,13 @@ import LoadingAnimation from '../../sharedComponents/loadingAnimation'
 import UserNftCard from './userNftCard'
 
 interface PropType {
-  bitverse: any
+  bitverseSigner: any
   ipfs: any
   userAddress: string
 }
 
 const DisplayUserNfts: React.FC<PropType> = ({
-  bitverse,
+  bitverseSigner,
   ipfs,
   userAddress,
 }) => {
@@ -21,15 +21,15 @@ const DisplayUserNfts: React.FC<PropType> = ({
 
   useEffect(() => {
     getUserNfts()
-  }, [bitverse])
+  }, [bitverseSigner])
 
   async function getUserNfts() {
     //fetch nft here
 
-    if (bitverse) {
+    if (bitverseSigner) {
       setIsLoadingNfts(true)
 
-      var uploaderToNftIndicesLength = await bitverse.uploaderToNftIndicesLength()
+      var uploaderToNftIndicesLength = await bitverseSigner.uploaderToNftIndicesLength()
       console.log('indices: ' + uploaderToNftIndicesLength)
 
       if (uploaderToNftIndicesLength && uploaderToNftIndicesLength > 0) {
@@ -39,8 +39,8 @@ const DisplayUserNfts: React.FC<PropType> = ({
         var metadataMap = new Map()
 
         for (var i = 0; i < uploaderToNftIndicesLength; i++) {
-          var nftIndex = await bitverse.uploaderToNftIndices(userAddress, i)
-          var nft = await bitverse.nftMapping(nftIndex)
+          var nftIndex = await bitverseSigner.uploaderToNftIndices(userAddress, i)
+          var nft = await bitverseSigner.nftMapping(nftIndex)
           nftsArray.push(nft)
         }
 

@@ -6,7 +6,7 @@ import { useState } from 'react'
 import LoadingAnimation from '../sharedComponents/loadingAnimation'
 
 interface Props {
-  bitverse: any
+  bitverseSigner: any
   ipfs: any
   userAddress: string
   isLoadingNetwork: boolean
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export const HandleDashboard: React.FC<Props> = ({
-  bitverse,
+  bitverseSigner,
   ipfs,
   isLoadingNetwork,
   isNftModalOpen,
@@ -90,7 +90,7 @@ export const HandleDashboard: React.FC<Props> = ({
           {!isLoadingNetwork && rightNetwork && showNft && (
             <div className="flex flex-col justify-center items-center mt-8 w-10/12 lg:w-8/12 xl:w-7/12  h-full bg-opacity-50">
               <DisplayUserNfts
-                bitverse={bitverse}
+                bitverseSigner={bitverseSigner}
                 ipfs={ipfs}
                 userAddress={userAddress}
               />
@@ -99,7 +99,7 @@ export const HandleDashboard: React.FC<Props> = ({
           {!isLoadingNetwork && rightNetwork && !showNft && (
             <div className="flex flex-col justify-center items-center mt-8 w-10/12 lg:w-8/12 xl:w-7/12 h-full bg-opacity-50">
               <DisplayUserContent
-                bitverse={bitverse}
+                bitverseSigner={bitverseSigner}
                 ipfs={ipfs}
                 userAddress={userAddress}
               />

@@ -23,13 +23,13 @@ import UploadProgress from './uploadProgress'
 interface ModalProps {
   closeModal: any
   ipfs: any
-  bitverse: any
+  bitverseSigner: any
 }
 
 const Modal: React.FC<ModalProps> = ({
   closeModal,
   ipfs,
-  bitverse,
+  bitverseSigner,
 }: ModalProps) => {
   const snapshot = useSnapshot(store)
 
@@ -384,20 +384,31 @@ const Modal: React.FC<ModalProps> = ({
 
     console.log('*** bitverse function ***')
 
-    const provider = await detectEthereumProvider()
-    const ethProvider = new ethers.providers.Web3Provider(provider)
-    const ethSigner = ethProvider.getSigner()
-    const network = provider.networkVersion
-
+    try {
+      var provider = await detectEthereumProvider()
+      var ethProvider = new ethers.providers.Web3Provider(provider)
+      var ethSigner = ethProvider.getSigner()
+      var network = provider.networkVersion
+  
+    } catch (error) {
+      console.error(error)
+    }
+   
     //Can be initialised with a provider or a signer
     //use signer to write to blockchain
-    mBitverse = bitverse
-      ? bitverse
+    try {
+      mBitverse = bitverseSigner
+      ? bitverseSigner
       : new ethers.Contract(
           bitverseAbi.networks[network].address,
           bitverseAbi.abi,
           ethSigner,
         )
+    } catch (error) {
+      console.error(error)
+      
+    }
+   
 
     console.log('*********  bitverse ***********')
     console.log(`contentCid - ${contentHash}
@@ -412,7 +423,6 @@ const Modal: React.FC<ModalProps> = ({
       await tx.wait()
       setAddingToBitverse(false)
       setShowSpinner(false)
-
       setIsUploadSuccessful(true)
     } catch (error) {
       console.error('****** Contract upload error *******')

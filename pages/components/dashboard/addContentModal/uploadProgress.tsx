@@ -96,7 +96,8 @@ const UploadProgress: React.FC<UploadProgressProps> = ({
 
       {isUploadSuccessful && (
         <div className="flex flex-row">
-          Upload Successful{' '}
+          <div className="div">Upload Successful</div>
+          
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

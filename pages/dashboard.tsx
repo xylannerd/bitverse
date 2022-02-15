@@ -35,7 +35,7 @@ const DashboardPage: React.FC = () => {
 
   //toggle isLoadingNetwork when on other network
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
-  const [bitverse, setBitverse] = useState(null)
+  const [bitverseSigner, setBitverseSigner] = useState(null)
   const [ethProvider, setEthProvider] = useState(null)
   const [signer, setSigner] = useState(null)
   const [isModalOpen, setisModalOpen] = useState(false)
@@ -61,25 +61,33 @@ const DashboardPage: React.FC = () => {
     console.log(contentMetadata)
   }, [contentMetadata])
 
+ 
+
   // just init bitverse and ipfs here
   async function initBitverseAndIpfs() {
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
 
-    var ipfsNode = snapshot.ipfs
-      ? snapshot.ipfs
-      : await IPFS.create({ repo: 'ok' + Math.random() })
+    try {
+      var ipfsNode = snapshot.ipfs
+        ? snapshot.ipfs
+        : await IPFS.create({ repo: 'ok' + Math.random() })
+    } catch (error) {
+      console.log(error)
+    }
     if (!snapshot.ipfs) {
       store.ipfs = ipfsNode
     }
 
     if (provider) {
       setMetaProvider(provider)
-      const ethersProvider = new ethers.providers.Web3Provider(provider)
-      const ethSigner = ethersProvider.getSigner()
-
-      const network = await provider.networkVersion
-
+      try {
+        var ethersProvider = new ethers.providers.Web3Provider(provider)
+        var ethSigner = ethersProvider.getSigner()
+        var network = await provider.networkVersion
+      } catch (error) {
+        console.log(error)
+      }
       console.log('network version: ' + network)
 
       //only move forward if the user has linked their wallet
@@ -94,13 +102,17 @@ const DashboardPage: React.FC = () => {
           setIsLoadingNetwork(false)
 
           //bitverseAbi.networks[network].address,
-
-          var contractBitverse = new ethers.Contract(
-            contractAddress,
-            bitverseAbi.abi,
-            ethSigner,
-          )
-          setBitverse(contractBitverse)
+          //initializing bitverse with signer coz the user must be present to access dashboard
+          try {
+            var contractBitverse = new ethers.Contract(
+              contractAddress,
+              bitverseAbi.abi,
+              ethSigner,
+            )
+          } catch (error) {
+            console.log(error)
+          }
+          setBitverseSigner(contractBitverse)
         } else {
           setRightNetwork(false)
           setIsLoadingNetwork(false)
@@ -114,12 +126,16 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="div">
       {isModalOpen && (
-        <Modal closeModal={setisModalOpen} ipfs={snapshot.ipfs} bitverse={bitverse} />
+        <Modal
+          closeModal={setisModalOpen}
+          ipfs={snapshot.ipfs}
+          bitverseSigner={bitverseSigner}
+        />
       )}
       {isNftModalOpen && (
         <NftModal
-          modalOpen={setIsNftModalOpen}
-          bitverse={bitverse}
+          setIsNftModalOpen={setIsNftModalOpen}
+          bitverseSigner={bitverseSigner}
           userAddress={snapshot.userAddress}
         />
       )}
@@ -128,7 +144,7 @@ const DashboardPage: React.FC = () => {
 
       <div className="mx-8 mb-32">
         <HandleDashboard
-          bitverse={bitverse}
+          bitverseSigner={bitverseSigner}
           ipfs={snapshot.ipfs}
           isLoadingNetwork={isLoadingNetwork}
           rightNetwork={rightNetwork}

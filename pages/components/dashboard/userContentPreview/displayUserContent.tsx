@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import LoadingAnimation from '../../sharedComponents/loadingAnimation'
 
 interface PropType {
-  bitverse: any
+  bitverseSigner: any
   ipfs: any
   userAddress: string
 }
 
 const DisplayUserContent: React.FC<PropType> = ({
-  bitverse,
+  bitverseSigner,
   ipfs,
   userAddress,
 }) => {
@@ -21,10 +21,10 @@ const DisplayUserContent: React.FC<PropType> = ({
 
   useEffect(() => {
     getUserContent()
-  }, [bitverse])
+  }, [bitverseSigner])
 
   async function getUserContent() {
-    if (bitverse && ipfs) {
+    if (bitverseSigner && ipfs) {
       setIsLoadingContent(true)
 
       //get all the indices that belongs to the user
@@ -34,7 +34,7 @@ const DisplayUserContent: React.FC<PropType> = ({
       //well the solidity mapping cannot return the whole array
       //but it can return the length of the array
       //so get array's length then iterate through it!
-      var authorToCidIndicesArrayLength = await bitverse.authorToCidIndicesLength()
+      var authorToCidIndicesArrayLength = await bitverseSigner.authorToCidIndicesLength()
       console.log('indices: ' + authorToCidIndicesArrayLength)
 
       if (authorToCidIndicesArrayLength && authorToCidIndicesArrayLength > 0) {
@@ -45,12 +45,12 @@ const DisplayUserContent: React.FC<PropType> = ({
         const metadataMap = new Map()
 
         for (var i = 0; i < authorToCidIndicesArrayLength; i++) {
-          var cidIndex = await bitverse.authorToCidIndices(userAddress, i)
-          var theCid = await bitverse.cidsArray(cidIndex)
+          var cidIndex = await bitverseSigner.authorToCidIndices(userAddress, i)
+          var theCid = await bitverseSigner.cidsArray(cidIndex)
           //now get the content from the contentsMapping[] array
 
           //theCid (eg.) =
-          var content = await bitverse.contentsMapping(theCid)
+          var content = await bitverseSigner.contentsMapping(theCid)
           contentArray.push(content)
           var res = await ipfs.cat(content.metadataCid)
           // var data = await res.Json()
