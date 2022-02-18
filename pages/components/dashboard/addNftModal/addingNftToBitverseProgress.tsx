@@ -24,7 +24,7 @@ const AddingNftToBitverseProgress: React.FC<PropType> = ({
   uploadSuccessful,
   uploadfailed,
   exitAndRefresh,
-  setIsNftModalOpen
+  setIsNftModalOpen,
 }) => {
   const defaultOptions = {
     loop: true,
@@ -41,14 +41,19 @@ const AddingNftToBitverseProgress: React.FC<PropType> = ({
       className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
     >
       {isUploading && (
-        <div className="div">
+        <div className="flex flex-col justify-center items-center">
           {' '}
           <Lottie options={defaultOptions} height={300} width={300} />
+          <div className="font-thin">Adding to Bitverse...</div>
+          <div className="font-bold">Waiting For Confirmation</div>
+          <div className="text-gray-400">
+            Please confirm the transaction in your wallet
+          </div>
         </div>
       )}
 
       {!isUploading && uploadSuccessful && (
-        <div className="div">
+        <div className="flex flex-col items-center justify-center">
           <div className="flex flex-row">
             <div className="div">Upload Successful</div>
 
@@ -68,12 +73,11 @@ const AddingNftToBitverseProgress: React.FC<PropType> = ({
             </svg>
           </div>
           <button
-          className="w-2/4 mt-2 p-2 rounded-lg text-white bg-black hover:bg-gray-800"
-          onClick={exitAndRefresh}
-        >
-          All Done
-        </button>
-
+            className="w-40 mt-8 p-2 rounded-lg text-white bg-black hover:bg-gray-800"
+            onClick={exitAndRefresh}
+          >
+            All Done
+          </button>
         </div>
       )}
 

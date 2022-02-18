@@ -50,11 +50,6 @@ const NftModal: React.FC<NftModalProps> = ({
 }) => {
   const [selectedTokenStandard, setSelectedTokenStandard] = useState(null)
 
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false)
-  const [isInvalidAddress, setIsInvalidAddress] = useState(false)
-  const [errorOccured, setErrorOccured] = useState(false)
-
-  const [addingToBitverse, setAddingToBitverse] = useState(false)
 
   const [tokenPreview, setTokenPreview] = useState(false)
   const [nftOwner, setNftOwner] = useState(null)
@@ -83,6 +78,13 @@ const NftModal: React.FC<NftModalProps> = ({
   const [uploadSuccessful, setUploadSuccessful] = useState(false)
   const [uploadfailed, setUploadFailed] = useState(false)
   const [showSpinner, setShowSpinner] = useState(false)
+
+  
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false)
+  const [isInvalidAddress, setIsInvalidAddress] = useState(false)
+  const [errorOccured, setErrorOccured] = useState(false)
+
+  const [addingToBitverse, setAddingToBitverse] = useState(false)
 
   useEffect(() => {
     console.log(selectedTokenStandard)
