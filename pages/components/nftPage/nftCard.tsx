@@ -10,6 +10,7 @@ interface Props {
   bitverseSigner: any
   bitverseProvider: any
   bitverseAlchemy: any
+  alchemyProvider: any
   userAddress: string
 }
 
@@ -25,6 +26,7 @@ export const NftCard: React.FC<Props> = ({
   bitverseProvider,
   bitverseSigner,
   bitverseAlchemy,
+  alchemyProvider,
   userAddress,
 }) => {
   //LOCAL_STATE
@@ -67,11 +69,12 @@ export const NftCard: React.FC<Props> = ({
   }, [nft])
 
   async function getUserLikeOrDislike() {
-    if (bitverseSigner) {
-      console.log(bitverseSigner);
-      
+    if (bitverseAlchemy) {
       try {
-        const tx = await bitverseSigner.checkIfUserLikedOrDislikedNft(nft.id)
+        const tx = await bitverseAlchemy.checkIfUserLikedOrDislikedNft(
+          nft.id,
+          userAddress,
+        )
         console.log('getUserLikeOrDislike')
         console.log(tx)
         setUserLiked(tx.likedNft)
@@ -90,7 +93,7 @@ export const NftCard: React.FC<Props> = ({
   async function refreshNftNetlike() {
     try {
       // const _nft = await bitverseAlchemy.nftMapping(nft.id)
-      const _nft = await bitverseProvider.nftMapping(nft.id)
+      const _nft = await bitverseAlchemy.nftMapping(nft.id)
       setNftNetlike(_nft.netlikes.toNumber())
     } catch (error) {
       console.log('error on refreshNftNetlike fn')
@@ -110,7 +113,7 @@ export const NftCard: React.FC<Props> = ({
       _tokenUri,
       isIpfsUrl,
       _nftOwner,
-    } = await getTokenMetadata(nft, ipfs)
+    } = await getTokenMetadata(nft, ipfs, alchemyProvider)
 
     setIsIpfsUrl(isIpfsUrl)
     setTokenName(_tokenName)
@@ -122,7 +125,7 @@ export const NftCard: React.FC<Props> = ({
     setTokenUri(tokenUri)
     setNftOwner(_nftOwner)
 
-    console.log(await getTokenMetadata(nft, ipfs))
+    console.log(await getTokenMetadata(nft, ipfs, alchemyProvider))
   }
 
   const likeNft = async () => {

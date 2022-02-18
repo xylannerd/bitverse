@@ -7,14 +7,15 @@ import { RIGHT_NETWORK } from './utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
-import bitverseAbi from '../temporaryStuff/bitverse.json'
-import { contractAddress } from '../contract-mumbai-testnet/contractAddress'
+import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
+import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Content } from './components/interfaces'
 import ImageCard from './components/imagesPage/imageCard'
+import { AlchemyProvider } from '@ethersproject/providers'
 
-export default function Images() {
+export default function Images({ alchemy_key }) {
   //get images from the blockchain
   //preview them
   const snapshot = useSnapshot(store)
@@ -23,6 +24,7 @@ export default function Images() {
 
   // const [ipfs, setIpfs] = useState(null)
   const [metaProvider, setMetaProvider] = useState(null)
+  const [alchemyProvider, setAlchemyProvider] = useState(null)
 
   //toggle isLoadingNetwork when on other network
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
@@ -30,6 +32,7 @@ export default function Images() {
 
   const [bitverseWithProvider, setBitverseWithProvider] = useState(null)
   const [bitverseWithSigner, setBitverseWithSigner] = useState(null)
+  const [bitverseWithAlchemy, setBitverseWithAlchemy] = useState(null)
 
   const [images, setImages] = useState([])
   const [noImageYet, setNoImageYet] = useState(false)
@@ -55,6 +58,23 @@ export default function Images() {
     setIsLoadingImages(true)
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
+
+    try {
+      var ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+      var bitverseAlchemy = new ethers.Contract(
+        contractMumbaiAddress,
+        bitverseAbi.abi,
+        ethersAlchemyProvider,
+      )
+      setAlchemyProvider(ethersAlchemyProvider)
+      setBitverseWithAlchemy(bitverseAlchemy)
+      fetchTheImages(bitverseAlchemy)
+    } catch (error) {
+      console.log(error)
+    }
+
+    console.log('** ethersAlchemyProvider **')
+    console.log(ethersAlchemyProvider)
 
     var ipfsNode = snapshot.ipfs
       ? snapshot.ipfs
@@ -93,7 +113,7 @@ export default function Images() {
 
         try {
           contractBitverse = new ethers.Contract(
-            contractAddress,
+            contractMumbaiAddress,
             bitverseAbi.abi,
             ethersProvider,
           )
@@ -103,7 +123,7 @@ export default function Images() {
 
         try {
           contractWithSigner = new ethers.Contract(
-            contractAddress,
+            contractMumbaiAddress,
             bitverseAbi.abi,
             ethSigner,
           )
@@ -114,7 +134,7 @@ export default function Images() {
         setBitverseWithSigner(contractWithSigner)
         console.log('bitverse initialised')
         //CALL FETCH IMAGES HERE
-        fetchTheImages(contractBitverse)
+        // fetchTheImages(contractBitverse)
       } else {
         setRightNetwork(false)
         setIsLoadingNetwork(false)
@@ -180,6 +200,7 @@ export default function Images() {
               ipfs={snapshot.ipfs}
               bitverseSigner={bitverseWithSigner}
               bitverseProvider={bitverseWithProvider}
+              bitverseAlchemy={bitverseWithAlchemy}
               userAddress={snapshot.userAddress}
             />
           ))}
@@ -210,15 +231,15 @@ export default function Images() {
         </div>
       )}
       {/* //network is loaded but the user has chosen the wrong network */}
-      {!isLoadingNetwork && !rightNetwork && (
+      {/* {!isLoadingNetwork && !rightNetwork && (
         <div className="text-white text-center mt-16">
           Please connect to right Network - Ganache!
         </div>
-      )}
+      )} */}
 
       {/* //right network //let's fetch images //shows loading-animation while
       //fetching images from the blockchain */}
-      {rightNetwork && (
+      {!isLoadingNetwork && (
         <div className="div">
           {!isLoadingImages ? (
             <ShowImages />
@@ -231,4 +252,13 @@ export default function Images() {
       )}
     </div>
   )
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      alchemy_key: process.env.ALCHEMY_KEY,
+      alchemy_url: process.env.ALCHEMY_URL,
+    },
+  }
 }

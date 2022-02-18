@@ -7,14 +7,15 @@ import { RIGHT_NETWORK } from './utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
-import bitverseAbi from '../temporaryStuff/bitverse.json'
-import { contractAddress } from '../contract-mumbai-testnet/contractAddress'
+import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
+import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Nft } from './components/interfaces'
 import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
 import { changeChain } from './sharedFunctions/changeEthereumChain'
+import { checkTargetForNewValues } from 'framer-motion'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
@@ -71,27 +72,26 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
     setIsLoadingNetwork(true)
     const provider = await detectEthereumProvider()
 
-    var ethersAlchemyProvider
-    var bitverseAlchemy
-
     //init alchemyProvider here
     //use this to read from the contract
     //use signer from metamask to sign and send transactions.
     try {
-      ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
-      bitverseAlchemy = new ethers.Contract(
-        contractAddress,
+      var ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+      var bitverseAlchemy = new ethers.Contract(
+        contractMumbaiAddress,
         bitverseAbi.abi,
         ethersAlchemyProvider,
       )
+      setAlchemyProvider(ethersAlchemyProvider)
+      setBitverseWithAlchemy(bitverseAlchemy)
+      setIsLoadingNetwork(false)
+      fetchTheNfts(bitverseAlchemy)
     } catch (error) {
       console.log(error)
     }
 
     console.log('** ethersAlchemyProvider **')
     console.log(ethersAlchemyProvider)
-
-    setAlchemyProvider(ethersAlchemyProvider)
 
     var ipfsNode = snapshot.ipfs
       ? snapshot.ipfs
@@ -134,7 +134,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
         try {
           contractBitverse = new ethers.Contract(
-            contractAddress,
+            contractMumbaiAddress,
             bitverseAbi.abi,
             ethersProvider,
           )
@@ -144,7 +144,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
         try {
           contractWithSigner = new ethers.Contract(
-            contractAddress,
+            contractMumbaiAddress,
             bitverseAbi.abi,
             ethSigner,
           )
@@ -155,8 +155,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
         setBitverseWithSigner(contractWithSigner)
         console.log('bitverse initialised')
         //CALL FETCH NFTS HERE
-        // fetchTheNfts(bitverseAlchemy)
-        fetchTheNfts(contractBitverse)
+        // fetchTheNfts(contractBitverse)
       } else {
         setRightNetwork(false)
         setIsLoadingNetwork(false)
@@ -210,6 +209,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
               bitverseSigner={bitverseWithSigner}
               bitverseProvider={bitverseWithProvider}
               bitverseAlchemy={bitverseWithAlchemy}
+              alchemyProvider={alchemyProvider}
               userAddress={snapshot.userAddress}
             />
           ))}
@@ -241,19 +241,21 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
         </div>
       )}
       {/* network is loaded but the user has chosen the wrong network */}
-      {!isLoadingNetwork && !rightNetwork && (
+      {/* {!isLoadingNetwork && !rightNetwork && (
         <div className="flex flex-col text-white items-center">
           <div className="text-white text-center mt-16 font-thin">
             Please connect to right Network - Ganache!
           </div>
           <div className="div">
-            <button className="mt-16" onClick={changeChain}>Change Chain</button>
+            <button className="mt-16" onClick={changeChain}>
+              Change Chain
+            </button>
           </div>
         </div>
-      )}
+      )} */}
       {/* //right network //let's fetch nft //shows loading-animation while fetching
       nfts from the blockchain */}
-      {rightNetwork && (
+      {!isLoadingNetwork && (
         <div className="div">
           {!isLoadingNfts ? (
             <ShowNfts />

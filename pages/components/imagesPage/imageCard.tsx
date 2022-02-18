@@ -10,6 +10,7 @@ interface PropType {
   ipfs: any
   bitverseSigner: any
   bitverseProvider: any
+  bitverseAlchemy: any
   userAddress: string
 }
 
@@ -17,6 +18,7 @@ const ImageCard: React.FC<PropType> = ({
   image,
   bitverseProvider,
   bitverseSigner,
+  bitverseAlchemy,
   ipfs,
   userAddress,
 }) => {
@@ -58,11 +60,10 @@ const ImageCard: React.FC<PropType> = ({
   }, [image])
 
   async function getUserLikeOrDislike() {
-    if (bitverseSigner) {
-      console.log(bitverseSigner)
+    if (bitverseAlchemy) {
 
       try {
-        const tx = await bitverseSigner.checkIfUserLikedOrDislikedContent(image.cid)
+        const tx = await bitverseAlchemy.checkIfUserLikedOrDislikedContent(image.cid, userAddress)
         console.log('getUserLikeOrDislike_Image')
         console.log(tx)
         setUserLiked(tx.likedContent)
@@ -82,7 +83,7 @@ const ImageCard: React.FC<PropType> = ({
 
   async function refreshImageNetlike() {
     try {
-      const _image = await bitverseProvider.contentsMapping(image.cid)
+      const _image = await bitverseAlchemy.contentsMapping(image.cid)
       setImageNetlike(_image.netlikes.toNumber())
     } catch (error) {
       console.log('error on refreshImageNetlike fn')
@@ -114,7 +115,7 @@ const ImageCard: React.FC<PropType> = ({
         setLikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Like an NFT 🍭')
+      alert('Please link your account to Like an image 🍭')
     }
   }
 
@@ -135,7 +136,7 @@ const ImageCard: React.FC<PropType> = ({
         setdislikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Dislike an NFT 🍭')
+      alert('Please link your account to Dislike an Image 🍭')
     }
   }
 

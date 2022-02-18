@@ -7,10 +7,11 @@
 //ganache chainID - 0x539 || 1337
 const ganache_networkId = 5777
 const ethereum_networkId = 1
+const polygon_mumbai_testnet = 80001
 
 //ENTER THE NETWORK HERE
 //THE CONTRACT DEPLOYMENT NETWORK
-export const RIGHT_NETWORK = ganache_networkId //Replace this to change network id
+export const RIGHT_NETWORK =  polygon_mumbai_testnet //Replace this to change network id
 
 
 //IPFS GATEWAYS

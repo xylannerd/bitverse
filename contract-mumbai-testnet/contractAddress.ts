@@ -16,4 +16,4 @@
 
     //hocrux-mumbai-testnet-address = "0xA2Fd8029A5D26497C0FC82C779F679d672F8cd20"
 
-export const contractMumbaiAddress = "0x9aB6849836ad2A4a74bb456372089625bf7B01Ff"
+export const contractMumbaiAddress = "0xF4CAf7D7ece81ba67a1C4508233B7735B23709ce"
