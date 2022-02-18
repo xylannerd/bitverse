@@ -54,19 +54,19 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
   useEffect(() => {
     if (ethereum.selectedAddress) {
       store.userAddress = ethereum.selectedAddress
-      console.log('inside nftPage: ' + snapshot.userAddress)
-      console.log(ethereum.selectedAddress)
+      // console.log('inside nftPage: ' + snapshot.userAddress)
+      // console.log(ethereum.selectedAddress)
     }
   }, [snapshot.userAddress])
 
-  useEffect(() => {
-    console.log('snapshot.ipfs status nft page:')
-    console.log(snapshot.ipfs)
-  }, [])
+  // useEffect(() => {
+  //   console.log('snapshot.ipfs status nft page:')
+  //   console.log(snapshot.ipfs)
+  // }, [])
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchNfts()
-    console.log('## useEffect nftPage ##')
+    // console.log('## useEffect nftPage ##')
   }, [])
 
   // just init bitverse and ipfs here
@@ -98,7 +98,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
       : await IPFS.create({ repo: 'ok' + Math.random() })
     if (!snapshot.ipfs) {
       store.ipfs = ipfsNode
-      console.log('ipfs-node initialised nftPage')
+      // console.log('ipfs-node initialised nftPage')
     }
 
     var ethersProvider
@@ -148,7 +148,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
         }
         setBitverseWithProvider(contractBitverse)
         setBitverseWithSigner(contractWithSigner)
-        console.log('bitverse initialised')
+        // console.log('bitverse initialised')
         //CALL FETCH NFTS HERE
         // fetchTheNfts(contractBitverse)
       } else {
@@ -162,12 +162,12 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
   //FETCH NFT FUNCTION
   async function fetchTheNfts(_bitverse) {
     if (_bitverse) {
-      console.log('fetching nfts on nftPage')
+      // console.log('fetching nfts on nftPage')
       var nftsArray = []
 
       var totalNfts = await _bitverse.numNfts()
-      console.log('total nfts:')
-      console.log(totalNfts.toNumber())
+      // console.log('total nfts:')
+      // console.log(totalNfts.toNumber())
       setTotalNftsCount(totalNfts.toNumber())
 
       if (totalNfts && totalNfts > 0) {
@@ -178,12 +178,12 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
         if (nftsArray) {
           setNfts(nftsArray)
-          console.log(nftsArray)
-          console.log('nftArray initialised')
+          // console.log(nftsArray)
+          // console.log('nftArray initialised')
           setIsLoadingNfts(false)
         }
       } else {
-        console.log('NO NFT UPLOADED YET!')
+        // console.log('NO NFT UPLOADED YET!')
         setNoNftYet(true)
         setIsLoadingNfts(false)
       }

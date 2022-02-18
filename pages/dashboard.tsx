@@ -46,8 +46,8 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     if (ethereum.selectedAddress) {
       store.userAddress = ethereum.selectedAddress
-      console.log('inside dashboard: ' + snapshot.userAddress)
-      console.log(ethereum.selectedAddress)
+      // console.log('inside dashboard: ' + snapshot.userAddress)
+      // console.log(ethereum.selectedAddress)
     }
   }, [snapshot.userAddress])
 
@@ -56,11 +56,11 @@ const DashboardPage: React.FC = () => {
     initBitverseAndIpfs()
   }, [snapshot.userAddress])
 
-  useEffect(() => {
-    console.log('contentMetadata: ')
+  // useEffect(() => {
+  //   // console.log('contentMetadata: ')
 
-    console.log(contentMetadata)
-  }, [contentMetadata])
+  //   // console.log(contentMetadata)
+  // }, [contentMetadata])
 
  
 
@@ -91,7 +91,7 @@ const DashboardPage: React.FC = () => {
       } catch (error) {
         console.log(error)
       }
-      console.log('network version: ' + network)
+      // console.log('network version: ' + network)
 
       //only move forward if the user has linked their wallet
       if (snapshot.userAddress) {

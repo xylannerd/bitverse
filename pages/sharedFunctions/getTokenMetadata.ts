@@ -73,7 +73,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
   // }
 
   if (_nft.tokenStandard.toNumber() === ERC_721) {
-    console.log('Fetching erc721 token')
+    // console.log('Fetching erc721 token')
 
     //Call the erc721 contract and fetch the nft
     try {
@@ -89,7 +89,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
     if (erc721contract) {
       const mtokenUri = await erc721contract.tokenURI(_nft.tokenId)
       _tokenUri = mtokenUri
-      console.log('uri :' + mtokenUri)
+      // console.log('uri :' + mtokenUri)
 
       if (mtokenUri) {
         var res
@@ -110,17 +110,17 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
           mtokenUri.includes('/bafy')
         ) {
           //gives false even for a valid ipfs-url
-          console.log('*** inside erc721 ipfs *** ')
+          // console.log('*** inside erc721 ipfs *** ')
 
           isIpfsUrl = true
-          console.log('*** 721 isIpfs url ***')
+          // console.log('*** 721 isIpfs url ***')
           // example ccid = 'QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9'
           const cid_eg2 =
             'bafybeihbsysdkemc3kyylegtfopkrcfiih4exnasoql2q36fb4zawlrwhy/volcano.json'
           try {
             res = await ipfs.cat(mtokenUri)
             // data = await res.json()
-            console.log(res)
+            // console.log(res)
           } catch (error) {
             console.log(error)
           }
@@ -133,10 +133,10 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
             res = await fetch(mtokenUri)
             data = await res.json()
 
-            console.log('erc721 normal fetch')
-            console.log('*** Normal fetch data *** ')
+            // console.log('erc721 normal fetch')
+            // console.log('*** Normal fetch data *** ')
 
-            console.log(data)
+            // console.log(data)
           } catch (error) {
             console.log(error)
           }
@@ -152,24 +152,24 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
 
       const mNftOwner = await erc721contract.ownerOf(_nft.tokenId)
       _nftOwner = mNftOwner
-      console.log('nft owner :' + mNftOwner)
+      // console.log('nft owner :' + mNftOwner)
 
       const mtokenName = await erc721contract.name()
       _tokenName = mtokenName
-      console.log('token name: ' + mtokenName)
+      // console.log('token name: ' + mtokenName)
 
       const mtokenSymbol = await erc721contract.symbol()
       _tokenSymbol = mtokenSymbol
-      console.log('token symbol: ' + mtokenSymbol)
+      // console.log('token symbol: ' + mtokenSymbol)
 
       const mOwnerBalance = await erc721contract.balanceOf(mNftOwner)
       _ownerBalance = mOwnerBalance.toNumber()
-      console.log('owner balance: ' + mOwnerBalance.toNumber())
+      // console.log('owner balance: ' + mOwnerBalance.toNumber())
     } else {
       console.log('Cannot initialize erc721 contract')
     }
   } else if (_nft.tokenStandard.toNumber() === ERC_1155) {
-    console.log('Fetching erc1155 token')
+    // console.log('Fetching erc1155 token')
 
     /* For ERC1155 Token */
 
@@ -186,7 +186,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
     if (erc1155contract) {
       const mtokenUri = await erc1155contract.uri(_nft.tokenId)
       _tokenUri = mtokenUri
-      console.log('uri :' + mtokenUri)
+      // console.log('uri :' + mtokenUri)
 
       //get the uri
       //request the metadata by appending tokenId at the end
@@ -199,7 +199,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
           0,
           mtokenUri.length - 4,
         )}${toPaddedHex(_nft.tokenId)}`
-        console.log(theUri)
+        // console.log(theUri)
 
         var res
         var data
@@ -210,15 +210,15 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
           mtokenUri.includes('/ipfs/') ||
           mtokenUri.includes('/bafy')
         ) {
-          console.log('1155 isIpfs url' + isIPFS.urlOrPath(mtokenUri))
+          // console.log('1155 isIpfs url' + isIPFS.urlOrPath(mtokenUri))
           try {
             res = await ipfs.cat(mtokenUri)
             data = await res.json()
           } catch (error) {
             console.log(error)
           }
-          console.log('inside erc1155 ipfs: ')
-          console.log(res)
+          // console.log('inside erc1155 ipfs: ')
+          // console.log(res)
         } else {
           try {
             res = await fetch(theUri)
@@ -226,8 +226,8 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
           } catch (error) {
             console.log(error)
           }
-          console.log('erc1155 normal fetch')
-          console.log(data)
+          // console.log('erc1155 normal fetch')
+          // console.log(data)
         }
 
         _imageUrl = data.image
@@ -239,7 +239,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
 
       const mNftOwner = await erc1155contract.ownerOf(_nft.tokenId)
       _nftOwner = mNftOwner
-      console.log('nft owner :' + mNftOwner)
+      // console.log('nft owner :' + mNftOwner)
     }
   }
 

@@ -81,7 +81,7 @@ export default function Images({ alchemy_key }) {
       : await IPFS.create({ repo: 'ok' + Math.random() })
     if (!snapshot.ipfs) {
       store.ipfs = ipfsNode
-      console.log('ipfs-node initialised imagePage')
+      // console.log('ipfs-node initialised imagePage')
     }
 
     var ethersProvider
@@ -98,7 +98,7 @@ export default function Images({ alchemy_key }) {
       } catch (error) {
         console.log(error)
       }
-      console.log('network version imagePage: ' + network)
+      // console.log('network version imagePage: ' + network)
 
       //ganache networkId - 5777
       //ganache chainID - 0x539 || 1337
@@ -132,7 +132,7 @@ export default function Images({ alchemy_key }) {
         }
         setBitverseWithProvider(contractBitverse)
         setBitverseWithSigner(contractWithSigner)
-        console.log('bitverse initialised')
+        // console.log('bitverse initialised')
         //CALL FETCH IMAGES HERE
         // fetchTheImages(contractBitverse)
       } else {
