@@ -8,7 +8,7 @@ import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
 import bitverseAbi from '../temporaryStuff/bitverse.json'
-import { contractAddress } from '../temporaryStuff/contractAddress'
+import { contractAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Nft } from './components/interfaces'

@@ -4,7 +4,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 //change to '../build/contracts/Bitverse.json'
 import bitverseAbi from '../temporaryStuff/bitverse.json'
-import { contractAddress } from '../temporaryStuff/contractAddress'
+import { contractAddress } from '../contract-mumbai-testnet/contractAddress'
 // // //
 import { useSnapshot } from 'valtio'
 import store from './stateGlobal/blockchain.state'
