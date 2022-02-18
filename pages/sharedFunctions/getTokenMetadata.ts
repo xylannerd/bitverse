@@ -35,7 +35,7 @@ const erc165abi = [
 const ERC_721 = 721
 const ERC_1155 = 1155
 
-async function getTokenMetadata(_nft: Nft, ipfs: any) {
+async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
   //LOCAL_STATE
   var _tokenName
   var _tokenSymbol
@@ -56,17 +56,22 @@ async function getTokenMetadata(_nft: Nft, ipfs: any) {
 
   // const fetch = await makeIpfsFetch({ipfs})
 
-  var provider
-  var ethProvider
-  // var ethSigner
+  // try {
+  //   var ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+  // } catch (error) {
+  //   console.log(error)
+  // }
 
-  try {
-    provider = await detectEthereumProvider()
-    ethProvider = new ethers.providers.Web3Provider(provider)
-    // ethSigner = ethProvider.getSigner()
-  } catch (error) {
-    console.log(error)
-  }
+  var ethProvider = ethersProvider
+
+  // try {
+  //   var provider = await detectEthereumProvider()
+  //   var ethProvider = new ethers.providers.Web3Provider(provider)
+  //   // ethSigner = ethProvider.getSigner()
+  // } catch (error) {
+  //   console.log(error)
+  // }
+
   if (_nft.tokenStandard.toNumber() === ERC_721) {
     console.log('Fetching erc721 token')
 

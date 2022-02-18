@@ -3,22 +3,28 @@ import { Content } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
 import { CID } from 'multiformats'
-import { IPFS_GATEWAY_URL } from '../../utils/constants'
+import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../../utils/constants'
 
 interface PropType {
   image: Content
   ipfs: any
   bitverseSigner: any
   bitverseProvider: any
+  bitverseAlchemy: any
   userAddress: string
+  networkVersion: number
+  setNetworkChangePopUp: any
 }
 
 const ImageCard: React.FC<PropType> = ({
   image,
   bitverseProvider,
   bitverseSigner,
+  bitverseAlchemy,
   ipfs,
   userAddress,
+  networkVersion,
+  setNetworkChangePopUp
 }) => {
   //
   const [imageName, setImageName] = useState(null)
@@ -51,18 +57,20 @@ const ImageCard: React.FC<PropType> = ({
     console.log('useEffect_imageCard - getUserLikeOrDislike')
   }, [image, updateLikeStatus])
 
-  //fetch tokenMetadata here
+  //fetch imageMEtadata here
   //prepare preview
-  useEffect(() => {
-    getImageMetadata()
-  }, [image])
+  // useEffect(() => {
+  //   getImageMetadata()
+  // }, [image])
+
+    //TODO
+  // async function getImageMetadata() {}
 
   async function getUserLikeOrDislike() {
-    if (bitverseSigner) {
-      console.log(bitverseSigner)
+    if (bitverseAlchemy) {
 
       try {
-        const tx = await bitverseSigner.checkIfUserLikedOrDislikedContent(image.cid)
+        const tx = await bitverseAlchemy.checkIfUserLikedOrDislikedContent(image.cid, userAddress)
         console.log('getUserLikeOrDislike_Image')
         console.log(tx)
         setUserLiked(tx.likedContent)
@@ -82,7 +90,7 @@ const ImageCard: React.FC<PropType> = ({
 
   async function refreshImageNetlike() {
     try {
-      const _image = await bitverseProvider.contentsMapping(image.cid)
+      const _image = await bitverseAlchemy.contentsMapping(image.cid)
       setImageNetlike(_image.netlikes.toNumber())
     } catch (error) {
       console.log('error on refreshImageNetlike fn')
@@ -90,10 +98,17 @@ const ImageCard: React.FC<PropType> = ({
     }
   }
 
-  //TODO
-  async function getImageMetadata() {}
+
 
   const likeImage = async () => {
+
+      //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+
+
     if (userAddress) {
       setLikeTxProcessing(true)
 
@@ -114,11 +129,18 @@ const ImageCard: React.FC<PropType> = ({
         setLikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Like an NFT 🍭')
+      alert('Please link your account to Like an image 🍭')
     }
   }
 
   const dislikeImage = async () => {
+
+      //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+
     if (userAddress) {
       setdislikeTxProcessing(true)
       console.log('dislike clicked!')
@@ -135,7 +157,7 @@ const ImageCard: React.FC<PropType> = ({
         setdislikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Dislike an NFT 🍭')
+      alert('Please link your account to Dislike an Image 🍭')
     }
   }
 

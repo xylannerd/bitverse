@@ -13,9 +13,10 @@ import getTokenMetadata from '../../../sharedFunctions/getTokenMetadata'
 interface PropType {
   nft: Nft
   ipfs: any
+  bitverseSigner: any
 }
 
-const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
+const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {
   //LOCAL_STATE
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
@@ -53,7 +54,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
       _tokenUri,
       isIpfsUrl,
       _nftOwner,
-    } = await getTokenMetadata(nft, ipfs)
+    } = await getTokenMetadata(nft, ipfs, ethSigner)
 
     setIsIpfsUrl(isIpfsUrl)
     setTokenName(_tokenName)
@@ -64,7 +65,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
     setAnimationUrl(_animationUrl)
     setTokenUri(tokenUri)
 
-    console.log(await getTokenMetadata(nft, ipfs))
+    // console.log(await getTokenMetadata(nft, ipfs, ethSigner))
   }
 
   return (
@@ -86,13 +87,14 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
         </div>
 
         <div id="cardBody" className="h-full grow pt-8 pb-8 pl-4 pr-64">
-          <div className="flex flex-col h-full grow text-white justify-between flex-nowrap overflow-hidden truncate">
-            <div className="div">
+          {/* justify-between and then uncomment */}
+          <div className="flex flex-col h-full grow text-white justify-center flex-nowrap overflow-hidden truncate">
+            {/* <div className="div"> */}
               {/* <div className="text-gray-500 text-sm">Name: {name}</div>{' '} */}
               {/* <div className="flex overflow-ellipsis w-96 text-gray-500 text-sm">
                 Description: {description}
               </div> */}
-            </div>
+            {/* </div> */}
 
             <div className="flex flex-col">
               <div className="text-gray-500 text-xs">
@@ -115,7 +117,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs }) => {
             </div>
           </div>
 
-          <div className="text-white text-sm text-gray-400">
+          <div className="text-xs text-gray-500">
             Note: Ipfs Uri previews may not show.
           </div>
         </div>

@@ -11,7 +11,7 @@ export default function Nfts() {
 
       <div className="flex items-center justify-center">
         <div className="flex w-96 flex-row justify-center items-center text-white mt-64 font-bold py-4 px-8 bg-red-400 rounded-md">
-          This page will come soon 🚧
+          This feature will come soon 🚧
         </div>
       </div>
     </div>
