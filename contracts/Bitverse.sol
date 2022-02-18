@@ -14,8 +14,11 @@ interface IERC721 {
 
 /// @title A decentralised platform for NFTs and content creators //TODO
 /// @author Xylan W. Reeves
-/// @notice You can use this contract for saving ipfs hashes, adding nfts
-/// The contract can track their likes/dislikes and reward the creator accordingly
+
+/// @notice
+/// In Open-web, content creators would be creating value without capturing it.
+/// Bitverse creates a system to correct the asymmetry between value created and value captured.
+
 /// feel free to build on it and stuff!
 
 /// @dev //TODO
@@ -326,7 +329,6 @@ contract Bitverse is ERC20 {
 
     // *** Good idea to paginate than to return the whole array! ***
 
-    // TODO
     // @dev Pagination function for the array.
     function getCidArrayPaginated(uint256 cursor, uint256 howMany)
     public
@@ -390,7 +392,7 @@ contract Bitverse is ERC20 {
         
         //represents owner's uploads to bitverse so far
         //incase the ownership is transferred
-        //the likes reward goes to the current owner
+        //the likes reward goes to the current owner and not the uploader!
         uploaderToNftIndices[msg.sender].push(nftId);
 
         emit NewNftAdded(_tokenAddress, _tokenId, msg.sender, block.timestamp);
