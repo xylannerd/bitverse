@@ -14,6 +14,7 @@ const polygon_mumbai_testnet = 80001
 export const RIGHT_NETWORK =  polygon_mumbai_testnet //Replace this to change network id
 
 
+
 //IPFS GATEWAYS
 
 //`https://${IPFS_PUBLIC_GATEWAY}/ipfs/${content.cid}`

@@ -35,7 +35,7 @@ const erc165abi = [
 const ERC_721 = 721
 const ERC_1155 = 1155
 
-async function getTokenMetadata(_nft: Nft, ipfs: any, alchemyProvider: any) {
+async function getTokenMetadata(_nft: Nft, ipfs: any, ethersProvider: any) {
   //LOCAL_STATE
   var _tokenName
   var _tokenSymbol
@@ -62,7 +62,7 @@ async function getTokenMetadata(_nft: Nft, ipfs: any, alchemyProvider: any) {
   //   console.log(error)
   // }
 
-  var ethProvider = alchemyProvider
+  var ethProvider = ethersProvider
 
   // try {
   //   var provider = await detectEthereumProvider()

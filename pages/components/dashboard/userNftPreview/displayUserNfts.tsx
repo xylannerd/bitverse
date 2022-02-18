@@ -4,6 +4,7 @@ import LoadingAnimation from '../../sharedComponents/loadingAnimation'
 import UserNftCard from './userNftCard'
 
 interface PropType {
+  ethSigner: any
   bitverseSigner: any
   ipfs: any
   userAddress: string
@@ -13,6 +14,7 @@ const DisplayUserNfts: React.FC<PropType> = ({
   bitverseSigner,
   ipfs,
   userAddress,
+  ethSigner
 }) => {
   const [isLoadingNfts, setIsLoadingNfts] = useState(true)
   const [userNfts, setUserNfts] = useState([])
@@ -65,7 +67,7 @@ const DisplayUserNfts: React.FC<PropType> = ({
       return (
         <div className="div">
           {userNfts.map((nft: Nft) => (
-            <UserNftCard key={nft.id.toNumber()} nft={nft} ipfs={ipfs} />
+            <UserNftCard key={nft.id.toNumber()} nft={nft} ipfs={ipfs} ethSigner={ethSigner} />
           ))}
         </div>
       )

@@ -3,7 +3,7 @@ import { Content } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
 import { CID } from 'multiformats'
-import { IPFS_GATEWAY_URL } from '../../utils/constants'
+import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../../utils/constants'
 
 interface PropType {
   image: Content
@@ -12,6 +12,8 @@ interface PropType {
   bitverseProvider: any
   bitverseAlchemy: any
   userAddress: string
+  networkVersion: number
+  setNetworkChangePopUp: any
 }
 
 const ImageCard: React.FC<PropType> = ({
@@ -21,6 +23,8 @@ const ImageCard: React.FC<PropType> = ({
   bitverseAlchemy,
   ipfs,
   userAddress,
+  networkVersion,
+  setNetworkChangePopUp
 }) => {
   //
   const [imageName, setImageName] = useState(null)
@@ -53,11 +57,14 @@ const ImageCard: React.FC<PropType> = ({
     console.log('useEffect_imageCard - getUserLikeOrDislike')
   }, [image, updateLikeStatus])
 
-  //fetch tokenMetadata here
+  //fetch imageMEtadata here
   //prepare preview
-  useEffect(() => {
-    getImageMetadata()
-  }, [image])
+  // useEffect(() => {
+  //   getImageMetadata()
+  // }, [image])
+
+    //TODO
+  // async function getImageMetadata() {}
 
   async function getUserLikeOrDislike() {
     if (bitverseAlchemy) {
@@ -91,10 +98,17 @@ const ImageCard: React.FC<PropType> = ({
     }
   }
 
-  //TODO
-  async function getImageMetadata() {}
+
 
   const likeImage = async () => {
+
+      //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+
+
     if (userAddress) {
       setLikeTxProcessing(true)
 
@@ -120,6 +134,13 @@ const ImageCard: React.FC<PropType> = ({
   }
 
   const dislikeImage = async () => {
+
+      //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+
     if (userAddress) {
       setdislikeTxProcessing(true)
       console.log('dislike clicked!')

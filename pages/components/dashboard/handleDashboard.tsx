@@ -6,6 +6,7 @@ import { useState } from 'react'
 import LoadingAnimation from '../sharedComponents/loadingAnimation'
 
 interface Props {
+  ethSigner: any
   bitverseSigner: any
   ipfs: any
   userAddress: string
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export const HandleDashboard: React.FC<Props> = ({
+  ethSigner,
   bitverseSigner,
   ipfs,
   isLoadingNetwork,
@@ -31,8 +33,8 @@ export const HandleDashboard: React.FC<Props> = ({
   setisModalOpen,
 }) => {
   //flip the state to set the default tab
-  const [showNft, setShowNft] = useState(false)
-  const [showContent, setShowContent] = useState(true)
+  const [showNft, setShowNft] = useState(true)
+  const [showContent, setShowContent] = useState(false)
 
   if (userAddress) {
     return (
@@ -90,6 +92,7 @@ export const HandleDashboard: React.FC<Props> = ({
           {!isLoadingNetwork && rightNetwork && showNft && (
             <div className="flex flex-col justify-center items-center mt-8 w-10/12 lg:w-8/12 xl:w-7/12  h-full bg-opacity-50">
               <DisplayUserNfts
+                ethSigner={ethSigner}
                 bitverseSigner={bitverseSigner}
                 ipfs={ipfs}
                 userAddress={userAddress}

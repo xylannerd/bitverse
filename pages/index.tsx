@@ -36,7 +36,7 @@ export default function Home() {
       <Navbar />
 
       <div className="flex flex-col items-center justify-center mt-4 text-white ">
-        <h3>HOME</h3>
+        <h3>Please go to nft page ✔️</h3>
       </div>
       
     </div>

@@ -14,6 +14,7 @@ import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Content } from './components/interfaces'
 import ImageCard from './components/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
+import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 
 export default function Images({ alchemy_key }) {
   //get images from the blockchain
@@ -26,10 +27,6 @@ export default function Images({ alchemy_key }) {
   const [metaProvider, setMetaProvider] = useState(null)
   const [alchemyProvider, setAlchemyProvider] = useState(null)
 
-  //toggle isLoadingNetwork when on other network
-  const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
-  const [isLoadingImages, setIsLoadingImages] = useState(true)
-
   const [bitverseWithProvider, setBitverseWithProvider] = useState(null)
   const [bitverseWithSigner, setBitverseWithSigner] = useState(null)
   const [bitverseWithAlchemy, setBitverseWithAlchemy] = useState(null)
@@ -39,18 +36,24 @@ export default function Images({ alchemy_key }) {
 
   const [totalImagesCount, setTotalImagesCount] = useState(0)
 
+  //UI STATE
+  const [networkChangePopup, setNetworkChangePopUp] = useState(false)
+  //toggle isLoadingNetwork when on other network
+  const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
+  const [isLoadingImages, setIsLoadingImages] = useState(true)
+
   // keep this useEffect
   useEffect(() => {
     if (ethereum.selectedAddress) {
       store.userAddress = ethereum.selectedAddress
-      console.log('inside imagesPage: ' + snapshot.userAddress)
-      console.log(ethereum.selectedAddress)
+      // console.log('inside imagesPage: ' + snapshot.userAddress)
+      // console.log(ethereum.selectedAddress)
     }
   }, [snapshot.userAddress])
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchImages()
-    console.log('useEffect imagesPage')
+    // console.log('useEffect imagesPage')
   }, [])
 
   async function initBitverseAndIpfsAndFetchImages() {
@@ -72,9 +75,6 @@ export default function Images({ alchemy_key }) {
     } catch (error) {
       console.log(error)
     }
-
-    console.log('** ethersAlchemyProvider **')
-    console.log(ethersAlchemyProvider)
 
     var ipfsNode = snapshot.ipfs
       ? snapshot.ipfs
@@ -146,7 +146,7 @@ export default function Images({ alchemy_key }) {
   //FETCH IMAGES FUNCTION
   async function fetchTheImages(_bitverse) {
     if (_bitverse) {
-      console.log('fetching images on imagesPage')
+      // console.log('fetching images on imagesPage')
       var contentCidArray = []
       var contentArray = []
       var imagesArray = []
@@ -180,7 +180,7 @@ export default function Images({ alchemy_key }) {
         if (imagesArray) {
           setTotalImagesCount(imagesArray.length)
           setImages(imagesArray)
-          console.log(imagesArray)
+          // console.log(imagesArray)
           setIsLoadingImages(false)
         }
       }
@@ -202,6 +202,8 @@ export default function Images({ alchemy_key }) {
               bitverseProvider={bitverseWithProvider}
               bitverseAlchemy={bitverseWithAlchemy}
               userAddress={snapshot.userAddress}
+              networkVersion={snapshot.networkId}
+              setNetworkChangePopUp={setNetworkChangePopUp}
             />
           ))}
         </div>
@@ -218,7 +220,11 @@ export default function Images({ alchemy_key }) {
   }
 
   return (
-    <div className="">
+    <div className="div">
+      {/* network change popUp here */}
+      {networkChangePopup && (
+        <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />
+      )}
       <Navbar />
       <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
         <div className="cursor-pointer">Welcome to Images</div>

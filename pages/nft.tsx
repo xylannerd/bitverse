@@ -16,6 +16,7 @@ import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
 import { changeChain } from './sharedFunctions/changeEthereumChain'
 import { checkTargetForNewValues } from 'framer-motion'
+import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
@@ -34,10 +35,6 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
   const [metaProvider, setMetaProvider] = useState(null)
   const [alchemyProvider, setAlchemyProvider] = useState(null)
 
-  //toggle isLoadingNetwork when on other network
-  const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
-  const [isLoadingNfts, setIsLoadingNfts] = useState(true)
-
   const [bitverseWithProvider, setBitverseWithProvider] = useState(null)
   const [bitverseWithSigner, setBitverseWithSigner] = useState(null)
   const [bitverseWithAlchemy, setBitverseWithAlchemy] = useState(null)
@@ -46,6 +43,12 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
   const [noNftYet, setNoNftYet] = useState(false)
 
   const [totalNftsCount, setTotalNftsCount] = useState(0)
+
+  //UI STATE
+  const [networkChangePopup, setNetworkChangePopUp] = useState(false)
+  //toggle isLoadingNetwork when on other network
+  const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
+  const [isLoadingNfts, setIsLoadingNfts] = useState(true)
 
   // keep this useEffect
   useEffect(() => {
@@ -90,9 +93,6 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
       console.log(error)
     }
 
-    console.log('** ethersAlchemyProvider **')
-    console.log(ethersAlchemyProvider)
-
     var ipfsNode = snapshot.ipfs
       ? snapshot.ipfs
       : await IPFS.create({ repo: 'ok' + Math.random() })
@@ -110,16 +110,11 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
       try {
         ethersProvider = new ethers.providers.Web3Provider(provider)
         ethSigner = ethersProvider.getSigner()
-        // console.log("** ethersAlchemyProvider **")
-        // const ethersAlchemyProvider =  new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_URL)
-        // console.log(ALCHEMY_URL)
-        // console.log(ethersAlchemyProvider)
-
         network = await provider.networkVersion
       } catch (error) {
         console.log(error)
       }
-      console.log('network version nftPage: ' + network)
+      // console.log('network version nftPage: ' + network)
 
       //ganache networkId - 5777
       //ganache chainID - 0x539 || 1337
@@ -211,6 +206,8 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
               bitverseAlchemy={bitverseWithAlchemy}
               alchemyProvider={alchemyProvider}
               userAddress={snapshot.userAddress}
+              networkVersion={snapshot.networkId}
+              setNetworkChangePopUp={setNetworkChangePopUp}
             />
           ))}
         </div>
@@ -228,6 +225,9 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
   return (
     <div className="div">
+      {/* network change popUp here */}
+      {networkChangePopup && <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />}
+
       <Navbar />
       <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
         <div className="cursor-pointer">Welcome to NFTs</div>

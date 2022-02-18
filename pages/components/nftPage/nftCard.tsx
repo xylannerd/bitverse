@@ -3,6 +3,8 @@ import getTokenMetadata from '../../sharedFunctions/getTokenMetadata'
 import { Nft } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
+import { RIGHT_NETWORK } from '../../utils/constants'
+import { changeChain } from '../../sharedFunctions/changeEthereumChain'
 
 interface Props {
   nft: Nft
@@ -12,6 +14,8 @@ interface Props {
   bitverseAlchemy: any
   alchemyProvider: any
   userAddress: string
+  networkVersion: number
+  setNetworkChangePopUp: any
 }
 
 //DONT FORGET - the link/redirect to opensea wouldn't work if your contract is deployed in ganache/remix/locally
@@ -28,7 +32,12 @@ export const NftCard: React.FC<Props> = ({
   bitverseAlchemy,
   alchemyProvider,
   userAddress,
+  networkVersion,
+  setNetworkChangePopUp
 }) => {
+
+
+
   //LOCAL_STATE
   const [nftOwner, setNftOwner] = useState(null)
   const [tokenUri, setTokenUri] = useState('')
@@ -55,6 +64,8 @@ export const NftCard: React.FC<Props> = ({
   const [updateLikeStatus, setUpdateLikeStatus] = useState(false)
 
   const [nftNetlike, setNftNetlike] = useState(0)
+
+  
 
   useEffect(() => {
     getUserLikeOrDislike()
@@ -125,10 +136,18 @@ export const NftCard: React.FC<Props> = ({
     setTokenUri(tokenUri)
     setNftOwner(_nftOwner)
 
-    console.log(await getTokenMetadata(nft, ipfs, alchemyProvider))
+    // console.log(await getTokenMetadata(nft, ipfs, alchemyProvider))
   }
 
+
   const likeNft = async () => {
+
+    //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+    
     if (userAddress) {
       setLikeTxProcessing(true)
 
@@ -154,6 +173,13 @@ export const NftCard: React.FC<Props> = ({
   }
 
   const dislikeNft = async () => {
+
+      //if not connected to the right network,
+    //prompt user to connect to polygon mumbai network
+    if(networkVersion != RIGHT_NETWORK){
+      setNetworkChangePopUp(true)
+    }
+
     if (userAddress) {
       setdislikeTxProcessing(true)
 

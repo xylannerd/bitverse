@@ -3,7 +3,7 @@ import { proxy } from 'valtio'
 
 interface IStore {
 userAddress: any
-chainId: number
+chainId: string
 networkId: number
 ipfs: any
 }

@@ -3,8 +3,8 @@ import * as IPFS from 'ipfs-core'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 //change to '../build/contracts/Bitverse.json'
-import bitverseAbi from '../temporaryStuff/bitverse.json'
-import { contractAddress } from '../contract-mumbai-testnet/contractAddress'
+import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
+import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 // // //
 import { useSnapshot } from 'valtio'
 import store from './stateGlobal/blockchain.state'
@@ -37,7 +37,8 @@ const DashboardPage: React.FC = () => {
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
   const [bitverseSigner, setBitverseSigner] = useState(null)
   const [ethProvider, setEthProvider] = useState(null)
-  const [signer, setSigner] = useState(null)
+  const [ethSigner, setEthSigner] = useState(null)
+
   const [isModalOpen, setisModalOpen] = useState(false)
   const [isNftModalOpen, setIsNftModalOpen] = useState(false)
 
@@ -83,8 +84,10 @@ const DashboardPage: React.FC = () => {
       setMetaProvider(provider)
       try {
         var ethersProvider = new ethers.providers.Web3Provider(provider)
-        var ethSigner = ethersProvider.getSigner()
+        var eSigner = ethersProvider.getSigner()
         var network = await provider.networkVersion
+        setEthProvider(ethersProvider)
+        setEthSigner(eSigner)
       } catch (error) {
         console.log(error)
       }
@@ -105,9 +108,9 @@ const DashboardPage: React.FC = () => {
           //initializing bitverse with signer coz the user must be present to access dashboard
           try {
             var contractBitverse = new ethers.Contract(
-              contractAddress,
+              contractMumbaiAddress,
               bitverseAbi.abi,
-              ethSigner,
+              eSigner,
             )
           } catch (error) {
             console.log(error)
@@ -144,6 +147,7 @@ const DashboardPage: React.FC = () => {
 
       <div className="mx-8 mb-32">
         <HandleDashboard
+          ethSigner={ethSigner}
           bitverseSigner={bitverseSigner}
           ipfs={snapshot.ipfs}
           isLoadingNetwork={isLoadingNetwork}
