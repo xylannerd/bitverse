@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useSnapshot } from 'valtio'
-import store from '../../stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from '../../utils/constants'
+import store from '../../../stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../../../utils/constants'
 import Logo from '../Logo/logo'
 import { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
@@ -13,7 +13,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
-import { HandleMetamaskConnectionButton } from './handleMetamaskButton'
+import HandleMetamaskConnectionButton from './handleMetamaskButton'
 import { useRouter } from 'next/router'
 
 const Navbar: React.FC = () => {
@@ -44,10 +44,12 @@ const Navbar: React.FC = () => {
 
   //keep this useEffect on the top!
   useEffect(() => {
+    //@ts-ignore
     if (ethereum.selectedAddress) {
+      //@ts-ignore
       store.userAddress = ethereum.selectedAddress
-      console.log('inside navbar: ' + snapshot.userAddress)
-      console.log(ethereum.selectedAddress)
+      // console.log('inside navbar: ' + snapshot.userAddress)
+      // console.log(ethereum.selectedAddress)
     }
   }, [snapshot.userAddress])
 
@@ -57,7 +59,9 @@ const Navbar: React.FC = () => {
     async function initProvider() {
       const prv = await detectEthereumProvider()
       setmProvider(prv)
+      //@ts-ignore
       store.networkId = prv.networkVersion
+      //@ts-ignore
       store.chainId = prv.chainId
     }
     initProvider()
@@ -97,6 +101,7 @@ const Navbar: React.FC = () => {
   }
 
   useEffect(() => {
+    //@ts-ignore
     ethereum.on('accountsChanged', (accounts) => {
       // Handle the new accounts, or lack thereof.
       // "accounts" will always be an array, but it can be empty.
@@ -105,6 +110,7 @@ const Navbar: React.FC = () => {
   }, [snapshot.userAddress])
 
   useEffect(() => {
+    //@ts-ignore
     ethereum.on('disconnect', (error) => {
       window.location.reload()
       console.log('Metamask Disconnected')
@@ -112,6 +118,7 @@ const Navbar: React.FC = () => {
   }, [snapshot.userAddress])
 
   useEffect(() => {
+    //@ts-ignore
     ethereum.on('chainChanged', (_chainId) => {
       // Handle the new chain.
       // Correctly handling chain changes can be complicated.

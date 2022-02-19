@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Nft } from '../../interfaces'
+import { Nft } from '../../../../utils/interfaces'
 import LoadingAnimation from '../../sharedComponents/loadingAnimation'
 import UserNftCard from './userNftCard'
 

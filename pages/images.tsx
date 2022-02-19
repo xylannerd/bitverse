@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import Navbar from './components/navComponent/navbar'
-import store from './stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from './utils/constants'
+import store from '../stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
@@ -11,7 +11,7 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
-import { Content } from './components/interfaces'
+import { Content } from '../utils/interfaces'
 import ImageCard from './components/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
 import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
@@ -44,7 +44,9 @@ export default function Images({ alchemy_key }) {
 
   // keep this useEffect
   useEffect(() => {
+    //@ts-ignore
     if (ethereum.selectedAddress) {
+      //@ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside imagesPage: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
@@ -93,7 +95,7 @@ export default function Images({ alchemy_key }) {
       try {
         ethersProvider = new ethers.providers.Web3Provider(provider)
         ethSigner = ethersProvider.getSigner()
-
+        //@ts-ignore
         network = await provider.networkVersion
       } catch (error) {
         console.log(error)

@@ -1,27 +1,20 @@
 import MetaMaskOnboarding from '@metamask/onboarding'
 
-
-interface Props{
-    userAddress: string
-    provider: any
-    requestForAccount: any
+interface Props {
+  userAddress: string
+  provider: any
+  requestForAccount: any
 }
 
-export const HandleMetamaskConnectionButton: React.FC<Props> = ({
+const HandleMetamaskConnectionButton: React.FC<Props> = ({
   userAddress,
   provider,
   requestForAccount,
 }) => {
-
-
-
-    
-function handleOnboarding() {
+  function handleOnboarding() {
     const onboarding = new MetaMaskOnboarding()
     onboarding.startOnboarding()
   }
-  
-  
 
   if (provider) {
     //metamask installed
@@ -55,3 +48,5 @@ function handleOnboarding() {
     )
   }
 }
+
+export default HandleMetamaskConnectionButton

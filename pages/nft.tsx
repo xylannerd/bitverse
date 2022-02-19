@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import Navbar from './components/navComponent/navbar'
-import { NftCard } from './components/nftPage/nftCard'
-import store from './stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from './utils/constants'
+import  NftCard  from './components/nftPage/nftCard'
+import store from '../stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
@@ -11,10 +11,10 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
-import { Nft } from './components/interfaces'
+import { Nft } from '../utils/interfaces'
 import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
-import { changeChain } from './sharedFunctions/changeEthereumChain'
+import { changeChain } from '../sharedFunctions/changeEthereumChain'
 import { checkTargetForNewValues } from 'framer-motion'
 import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 
@@ -52,7 +52,9 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
   // keep this useEffect
   useEffect(() => {
+    //@ts-ignore
     if (ethereum.selectedAddress) {
+      //@ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside nftPage: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
@@ -110,7 +112,8 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
       try {
         ethersProvider = new ethers.providers.Web3Provider(provider)
         ethSigner = ethersProvider.getSigner()
-        network = await provider.networkVersion
+        //@ts-ignore
+        network = provider.networkVersion
       } catch (error) {
         console.log(error)
       }
