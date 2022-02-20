@@ -228,7 +228,7 @@ export default function Images() {
         <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />
       )}
       <Navbar />
-      <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl ml-8 items-center justify-center">
+      <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl items-center justify-center">
         <div className="cursor-pointer">Welcome to Images</div>
       </div>
       {isLoadingNetwork && (
