@@ -3,9 +3,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../../../public/spiral-dots-preloader.json'
+import loadingAnimation from '../../../public/spiral-dots-preloader.json'
 
-import Inputs from '../../../../non-react-components/dashboard.addNftModal/inputs'
+import Inputs from './inputs'
 import { useEffect } from 'react'
 
 interface Props {

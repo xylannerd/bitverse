@@ -1,5 +1,5 @@
 import Lottie from 'react-lottie'
-import loadingAnimation from '../../../public/circle-spinner.json'
+import loadingAnimation from '../../public/circle-spinner.json'
 
 interface PropType {
   size: number

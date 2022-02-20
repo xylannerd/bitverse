@@ -1,20 +1,20 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
-import Navbar from './components/navComponent/navbar'
-import store from '../non-react-components/stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from '../non-react-components/utils/constants'
+import Navbar from '../components/navComponent/navbar'
+import store from '../components/stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../components/utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
 import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
-import LoadingAnimation from './components/sharedComponents/loadingAnimation'
-import { Content } from '../non-react-components/utils/interfaces'
-import ImageCard from './components/imagesPage/imageCard'
+import LoadingAnimation from '../components/sharedComponents/loadingAnimation'
+import { Content } from '../components/utils/interfaces'
+import ImageCard from '../components/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
-import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
+import NetworkChangePopUp from '../components/sharedComponents/networkChangePopUp'
 
 export default function Images() {
   //get images from the blockchain

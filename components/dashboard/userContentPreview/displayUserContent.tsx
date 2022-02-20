@@ -1,5 +1,5 @@
 import ContentCard from './contentCard'
-import { Content } from '../../../../non-react-components/utils/interfaces'
+import { Content } from '../../utils/interfaces'
 import { useEffect, useState } from 'react'
 import LoadingAnimation from '../../sharedComponents/loadingAnimation'
 
