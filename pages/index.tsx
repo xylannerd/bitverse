@@ -15,7 +15,7 @@ export default function Home() {
         <Link href="/nft">
           <a>
             <div className="text-white mt-32 font-semibold text-center py-4 px-8 bg-blue-400 cursor-pointer rounded-md">
-              Click here and let's start from NFTs
+              Click here and let's start from NFTs 🍭
             </div>
           </a>
         </Link>
