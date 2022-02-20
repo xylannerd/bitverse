@@ -5,7 +5,7 @@ import Select from 'react-select'
 import Lottie from 'react-lottie'
 import loadingAnimation from '../../../../public/spiral-dots-preloader.json'
 
-import Inputs from './inputs'
+import Inputs from '../../../../non-react-components/dashboard.addNftModal/inputs'
 import { useEffect } from 'react'
 
 interface Props {

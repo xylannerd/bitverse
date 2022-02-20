@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import Navbar from './components/navComponent/navbar'
 import NftCard  from './components/nftPage/nftCard'
-import store from './components/stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from './components/utils/constants'
+import store from '../non-react-components/stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../non-react-components/utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
@@ -11,17 +11,17 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
-import { Nft } from './components/interfaces'
+import { Nft } from '../non-react-components/utils/interfaces'
 import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
-import { changeChain } from './components/sharedFunctions/changeEthereumChain'
+import { changeChain } from '../non-react-components/sharedFunctions/changeEthereumChain'
 import { checkTargetForNewValues } from 'framer-motion'
 import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
 
-export default function Nfts({ alchemy_key, alchemy_url }) {
+export default function Nfts() {
   //make sure the wallet is connected
   //check if the user is connected to the right network
 
@@ -81,7 +81,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
     //use this to read from the contract
     //use signer from metamask to sign and send transactions.
     try {
-      var ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+      var ethersAlchemyProvider = new AlchemyProvider('maticmum', process.env.NEXT_PUBLIC_ALCHEMY_KEY)
       var bitverseAlchemy = new ethers.Contract(
         contractMumbaiAddress,
         bitverseAbi.abi,
@@ -273,11 +273,11 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
   )
 }
 
-export async function getStaticProps() {
-  return {
-    props: {
-      alchemy_key: process.env.ALCHEMY_KEY,
-      alchemy_url: process.env.ALCHEMY_URL,
-    },
-  }
-}
+// export async function getStaticProps() {
+//   return {
+//     props: {
+//       alchemy_key: process.env.ALCHEMY_KEY,
+//       alchemy_url: process.env.ALCHEMY_URL,
+//     },
+//   }
+// }

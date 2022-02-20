@@ -1,4 +1,4 @@
-import { changeChain } from '../sharedFunctions/changeEthereumChain'
+import { changeChain } from '../../../non-react-components/sharedFunctions/changeEthereumChain'
 
 interface PropType {
   setNetworkChangePopUp: any

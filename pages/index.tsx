@@ -1,5 +1,4 @@
 import Navbar from './components/navComponent/navbar'
-import Head from 'next/head'
 import React from 'react'
 
 

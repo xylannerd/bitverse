@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import getTokenMetadata from '../sharedFunctions/getTokenMetadata'
-import { Nft } from '../interfaces'
+import getTokenMetadata from '../../../non-react-components/sharedFunctions/getTokenMetadata'
+import { Nft } from '../../../non-react-components/utils/interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
-import { RIGHT_NETWORK } from '../utils/constants'
-import { changeChain } from '../sharedFunctions/changeEthereumChain'
+import { RIGHT_NETWORK } from '../../../non-react-components/utils/constants'
+import { changeChain } from '../../../non-react-components/sharedFunctions/changeEthereumChain'
 
 interface Props {
   nft: Nft

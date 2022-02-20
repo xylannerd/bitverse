@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import Navbar from './components/navComponent/navbar'
-import store from './components/stateGlobal/blockchain.state'
-import { RIGHT_NETWORK } from './components/utils/constants'
+import store from '../non-react-components/stateGlobal/blockchain.state'
+import { RIGHT_NETWORK } from '../non-react-components/utils/constants'
 import * as IPFS from 'ipfs-core'
 import { ethers } from 'ethers'
 //temporary
@@ -11,12 +11,12 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
-import { Content } from './components/interfaces'
+import { Content } from '../non-react-components/utils/interfaces'
 import ImageCard from './components/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
 import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 
-export default function Images({ alchemy_key }) {
+export default function Images() {
   //get images from the blockchain
   //preview them
   const snapshot = useSnapshot(store)
@@ -65,7 +65,7 @@ export default function Images({ alchemy_key }) {
     const provider = await detectEthereumProvider()
 
     try {
-      var ethersAlchemyProvider = new AlchemyProvider('maticmum', alchemy_key)
+      var ethersAlchemyProvider = new AlchemyProvider('maticmum', process.env.NEXT_PUBLIC_ALCHEMY_KEY)
       var bitverseAlchemy = new ethers.Contract(
         contractMumbaiAddress,
         bitverseAbi.abi,
@@ -262,11 +262,11 @@ export default function Images({ alchemy_key }) {
   )
 }
 
-export async function getStaticProps() {
-  return {
-    props: {
-      alchemy_key: process.env.ALCHEMY_KEY,
-      alchemy_url: process.env.ALCHEMY_URL,
-    },
-  }
-}
+// export async function getStaticProps() {
+//   return {
+//     props: {
+//       alchemy_key: process.env.ALCHEMY_KEY,
+//       alchemy_url: process.env.ALCHEMY_URL,
+//     },
+//   }
+// }
