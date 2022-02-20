@@ -52,7 +52,9 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
 
   // keep this useEffect
   useEffect(() => {
+    // @ts-ignore
     if (ethereum.selectedAddress) {
+      // @ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside nftPage: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
@@ -110,6 +112,7 @@ export default function Nfts({ alchemy_key, alchemy_url }) {
       try {
         ethersProvider = new ethers.providers.Web3Provider(provider)
         ethSigner = ethersProvider.getSigner()
+        // @ts-ignore
         network = await provider.networkVersion
       } catch (error) {
         console.log(error)
