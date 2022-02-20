@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useSnapshot } from 'valtio'
-import store from '../../../stateGlobal/blockchain.state'
-import MimedNft from '../../../pages/components/dashboard/addNftModal/mimedNft'
+import store from '../../../../stateGlobal/blockchain.state'
+import MimedNft from './mimedNft'
 
 interface PropType {
   userAddress: string

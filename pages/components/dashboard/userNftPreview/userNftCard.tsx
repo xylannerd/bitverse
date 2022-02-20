@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Nft } from '../../../utils/interfaces'
-import getTokenMetadata from '../../../sharedFunctions/getTokenMetadata'
+import { Nft } from '../../../../utils/interfaces'
+import getTokenMetadata from '../../../../sharedFunctions/getTokenMetadata'
 
 /* 
   TODO:
