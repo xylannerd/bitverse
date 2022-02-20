@@ -13,7 +13,7 @@ import { ethers } from 'ethers'
 import IPFS, { CID } from 'ipfs-core'
 
 
-import bitverseAbi from '../../../../build/contracts/Bitverse.json'
+import bitverseAbi from '../../../../contract-mumbai-testnet/bitverse.json'
 
 import Confirmation from './confirmation'
 
