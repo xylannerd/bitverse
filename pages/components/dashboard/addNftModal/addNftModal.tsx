@@ -293,11 +293,11 @@ const NftModal: React.FC<NftModalProps> = ({
   }
 
   //Closes the modal
-  const exitModal = (e) => {
+  const exitModal = (e: any) => {
     setIsNftModalOpen(false)
 
     //this part stops the click from propagating
-    if (!e) var e = window.event
+    if (!e) var e: any = window.event
     e.cancelBubble = true
     if (e.stopPropagation) e.stopPropagation()
   }

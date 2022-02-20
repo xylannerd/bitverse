@@ -14,6 +14,8 @@ import IPFS, { CID } from 'ipfs-core'
 
 
 import bitverseAbi from '../../../../contract-mumbai-testnet/bitverse.json'
+import { contractMumbaiAddress } from '../../../../contract-mumbai-testnet/contractAddress'
+
 
 import Confirmation from './confirmation'
 
@@ -86,13 +88,17 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   //Closes the modal
-  const exitModal = (e) => {
+  const exitModal = (e: any) => {
     closeModal(false)
 
     //this part stops the click from propagating
-    if (!e) var e = window.event
+    if (!e) var e: any = window.event
     e.cancelBubble = true
     if (e.stopPropagation) e.stopPropagation()
+
+    // e ??= window.event!; // if e is not there set it to window.event
+    // e.cancelBubble = true;
+    // e.stopPropagation?.(); // if stopPropagation exists call it
   }
 
   const exitAndRefresh = (e: any) => {
@@ -388,6 +394,7 @@ const Modal: React.FC<ModalProps> = ({
       var provider = await detectEthereumProvider()
       var ethProvider = new ethers.providers.Web3Provider(provider)
       var ethSigner = ethProvider.getSigner()
+      // @ts-ignore
       var network = provider.networkVersion
   
     } catch (error) {
@@ -400,7 +407,7 @@ const Modal: React.FC<ModalProps> = ({
       mBitverse = bitverseSigner
       ? bitverseSigner
       : new ethers.Contract(
-          bitverseAbi.networks[network].address,
+          contractMumbaiAddress,
           bitverseAbi.abi,
           ethSigner,
         )

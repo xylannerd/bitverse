@@ -13,7 +13,7 @@ import getTokenMetadata from '../../../sharedFunctions/getTokenMetadata'
 interface PropType {
   nft: Nft
   ipfs: any
-  bitverseSigner: any
+  ethSigner: any
 }
 
 const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {

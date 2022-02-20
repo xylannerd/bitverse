@@ -44,7 +44,9 @@ const DashboardPage: React.FC = () => {
 
   // keep this useEffect
   useEffect(() => {
+    // @ts-ignore
     if (ethereum.selectedAddress) {
+      // @ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside dashboard: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
@@ -85,6 +87,7 @@ const DashboardPage: React.FC = () => {
       try {
         var ethersProvider = new ethers.providers.Web3Provider(provider)
         var eSigner = ethersProvider.getSigner()
+        // @ts-ignore
         var network = await provider.networkVersion
         setEthProvider(ethersProvider)
         setEthSigner(eSigner)
