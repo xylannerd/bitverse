@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import getTokenMetadata from '../../../sharedFunctions/getTokenMetadata'
-import { Nft } from '../../../utils/interfaces'
+import getTokenMetadata from '../../sharedFunctions/getTokenMetadata'
+import { Nft } from '../interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
-import { RIGHT_NETWORK } from '../../../utils/constants'
-import { changeChain } from '../../../sharedFunctions/changeEthereumChain'
+import { RIGHT_NETWORK } from '../../utils/constants'
+import { changeChain } from '../../sharedFunctions/changeEthereumChain'
 
 interface Props {
   nft: Nft
@@ -24,7 +24,7 @@ interface Props {
 //const opensea_asset_url = 'https://opensea.io/assets/{tokenAddress}/{tokenId}'
 //const openesea_profile_url = 'https://opensea.io/{address}'
 
- const NftCard: React.FC<Props> = ({
+export const NftCard: React.FC<Props> = ({
   nft,
   ipfs,
   bitverseProvider,
@@ -348,5 +348,3 @@ interface Props {
     </div>
   )
 }
-
-export default NftCard

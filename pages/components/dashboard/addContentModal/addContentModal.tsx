@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
-import store from '../../../../stateGlobal/blockchain.state'
+import store from '../../../stateGlobal/blockchain.state'
 
 import Image from 'next/image'
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -12,26 +12,19 @@ import { ethers } from 'ethers'
 
 import IPFS, { CID } from 'ipfs-core'
 
-import bitverseAbi from '../../../../contract-mumbai-testnet/bitverse.json'
+
+import bitverseAbi from '../../../../build/contracts/Bitverse.json'
 
 import Confirmation from './confirmation'
 
 import { saveAs } from 'file-saver'
 import UploadProgress from './uploadProgress'
-import { contractMumbaiAddress } from '../../../../contract-mumbai-testnet/contractAddress'
-// import { MetaMaskInpageProvider } from "@metamask/providers"
 
 interface ModalProps {
   closeModal: any
   ipfs: any
   bitverseSigner: any
 }
-
-// declare global {
-//   interface Window {
-//     ethereum: MetaMaskInpageProvider;
-//   }
-// }
 
 const Modal: React.FC<ModalProps> = ({
   closeModal,
@@ -72,7 +65,7 @@ const Modal: React.FC<ModalProps> = ({
   //capture the image and previews
   const captureImage = (event) => {
     event.preventDefault()
-    // console.log(event.target.files)
+    console.log(event.target.files)
     //checks the mime type and only accepts image type.
     if (event.target.files[0].type.substr(0, 5) === 'image') {
       setImageToUpload(event.target.files[0])
@@ -87,17 +80,17 @@ const Modal: React.FC<ModalProps> = ({
   //capture video and previews
   const captureVideo = (event) => {
     event.preventDefault()
-    // console.log(event.target.files)
+    console.log(event.target.files)
     setVideoToUpload(event.target.files[0])
     setFileCaptured(true)
   }
 
   //Closes the modal
-  const exitModal = (e: any) => {
+  const exitModal = (e) => {
     closeModal(false)
 
     //this part stops the click from propagating
-    if (!e) var e: any = window.event
+    if (!e) var e = window.event
     e.cancelBubble = true
     if (e.stopPropagation) e.stopPropagation()
   }
@@ -131,7 +124,7 @@ const Modal: React.FC<ModalProps> = ({
   //This is where we get the form data and
   //we process it for ipfs and bitverse.
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    // console.log(JSON.stringify(data))
+    console.log(JSON.stringify(data))
 
     // upload to ipfs
     // then to bitverse!
@@ -395,21 +388,27 @@ const Modal: React.FC<ModalProps> = ({
       var provider = await detectEthereumProvider()
       var ethProvider = new ethers.providers.Web3Provider(provider)
       var ethSigner = ethProvider.getSigner()
-      //@ts-ignore
       var network = provider.networkVersion
+  
     } catch (error) {
       console.error(error)
     }
-
+   
     //Can be initialised with a provider or a signer
     //use signer to write to blockchain
     try {
       mBitverse = bitverseSigner
-        ? bitverseSigner
-        : new ethers.Contract(contractMumbaiAddress, bitverseAbi.abi, ethSigner)
+      ? bitverseSigner
+      : new ethers.Contract(
+          bitverseAbi.networks[network].address,
+          bitverseAbi.abi,
+          ethSigner,
+        )
     } catch (error) {
       console.error(error)
+      
     }
+   
 
     console.log('*********  bitverse ***********')
     console.log(`contentCid - ${contentHash}

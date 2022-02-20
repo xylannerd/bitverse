@@ -7,19 +7,19 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 // // //
 import { useSnapshot } from 'valtio'
-import store from '../stateGlobal/blockchain.state'
+import store from './stateGlobal/blockchain.state'
 import Navbar from './components/navComponent/navbar'
 import { useContext, useEffect, useState } from 'react'
 import Modal from './components/dashboard/addContentModal/addContentModal'
 import NftModal from './components/dashboard/addNftModal/addNftModal'
 
 //interfaces
-import { Content } from '../utils/interfaces'
+import { Content } from './components/interfaces'
 //components
 import DisplayUserContent from './components/dashboard/userContentPreview/displayUserContent'
 
-import { RIGHT_NETWORK } from '../utils/constants'
-import  HandleDashboard  from './components/dashboard/handleDashboard'
+import { RIGHT_NETWORK } from './utils/constants'
+import { HandleDashboard } from './components/dashboard/handleDashboard'
 
 const DashboardPage: React.FC = () => {
   const snapshot = useSnapshot(store)
@@ -44,9 +44,7 @@ const DashboardPage: React.FC = () => {
 
   // keep this useEffect
   useEffect(() => {
-    //@ts-ignore
     if (ethereum.selectedAddress) {
-      //@ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside dashboard: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
@@ -87,7 +85,6 @@ const DashboardPage: React.FC = () => {
       try {
         var ethersProvider = new ethers.providers.Web3Provider(provider)
         var eSigner = ethersProvider.getSigner()
-        //@ts-ignore
         var network = await provider.networkVersion
         setEthProvider(ethersProvider)
         setEthSigner(eSigner)

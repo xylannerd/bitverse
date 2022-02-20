@@ -2,10 +2,10 @@ import { SubmitHandler } from 'react-hook-form'
 import { BigNumber, ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
-import Inputs from '../../../../utils/inputs'
+import Inputs from './inputs'
 import NftPreview from './nftPreview'
 import NftForm from './nftForm'
-import toPaddedHex from '../../../../utils/toPaddedHex'
+import toPaddedHex from '../../../utils/toPaddedHex'
 import AddingNftToBitverseProgress from './addingNftToBitverseProgress'
 
 interface NftModalProps {
@@ -293,11 +293,11 @@ const NftModal: React.FC<NftModalProps> = ({
   }
 
   //Closes the modal
-  const exitModal = (e: any) => {
+  const exitModal = (e) => {
     setIsNftModalOpen(false)
 
     //this part stops the click from propagating
-    if (!e) var e: any = window.event
+    if (!e) var e = window.event
     e.cancelBubble = true
     if (e.stopPropagation) e.stopPropagation()
   }

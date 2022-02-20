@@ -1,7 +1,6 @@
 //TODO
 export const changeChain = async () => {
   try {
-    //@ts-ignore
     await ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x13881' }],
@@ -10,7 +9,6 @@ export const changeChain = async () => {
     // This error code indicates that the chain has not been added to MetaMask.
     if (switchError.code === 4902) {
       try {
-        //@ts-ignore
         await ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [

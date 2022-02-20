@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Nft } from '../../../../utils/interfaces'
-import getTokenMetadata from '../../../../sharedFunctions/getTokenMetadata'
+import { Nft } from '../../interfaces'
+import getTokenMetadata from '../../../sharedFunctions/getTokenMetadata'
 
 /* 
   TODO:
@@ -13,7 +13,7 @@ import getTokenMetadata from '../../../../sharedFunctions/getTokenMetadata'
 interface PropType {
   nft: Nft
   ipfs: any
-  ethSigner: any
+  bitverseSigner: any
 }
 
 const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {

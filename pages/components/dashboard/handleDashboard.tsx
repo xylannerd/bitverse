@@ -1,6 +1,6 @@
 import DisplayUserContent from './userContentPreview/displayUserContent'
-import  AddNft  from './addNft'
-import  AddContent  from './addContent'
+import { AddNft } from './addNft'
+import { AddContent } from './addContent'
 import DisplayUserNfts from './userNftPreview/displayUserNfts'
 import { useState } from 'react'
 import LoadingAnimation from '../sharedComponents/loadingAnimation'
@@ -20,7 +20,7 @@ interface Props {
   setisModalOpen: any
 }
 
- const HandleDashboard: React.FC<Props> = ({
+export const HandleDashboard: React.FC<Props> = ({
   ethSigner,
   bitverseSigner,
   ipfs,
@@ -127,5 +127,3 @@ interface Props {
     )
   }
 }
-
-export default HandleDashboard

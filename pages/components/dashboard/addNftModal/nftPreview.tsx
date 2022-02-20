@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useSnapshot } from 'valtio'
-import store from '../../../../stateGlobal/blockchain.state'
+import store from '../../../stateGlobal/blockchain.state'
 import MimedNft from './mimedNft'
 
 interface PropType {
