@@ -7,7 +7,7 @@ interface Props{
     requestForAccount: any
 }
 
-export const HandleMetamaskConnectionButton: React.FC<Props> = ({
+ const HandleMetamaskConnectionButton: React.FC<Props> = ({
   userAddress,
   provider,
   requestForAccount,
@@ -55,3 +55,4 @@ function handleOnboarding() {
     )
   }
 }
+export default HandleMetamaskConnectionButton

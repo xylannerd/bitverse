@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Content } from '../interfaces'
+import { Content } from '../../../componentsNonReact/interfaces'
 import Blockies from 'react-blockies'
 import TxSpinner from '../sharedComponents/txSpinner'
 import { CID } from 'multiformats'
-import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../../utils/constants'
+import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../../../componentsNonReact/utils/constants'
 
 interface PropType {
   image: Content

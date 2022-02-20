@@ -2,10 +2,10 @@ import { SubmitHandler } from 'react-hook-form'
 import { BigNumber, ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import detectEthereumProvider from '@metamask/detect-provider'
-import Inputs from './inputs'
+import Inputs from '../../../../componentsNonReact/dashboard/addNftModal/inputs'
 import NftPreview from './nftPreview'
 import NftForm from './nftForm'
-import toPaddedHex from '../../../utils/toPaddedHex'
+import toPaddedHex from '../../../../componentsNonReact/utils/toPaddedHex'
 import AddingNftToBitverseProgress from './addingNftToBitverseProgress'
 
 interface NftModalProps {

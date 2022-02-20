@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { CID } from 'multiformats/cid'
-import { Content } from '../../interfaces'
-import { IPFS_GATEWAY_URL } from '../../../utils/constants'
+import { Content } from '../../../../componentsNonReact/interfaces'
+import { IPFS_GATEWAY_URL } from '../../../../componentsNonReact/utils/constants'
 
 const IPFS_GATEWAY = 'ipfs.io'
 const IPFS_PUBLIC_GATEWAY = 'dweb.link'

@@ -1,4 +1,4 @@
-import { Nft } from '../components/interfaces'
+import { Nft } from '../interfaces'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import { useState } from 'react'

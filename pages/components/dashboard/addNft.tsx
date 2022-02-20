@@ -3,7 +3,7 @@ interface Props {
   isNftModalOpen: boolean
 }
 
-export const AddNft: React.FC<Props> = ({
+const AddNft: React.FC<Props> = ({
   setIsNftModalOpen,
   isNftModalOpen,
 }) => {
@@ -20,3 +20,5 @@ export const AddNft: React.FC<Props> = ({
     </div>
   )
 }
+
+export default AddNft

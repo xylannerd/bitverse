@@ -3,7 +3,7 @@ interface Props {
   isModalOpen: boolean
 }
 
-export const AddContent: React.FC<Props> = ({
+ const AddContent: React.FC<Props> = ({
   setisModalOpen,
   isModalOpen,
 }) => {
@@ -17,3 +17,5 @@ export const AddContent: React.FC<Props> = ({
     </div>
   )
 }
+
+export default AddContent
