@@ -88,8 +88,8 @@ const NftPreview: React.FC<PropType> = ({
 
   if (isInvalidAddress) {
     return (
-      <div className="text-center text-red-500 w-full h-full items-center justify-center">
-        <div className="div"> Invalid Token Address Entered!</div>
+      <div className="flex text-center text-red-500 w-full h-full items-center justify-center">
+        <div className="text-center"> Invalid Token Address Entered!</div>
       </div>
     )
   } else if (errorOccured) {
