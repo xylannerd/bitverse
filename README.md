@@ -31,4 +31,5 @@ Note: You need an alchemy-key (Polygon Mumbai) to run this in your local machine
 Just add an env.local file with your alchemy-key like so:
 
 //inside env.local
+
 NEXT_PUBLIC_ALCHEMY_KEY=yOurAlchEMYkEY
