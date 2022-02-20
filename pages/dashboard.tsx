@@ -7,18 +7,18 @@ import bitverseAbi from '../contract-mumbai-testnet/bitverse.json'
 import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddress'
 // // //
 import { useSnapshot } from 'valtio'
-import store from '../componentsNonReact/stateGlobal/blockchain.state'
+import store from './components/stateGlobal/blockchain.state'
 import Navbar from './components/navComponent/navbar'
 import { useContext, useEffect, useState } from 'react'
 import Modal from './components/dashboard/addContentModal/addContentModal'
 import NftModal from './components/dashboard/addNftModal/addNftModal'
 
 //interfaces
-import { Content } from '../componentsNonReact/interfaces'
+import { Content } from './components/interfaces'
 //components
 import DisplayUserContent from './components/dashboard/userContentPreview/displayUserContent'
 
-import { RIGHT_NETWORK } from '../componentsNonReact/utils/constants'
+import { RIGHT_NETWORK } from './components/utils/constants'
 import  HandleDashboard  from './components/dashboard/handleDashboard'
 
 const DashboardPage: React.FC = () => {

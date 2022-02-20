@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Content } from '../interfaces'
 import Blockies from 'react-blockies'
-import TxSpinner from '../../pages/components/sharedComponents/txSpinner'
+import TxSpinner from '../sharedComponents/txSpinner'
 import { CID } from 'multiformats'
 import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../utils/constants'
 

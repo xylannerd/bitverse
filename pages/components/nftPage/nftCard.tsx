@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import getTokenMetadata from '../sharedFunctions/getTokenMetadata'
 import { Nft } from '../interfaces'
 import Blockies from 'react-blockies'
-import TxSpinner from '../../pages/components/sharedComponents/txSpinner'
+import TxSpinner from '../sharedComponents/txSpinner'
 import { RIGHT_NETWORK } from '../utils/constants'
 import { changeChain } from '../sharedFunctions/changeEthereumChain'
 
