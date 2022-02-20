@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import Navbar from './components/navComponent/navbar'
-import  NftCard  from './components/nftPage/nftCard'
+import  NftCard  from '../components/nftPage/nftCard'
 import store from '../stateGlobal/blockchain.state'
 import { RIGHT_NETWORK } from '../utils/constants'
 import * as IPFS from 'ipfs-core'

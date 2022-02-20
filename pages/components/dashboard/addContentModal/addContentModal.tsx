@@ -33,7 +33,7 @@ interface ModalProps {
 //   }
 // }
 
-const Modal: React.FC<ModalProps> = ({
+const ContentModal: React.FC<ModalProps> = ({
   closeModal,
   ipfs,
   bitverseSigner,
@@ -489,4 +489,4 @@ const Modal: React.FC<ModalProps> = ({
   )
 }
 
-export default Modal
+export default ContentModal

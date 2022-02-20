@@ -10,7 +10,7 @@ import { useSnapshot } from 'valtio'
 import store from '../stateGlobal/blockchain.state'
 import Navbar from './components/navComponent/navbar'
 import { useContext, useEffect, useState } from 'react'
-import Modal from './components/dashboard/addContentModal/addContentModal'
+import ContentModal from './components/dashboard/addContentModal/addContentModal'
 import NftModal from './components/dashboard/addNftModal/addNftModal'
 
 //interfaces
@@ -132,7 +132,7 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="div">
       {isModalOpen && (
-        <Modal
+        <ContentModal
           closeModal={setisModalOpen}
           ipfs={snapshot.ipfs}
           bitverseSigner={bitverseSigner}
