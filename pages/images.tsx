@@ -12,7 +12,7 @@ import { contractMumbaiAddress } from '../contract-mumbai-testnet/contractAddres
 import detectEthereumProvider from '@metamask/detect-provider'
 import LoadingAnimation from './components/sharedComponents/loadingAnimation'
 import { Content } from '../componentsNonReact/interfaces'
-import ImageCard from './components/imagesPage/imageCard'
+import ImageCard from '../componentsNonReact/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
 import NetworkChangePopUp from './components/sharedComponents/networkChangePopUp'
 

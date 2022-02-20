@@ -1,123 +1,162 @@
 import { useEffect, useState } from 'react'
-import { Content } from '../../../componentsNonReact/interfaces'
+import getTokenMetadata from '../sharedFunctions/getTokenMetadata'
+import { Nft } from '../interfaces'
 import Blockies from 'react-blockies'
-import TxSpinner from '../sharedComponents/txSpinner'
-import { CID } from 'multiformats'
-import { IPFS_GATEWAY_URL, RIGHT_NETWORK } from '../../../componentsNonReact/utils/constants'
+import TxSpinner from '../../pages/components/sharedComponents/txSpinner'
+import { RIGHT_NETWORK } from '../utils/constants'
+import { changeChain } from '../sharedFunctions/changeEthereumChain'
 
-interface PropType {
-  image: Content
+interface Props {
+  nft: Nft
   ipfs: any
   bitverseSigner: any
   bitverseProvider: any
   bitverseAlchemy: any
+  alchemyProvider: any
   userAddress: string
   networkVersion: number
   setNetworkChangePopUp: any
 }
 
-const ImageCard: React.FC<PropType> = ({
-  image,
+//DONT FORGET - the link/redirect to opensea wouldn't work if your contract is deployed in ganache/remix/locally
+//it will show 404 error which is fine
+//redirect to opensea asset page will work in production/mainnet where contract has a mainnet address
+//const opensea_asset_url = 'https://opensea.io/assets/{tokenAddress}/{tokenId}'
+//const openesea_profile_url = 'https://opensea.io/{address}'
+
+ const NftCard: React.FC<Props> = ({
+  nft,
+  ipfs,
   bitverseProvider,
   bitverseSigner,
   bitverseAlchemy,
-  ipfs,
+  alchemyProvider,
   userAddress,
   networkVersion,
   setNetworkChangePopUp
 }) => {
-  //
-  const [imageName, setImageName] = useState(null)
-  const [imageDescription, setImageDescription] = useState(null)
+
+
+
+  //LOCAL_STATE
+  const [nftOwner, setNftOwner] = useState(null)
+  const [tokenUri, setTokenUri] = useState('')
+  const [isIpfsUrl, setIsIpfsUrl] = useState<boolean>(false)
+
+  //ERC721
+  const [tokenName, setTokenName] = useState('')
+  const [tokenSymbol, setTokenSymbol] = useState('')
+  const [ownerBalance, setOwnerBalance] = useState(null)
+
+  //data from metadata
+  const [imageUrl, setImageUrl] = useState(null)
+  const [name, setName] = useState(null)
+  const [description, setDescription] = useState(null)
+  const [externalLink, setExternalLink] = useState(null)
+  const [animationUrl, setAnimationUrl] = useState(null)
 
   //has user liked or disliked the nft
   const [userLiked, setUserLiked] = useState(false)
   const [userDisliked, setUserDisliked] = useState(false)
   const [likeTxProcessing, setLikeTxProcessing] = useState(false)
   const [dislikeTxProcessing, setdislikeTxProcessing] = useState(false)
-  //flip this to update image like/dislike status
+  //flip this to update nft like/dislike status
   const [updateLikeStatus, setUpdateLikeStatus] = useState(false)
-  const [imageNetlike, setImageNetlike] = useState(0)
 
-  //ipfs image url
-  let cid
-  //cid v1 is new and better than cid v0, lookup up the reasons yourself
-  if (CID.parse(image.cid).version == 0) {
-    cid = CID.parse(image.cid).toV1().toString()
-  } else {
-    cid = image.cid
-  }
+  const [nftNetlike, setNftNetlike] = useState(0)
 
-  const imageSource = `https://${cid}.${IPFS_GATEWAY_URL}`
-  //   const imageSource = `ipfs://${cid}`
+  
 
   useEffect(() => {
     getUserLikeOrDislike()
-    refreshImageNetlike()
-    console.log('useEffect_imageCard - getUserLikeOrDislike')
-  }, [image, updateLikeStatus])
+    refreshNftNetlike()
+    console.log('useEffect - getUserLikeOrDislike')
+  }, [nft, updateLikeStatus])
 
-  //fetch imageMEtadata here
+  //fetch tokenMetadata here
   //prepare preview
-  // useEffect(() => {
-  //   getImageMetadata()
-  // }, [image])
-
-    //TODO
-  // async function getImageMetadata() {}
+  useEffect(() => {
+    getNftMetadata()
+  }, [nft])
 
   async function getUserLikeOrDislike() {
     if (bitverseAlchemy) {
-
       try {
-        const tx = await bitverseAlchemy.checkIfUserLikedOrDislikedContent(image.cid, userAddress)
-        console.log('getUserLikeOrDislike_Image')
+        const tx = await bitverseAlchemy.checkIfUserLikedOrDislikedNft(
+          nft.id,
+          userAddress,
+        )
+        console.log('getUserLikeOrDislike')
         console.log(tx)
-        setUserLiked(tx.likedContent)
-        setUserDisliked(tx.dislikedContent)
+        setUserLiked(tx.likedNft)
+        setUserDisliked(tx.dislikedNft)
       } catch (error) {
         console.log(
-          'error in imageCard component\ncheckIfUserLikedOrDislikedImage fn',
+          'error in nftCard component\ncheckIfUserLikedOrDislikedNft fn',
         )
         console.log(error)
       }
     } else {
-      console.log(
-        'contract not found: Image-Page \ngetUserLikeOrDislike_Image fn',
-      )
+      console.log('contract not found: NFT-Page \ngetUserLikeOrDislike fn')
     }
   }
 
-  async function refreshImageNetlike() {
+  async function refreshNftNetlike() {
     try {
-      const _image = await bitverseAlchemy.contentsMapping(image.cid)
-      setImageNetlike(_image.netlikes.toNumber())
+      // const _nft = await bitverseAlchemy.nftMapping(nft.id)
+      const _nft = await bitverseAlchemy.nftMapping(nft.id)
+      setNftNetlike(_nft.netlikes.toNumber())
     } catch (error) {
-      console.log('error on refreshImageNetlike fn')
+      console.log('error on refreshNftNetlike fn')
+
       console.log(error)
     }
   }
 
+  async function getNftMetadata() {
+    const {
+      _tokenName,
+      _tokenSymbol,
+      _name,
+      _description,
+      _imageUrl,
+      _animationUrl,
+      _tokenUri,
+      isIpfsUrl,
+      _nftOwner,
+    } = await getTokenMetadata(nft, ipfs, alchemyProvider)
+
+    setIsIpfsUrl(isIpfsUrl)
+    setTokenName(_tokenName)
+    setTokenSymbol(_tokenSymbol)
+    setName(_name)
+    setDescription(_description)
+    setImageUrl(_imageUrl)
+    setAnimationUrl(_animationUrl)
+    setTokenUri(tokenUri)
+    setNftOwner(_nftOwner)
+
+    // console.log(await getTokenMetadata(nft, ipfs, alchemyProvider))
+  }
 
 
-  const likeImage = async () => {
+  const likeNft = async () => {
 
-      //if not connected to the right network,
+    //if not connected to the right network,
     //prompt user to connect to polygon mumbai network
     if(networkVersion != RIGHT_NETWORK){
       setNetworkChangePopUp(true)
     }
-
-
+    
     if (userAddress) {
       setLikeTxProcessing(true)
 
       console.log('like clicked!')
-      //   console.log(bitverseSigner)
+      console.log(bitverseSigner)
 
       //invoke likeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverseSigner.like(image.cid)
+        const tx = await bitverseSigner.likeNft(nft.id)
         console.log(tx)
 
         await tx.wait()
@@ -129,11 +168,11 @@ const ImageCard: React.FC<PropType> = ({
         setLikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Like an image 🍭')
+      alert('Please link your account to Like an NFT 🍭')
     }
   }
 
-  const dislikeImage = async () => {
+  const dislikeNft = async () => {
 
       //if not connected to the right network,
     //prompt user to connect to polygon mumbai network
@@ -143,12 +182,16 @@ const ImageCard: React.FC<PropType> = ({
 
     if (userAddress) {
       setdislikeTxProcessing(true)
-      console.log('dislike clicked!')
-      //   console.log(bitverseSigner)
 
+      console.log('dislike clicked!')
+      console.log(bitverseSigner)
+
+      //invoke dislikeNft(uint256 _nftId) fn on bitverse contract
       try {
-        const tx = await bitverseSigner.dislike(image.cid)
+        const tx = await bitverseSigner.dislikeNft(nft.id)
+
         console.log(tx)
+
         await tx.wait()
         setdislikeTxProcessing(false)
         setUpdateLikeStatus(!updateLikeStatus)
@@ -157,57 +200,57 @@ const ImageCard: React.FC<PropType> = ({
         setdislikeTxProcessing(false)
       }
     } else {
-      alert('Please link your account to Dislike an Image 🍭')
+      alert('Please link your account to Dislike an NFT 🍭')
     }
   }
 
+  //show nft-tokenName
+  //else show metadata name
+  //else
+
   return (
     <div
-      id="imageCard"
+      id="nftCard"
       className="flex flex-col w-72 h-96 justify-start rounded-xl overflow-hidden bg-gray-800 shadow-xl"
     >
-      <a href={`ipfs://${image.cid}`} target="_blank">
+      <a
+        href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
+        target="_blank"
+      >
         <div
-          id="imagePreview"
+          id="nftImage"
           className="flex w-full justify-center h-80 bg-gray-900 relative cursor-pointer"
         >
           <div className="text-white pl-2 pr-2 absolute bottom-1 left-0 bg-blue-900 font-thin bg-opacity-50 rounded-r-md">
-            {imageName}
+            {name}
           </div>
 
-          <img className="w-full object-cover" src={imageSource} />
+          <img className="w-full object-cover" src={imageUrl} />
         </div>
       </a>
 
       <div className="flex flex-row justify-between w-full h-16">
         <div className="flex flex-row ml-4 justify-center items-center">
-          {image.author && (
+          {nftOwner && (
             <div className="flex flex-row items-center space-x-2">
               <div className="flex items-center rounded-full overflow-hidden cursor-pointer">
-                {/* puth link to author etherscan here */}
-                <a
-                  href={`https://etherscan.io/address/${image.author}`}
-                  target="_blank"
-                >
+                <a href={`https://opensea.io/${nftOwner}`} target="_blank">
                   {' '}
                   <Blockies
-                    seed={image.author}
+                    seed={nftOwner}
                     size={8}
                     bgColor="#000000"
                     spotColor="#000000"
                   />
                 </a>
               </div>
-              <a
-                href={`https://etherscan.io/address/${image.author}`}
-                target="_blank"
-              >
-                <div className="text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${image.author.substr(
+              <a href={`https://opensea.io/${nftOwner}`} target="_blank">
+                <div className="slashed-zero text-gray-400 hover:text-opacity-75 font-semibold cursor-pointer">{`${nftOwner.substr(
                   0,
                   3,
-                )}...${image.author.substr(
-                  image.author.length - 4,
-                  image.author.length,
+                )}...${nftOwner.substr(
+                  nftOwner.length - 4,
+                  nftOwner.length,
                 )}`}</div>
               </a>
             </div>
@@ -238,7 +281,7 @@ const ImageCard: React.FC<PropType> = ({
                   stroke="white"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
-                  onClick={likeImage}
+                  onClick={likeNft}
                 >
                   <path
                     strokeLinecap="round"
@@ -258,7 +301,7 @@ const ImageCard: React.FC<PropType> = ({
               id="netlikes"
               className="flex items-center justify-center text-white text-center h-full w-4"
             >
-              {imageNetlike}
+              {nftNetlike}
             </div>
             {/*  */}
             {userDisliked ? (
@@ -276,7 +319,7 @@ const ImageCard: React.FC<PropType> = ({
             ) : !dislikeTxProcessing ? (
               <div
                 className="w-8 h-full flex items-center justify-center"
-                onClick={dislikeImage}
+                onClick={dislikeNft}
               >
                 <svg
                   id="dislikeIconVacant"
@@ -306,4 +349,4 @@ const ImageCard: React.FC<PropType> = ({
   )
 }
 
-export default ImageCard
+export default NftCard

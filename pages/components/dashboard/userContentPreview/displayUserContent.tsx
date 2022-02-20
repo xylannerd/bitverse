@@ -1,4 +1,4 @@
-import ContentCard from './contentCard'
+import ContentCard from '../../../../componentsNonReact/dashboard/userContentPreview/contentCard'
 import { Content } from '../../../../componentsNonReact/interfaces'
 import { useEffect, useState } from 'react'
 import LoadingAnimation from '../../sharedComponents/loadingAnimation'

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Nft } from '../../../../componentsNonReact/interfaces'
 import LoadingAnimation from '../../sharedComponents/loadingAnimation'
-import UserNftCard from './userNftCard'
+import UserNftCard from '../../../../componentsNonReact/dashboard/userNftPreview/userNftCard'
 
 interface PropType {
   ethSigner: any
