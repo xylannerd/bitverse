@@ -3,3 +3,6 @@
  "engines": {
     "node": ">= 16.13.2"
   }
+
+  //env
+  NEXT_PUBLIC_ALCHEMY_KEY=yourkey
