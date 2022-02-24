@@ -35,12 +35,12 @@ const NftPreview: React.FC<PropType> = ({
 }) => {
   const snapshot = useSnapshot(store)
 
-  useEffect(() => {
-    console.log('**inside nft-preview**')
-    console.log('props.userAddress: ' + userAddress)
-    console.log('props.nftOwner: ' + nftOwner)
-    console.log('store.userAddress: ' + snapshot.userAddress)
-  }, [snapshot.userAddress, userAddress])
+  // useEffect(() => {
+  //   console.log('**inside nft-preview**')
+  //   console.log('props.userAddress: ' + userAddress)
+  //   console.log('props.nftOwner: ' + nftOwner)
+  //   console.log('store.userAddress: ' + snapshot.userAddress)
+  // }, [snapshot.userAddress, userAddress])
 
   function ValidateOwnerAndShowAddButton() {
     // var _userAddress = new String(userAddress)
@@ -48,8 +48,8 @@ const NftPreview: React.FC<PropType> = ({
     // var isEqual = JSON.stringify(_userAddress) === JSON.stringify(_nftOwner)
     // console.log(isEqual)
     const _userAddress = ethers.utils.getAddress(userAddress)
-    console.log('---nftPreviewPage---')
-    console.log('ethers.utils.getAddress: ' + _userAddress)
+    // console.log('---nftPreviewPage---')
+    // console.log('ethers.utils.getAddress: ' + _userAddress)
 
     if (nftOwner == _userAddress) {
       return (

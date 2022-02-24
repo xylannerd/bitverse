@@ -35,6 +35,7 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
   }
 
   const imageSource = `https://${cid}.${IPFS_GATEWAY_URL}`
+  // const imageSource = `https://${cid}.${IPFS_GATEWAY_URL}`
 
   if (userMetadata) {
     metadata = userMetadata.get(content.cid)
