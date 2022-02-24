@@ -16,7 +16,6 @@ import { NextPage } from 'next'
 import { AlchemyProvider } from '@ethersproject/providers'
 import { changeChain } from '../components/sharedFunctions/changeEthereumChain'
 import { checkTargetForNewValues } from 'framer-motion'
-import NetworkChangePopUp from '../components/sharedComponents/networkChangePopUp'
 
 //nft_metadata_cid: QmPzhc9ezphJ85qJWfVVpeHkPieDJznpYduGhMYD7Z4Ac9
 //ipfs_gateway_url:
@@ -44,27 +43,34 @@ export default function Nfts() {
 
   const [totalNftsCount, setTotalNftsCount] = useState(0)
 
-  //UI STATE
-  const [networkChangePopup, setNetworkChangePopUp] = useState(false)
+  // //UI STATE
+  // const [networkChangePopup, setNetworkChangePopUp] = useState(false)
   //toggle isLoadingNetwork when on other network
   const [isLoadingNetwork, setIsLoadingNetwork] = useState(true)
   const [isLoadingNfts, setIsLoadingNfts] = useState(true)
 
   // keep this useEffect
   useEffect(() => {
-    // @ts-ignore
+    
+    try {
+      // @ts-ignore
     if (ethereum.selectedAddress) {
       // @ts-ignore
       store.userAddress = ethereum.selectedAddress
       // console.log('inside nftPage: ' + snapshot.userAddress)
       // console.log(ethereum.selectedAddress)
+    }  
+    } catch (error) {
+      console.error(error)
     }
+    
   }, [snapshot.userAddress])
 
-  // useEffect(() => {
-  //   console.log('snapshot.ipfs status nft page:')
-  //   console.log(snapshot.ipfs)
-  // }, [])
+  useEffect(() => {
+    if(!snapshot.userAddress){
+      console.error("No linked account found")
+    }
+  },[])
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchNfts()
@@ -210,7 +216,6 @@ export default function Nfts() {
               alchemyProvider={alchemyProvider}
               userAddress={snapshot.userAddress}
               networkVersion={snapshot.networkId}
-              setNetworkChangePopUp={setNetworkChangePopUp}
             />
           ))}
         </div>
@@ -229,7 +234,7 @@ export default function Nfts() {
   return (
     <div className="div">
       {/* network change popUp here */}
-      {networkChangePopup && <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />}
+      {/* {networkChangePopup && <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />} */}
 
       <Navbar />
       <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl items-center justify-center">

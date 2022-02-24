@@ -14,7 +14,6 @@ import LoadingAnimation from '../components/sharedComponents/loadingAnimation'
 import { Content } from '../components/utils/interfaces'
 import ImageCard from '../components/imagesPage/imageCard'
 import { AlchemyProvider } from '@ethersproject/providers'
-import NetworkChangePopUp from '../components/sharedComponents/networkChangePopUp'
 
 export default function Images() {
   //get images from the blockchain
@@ -44,14 +43,24 @@ export default function Images() {
 
   // keep this useEffect
   useEffect(() => {
-    // @ts-ignore
-    if (ethereum.selectedAddress) {
+    try {
       // @ts-ignore
-      store.userAddress = ethereum.selectedAddress
-      // console.log('inside imagesPage: ' + snapshot.userAddress)
-      // console.log(ethereum.selectedAddress)
+      if (ethereum.selectedAddress) {
+        // @ts-ignore
+        store.userAddress = ethereum.selectedAddress
+        // console.log('inside imagesPage: ' + snapshot.userAddress)
+        // console.log(ethereum.selectedAddress)
+      }
+    } catch (error) {
+      // console.error(error)
     }
   }, [snapshot.userAddress])
+
+  useEffect(() => {
+    if(!snapshot.userAddress){
+      console.error("No linked account found")
+    }
+  },[])
 
   useEffect(() => {
     initBitverseAndIpfsAndFetchImages()
@@ -65,7 +74,10 @@ export default function Images() {
     const provider = await detectEthereumProvider()
 
     try {
-      var ethersAlchemyProvider = new AlchemyProvider('maticmum', process.env.NEXT_PUBLIC_ALCHEMY_KEY)
+      var ethersAlchemyProvider = new AlchemyProvider(
+        'maticmum',
+        process.env.NEXT_PUBLIC_ALCHEMY_KEY,
+      )
       var bitverseAlchemy = new ethers.Contract(
         contractMumbaiAddress,
         bitverseAbi.abi,
@@ -73,18 +85,21 @@ export default function Images() {
       )
       setAlchemyProvider(ethersAlchemyProvider)
       setBitverseWithAlchemy(bitverseAlchemy)
+      setIsLoadingNetwork(false)
       fetchTheImages(bitverseAlchemy)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
 
-    var ipfsNode = snapshot.ipfs
-      ? snapshot.ipfs
-      : await IPFS.create({ repo: 'ok' + Math.random() })
-    if (!snapshot.ipfs) {
-      store.ipfs = ipfsNode
-      // console.log('ipfs-node initialised imagePage')
-    }
+  
+      var ipfsNode = snapshot.ipfs
+        ? snapshot.ipfs
+        : await IPFS.create({ repo: 'ok' + Math.random() })
+      if (!snapshot.ipfs) {
+        store.ipfs = ipfsNode
+        // console.log('ipfs-node initialised imagePage')
+      }
+   
 
     var ethersProvider
     var ethSigner
@@ -98,7 +113,7 @@ export default function Images() {
         // @ts-ignore
         network = await provider.networkVersion
       } catch (error) {
-        console.log(error)
+        // console.error(error)
       }
       // console.log('network version imagePage: ' + network)
 
@@ -110,11 +125,10 @@ export default function Images() {
         setIsLoadingNetwork(false)
 
         //bitverseAbi.networks[network].address,
-        var contractBitverse
-        var contractWithSigner
+       
 
         try {
-          contractBitverse = new ethers.Contract(
+          var contractBitverse = new ethers.Contract(
             contractMumbaiAddress,
             bitverseAbi.abi,
             ethersProvider,
@@ -124,7 +138,7 @@ export default function Images() {
         }
 
         try {
-          contractWithSigner = new ethers.Contract(
+          var contractWithSigner = new ethers.Contract(
             contractMumbaiAddress,
             bitverseAbi.abi,
             ethSigner,
@@ -140,7 +154,7 @@ export default function Images() {
       } else {
         setRightNetwork(false)
         setIsLoadingNetwork(false)
-        console.log('please select the correct network')
+        console.error('please select the correct network')
       }
     }
   }
@@ -205,7 +219,6 @@ export default function Images() {
               bitverseAlchemy={bitverseWithAlchemy}
               userAddress={snapshot.userAddress}
               networkVersion={snapshot.networkId}
-              setNetworkChangePopUp={setNetworkChangePopUp}
             />
           ))}
         </div>
@@ -223,10 +236,7 @@ export default function Images() {
 
   return (
     <div className="div">
-      {/* network change popUp here */}
-      {networkChangePopup && (
-        <NetworkChangePopUp setNetworkChangePopUp={setNetworkChangePopUp} />
-      )}
+     
       <Navbar />
       <div className="flex flex-col mt-8 font-logofont text-logowhite font-bold text-2xl items-center justify-center">
         <div className="cursor-pointer">Welcome to Images</div>
