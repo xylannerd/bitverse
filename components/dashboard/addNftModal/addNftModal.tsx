@@ -86,9 +86,9 @@ const NftModal: React.FC<NftModalProps> = ({
 
   const [addingToBitverse, setAddingToBitverse] = useState(false)
 
-  useEffect(() => {
-    console.log(selectedTokenStandard)
-  }, [selectedTokenStandard])
+  // useEffect(() => {
+  //   console.log(selectedTokenStandard)
+  // }, [selectedTokenStandard])
 
   //This is where we get the form data and
   //we process the  NFT for bitverse.
@@ -97,8 +97,8 @@ const NftModal: React.FC<NftModalProps> = ({
     //Fetch the data from the Contract Address with given tokenAddress and tokenId
     //prepare the preview
     //if all good, upload it to bitverse
-    console.log('*** bigint form ***')
-    console.log(data.TokenId)
+    // console.log('*** bigint form ***')
+    // console.log(data.TokenId)
 
     fetchTheNft(data.TokenAddress, data.TokenId)
   }
@@ -108,19 +108,17 @@ const NftModal: React.FC<NftModalProps> = ({
     setTokenAddress(_tokenAddress)
     setTokenId(_tokenId)
 
-    var provider
-    var ethProvider
-    var ethSigner
+   
 
-    console.log('*** fetch_nft ***')
-    console.log('tokenAddress: ' + _tokenAddress)
-    console.log('tokenId: ' + _tokenId)
+    // console.log('*** fetch_nft ***')
+    // console.log('tokenAddress: ' + _tokenAddress)
+    // console.log('tokenId: ' + _tokenId)
 
     if (ethers.utils.isAddress(_tokenAddress)) {
       try {
-        provider = await detectEthereumProvider()
-        ethProvider = new ethers.providers.Web3Provider(provider)
-        ethSigner = ethProvider.getSigner()
+        var provider = await detectEthereumProvider()
+        var ethProvider = new ethers.providers.Web3Provider(provider)
+        var ethSigner = ethProvider.getSigner()
       } catch (error) {
         console.error(error)
         setErrorOccured(true)
@@ -148,7 +146,7 @@ const NftModal: React.FC<NftModalProps> = ({
           try {
             mtokenUri = await erc721contract.tokenURI(_tokenId)
             setTokenUri(mtokenUri)
-            console.log('uri :' + mtokenUri)
+            // console.log('uri :' + mtokenUri)
           } catch (error) {
             console.log(error)
             setErrorOccured(true)
@@ -158,14 +156,14 @@ const NftModal: React.FC<NftModalProps> = ({
             try {
               const res = await fetch(mtokenUri)
               const data = await res.json()
-              console.log(data)
+              // console.log(data)
               setImageUrl(data.image)
               setmName(data.name)
               setmDescription(data.description)
 
               // console.log("header: " + d.header)
             } catch (error) {
-              console.log(error)
+              console.error(error)
               setIsLoadingPreview(false)
               setErrorOccured(true)
             }
@@ -173,29 +171,29 @@ const NftModal: React.FC<NftModalProps> = ({
 
           const mNftOwner = await erc721contract.ownerOf(_tokenId)
           setNftOwner(mNftOwner)
-          console.log('nft owner :' + mNftOwner)
+          // console.log('nft owner :' + mNftOwner)
 
           const mtokenName = await erc721contract.name()
           setTokenName(mtokenName)
-          console.log('token name: ' + mtokenName)
+          // console.log('token name: ' + mtokenName)
 
           const mtokenSymbol = await erc721contract.symbol()
           setTokenSymbol(mtokenSymbol)
-          console.log('token symbol: ' + mtokenSymbol)
+          // console.log('token symbol: ' + mtokenSymbol)
 
           const mOwnerBalance = await erc721contract.balanceOf(mNftOwner)
           setOwnerBalance(mOwnerBalance.toNumber())
-          console.log('owner balance: ' + mOwnerBalance.toNumber())
+          // console.log('owner balance: ' + mOwnerBalance.toNumber())
 
           setIsLoadingPreview(false)
           setTokenPreview(true)
         } else {
-          console.log('Cannot initialize erc721 contract')
+          // console.log('Cannot initialize erc721 contract')
           setTokenPreview(true)
           setErrorOccured(true)
         }
       } else if (selectedTokenStandard.value === options[1].value) {
-        console.log('inside erc1155 fn')
+        // console.log('inside erc1155 fn')
         setTokenStandard(1155)
 
         /* For ERC1155 Token */
@@ -207,7 +205,7 @@ const NftModal: React.FC<NftModalProps> = ({
             ethSigner,
           )
         } catch (error) {
-          console.log(error)
+          console.error(error)
           setIsLoadingPreview(false)
           setErrorOccured(true)
         }
@@ -218,9 +216,9 @@ const NftModal: React.FC<NftModalProps> = ({
           try {
             mtokenUri = await erc1155contract.uri(_tokenId)
             setTokenUri(mtokenUri)
-            console.log('uri :' + mtokenUri)
+            // console.log('uri :' + mtokenUri)
           } catch (error) {
-            console.log(error)
+            console.error(error)
             setIsLoadingPreview(false)
             setErrorOccured(true)
           }
@@ -234,19 +232,19 @@ const NftModal: React.FC<NftModalProps> = ({
               0,
               mtokenUri.length - 4,
             )}${toPaddedHex(_tokenId)}`
-            console.log(theUri)
+            // console.log(theUri)
 
             try {
               const res = await fetch(theUri)
               const data = await res.json()
-              console.log(data)
+              // console.log(data)
               setImageUrl(data.image)
               setmName(data.name)
               setmDescription(data.description)
               setExternalLink(data.external_link)
               setAnimationUrl(data.animation_url)
             } catch (error) {
-              console.log(error)
+              console.error(error)
               setErrorOccured(true)
             }
           }
@@ -282,8 +280,8 @@ const NftModal: React.FC<NftModalProps> = ({
     }
 
     await addNftTx.wait()
-    console.log('********* result ***********')
-    console.log(addNftTx)
+    // console.log('********* result ***********')
+    // console.log(addNftTx)
 
     setShowSpinner(false)
     setIsUploading(false)

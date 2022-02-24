@@ -39,10 +39,10 @@ const NftForm: React.FC<Props> = ({
   errorOccured,
   setErrorOccured,
 }) => {
-  useEffect(() => {
-    console.log('error occured: ')
-    console.log(errorOccured)
-  }, [errorOccured])
+  // useEffect(() => {
+  //   // console.log('error occured: ')
+  //   // console.log(errorOccured)
+  // }, [errorOccured])
 
   var schema = yup.object().shape({
     TokenId: yup.string().required(),

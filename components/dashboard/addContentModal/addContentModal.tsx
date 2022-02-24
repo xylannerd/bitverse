@@ -67,7 +67,7 @@ const Modal: React.FC<ModalProps> = ({
   //capture the image and previews
   const captureImage = (event) => {
     event.preventDefault()
-    console.log(event.target.files)
+    // console.log(event.target.files)
     //checks the mime type and only accepts image type.
     if (event.target.files[0].type.substr(0, 5) === 'image') {
       setImageToUpload(event.target.files[0])
@@ -82,7 +82,7 @@ const Modal: React.FC<ModalProps> = ({
   //capture video and previews
   const captureVideo = (event) => {
     event.preventDefault()
-    console.log(event.target.files)
+    // console.log(event.target.files)
     setVideoToUpload(event.target.files[0])
     setFileCaptured(true)
   }
@@ -130,7 +130,7 @@ const Modal: React.FC<ModalProps> = ({
   //This is where we get the form data and
   //we process it for ipfs and bitverse.
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(JSON.stringify(data))
+    // console.log(JSON.stringify(data))
 
     // upload to ipfs
     // then to bitverse!
@@ -385,10 +385,7 @@ const Modal: React.FC<ModalProps> = ({
     setUploadingToIpfs(false)
     setAddingToBitverse(true)
 
-    var mBitverse
-    var tx
-
-    console.log('*** bitverse function ***')
+    // console.log('*** bitverse function ***')
 
     try {
       var provider = await detectEthereumProvider()
@@ -404,7 +401,7 @@ const Modal: React.FC<ModalProps> = ({
     //Can be initialised with a provider or a signer
     //use signer to write to blockchain
     try {
-      mBitverse = bitverseSigner
+      var mBitverse = bitverseSigner
       ? bitverseSigner
       : new ethers.Contract(
           contractMumbaiAddress,
@@ -417,24 +414,24 @@ const Modal: React.FC<ModalProps> = ({
     }
    
 
-    console.log('*********  bitverse ***********')
-    console.log(`contentCid - ${contentHash}
-    metadataCid - ${metadataHash}`)
+    // console.log('*********  bitverse ***********')
+    // console.log(`contentCid - ${contentHash}
+    // metadataCid - ${metadataHash}`)
 
-    console.log(mBitverse)
+    // console.log(mBitverse)
     try {
-      tx = await mBitverse._addContent(contentHash, metadataHash, contentType)
-      console.log('*********  result ***********')
-      console.log(tx)
+      var tx = await mBitverse._addContent(contentHash, metadataHash, contentType)
+      // console.log('*********  result ***********')
+      // console.log(tx)
 
       await tx.wait()
       setAddingToBitverse(false)
       setShowSpinner(false)
       setIsUploadSuccessful(true)
     } catch (error) {
-      console.error('****** Contract upload error *******')
+      // console.error('****** Contract upload error *******')
 
-      console.log(error)
+      console.error(error)
       setShowSpinner(false)
       setAddingToBitverse(false)
 
@@ -447,11 +444,11 @@ const Modal: React.FC<ModalProps> = ({
   //metadata file naming convention- {contentCid}.json
   function downloadMetaDataJsonFile() {
     if (!contentCid) {
-      console.log('CID not found')
+      // console.log('CID not found')
     }
 
     if (!metadataJson) {
-      console.log('No Metadata JSON file')
+      // console.log('No Metadata JSON file')
     }
 
     //CID.parse(content.cid)

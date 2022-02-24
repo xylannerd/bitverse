@@ -32,7 +32,7 @@ const DisplayUserNfts: React.FC<PropType> = ({
       setIsLoadingNfts(true)
 
       var uploaderToNftIndicesLength = await bitverseSigner.uploaderToNftIndicesLength()
-      console.log('indices: ' + uploaderToNftIndicesLength)
+      // console.log('indices: ' + uploaderToNftIndicesLength)
 
       if (uploaderToNftIndicesLength && uploaderToNftIndicesLength > 0) {
         setUserNftCount(uploaderToNftIndicesLength)
@@ -48,13 +48,13 @@ const DisplayUserNfts: React.FC<PropType> = ({
 
         if (nftsArray) {
           setUserNfts(nftsArray)
-          console.log(nftsArray)
+          // console.log(nftsArray)
           setIsLoadingNfts(false)
         }
       } else {
         //author has no content yet!
         //message: Your dashboard looks empty, Lets add something!
-        console.log('NO NFT FOUND')
+        // console.log('NO NFT FOUND')
         setIsLoadingNfts(false)
       }
     } else {

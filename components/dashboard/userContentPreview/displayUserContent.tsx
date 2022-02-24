@@ -54,8 +54,8 @@ const DisplayUserContent: React.FC<PropType> = ({
           contentArray.push(content)
           var res = await ipfs.cat(content.metadataCid)
           // var data = await res.Json()
-          console.log("** Metadata from Cid **")
-          console.log(res)
+          // console.log("** Metadata from Cid **")
+          // console.log(res)
           //sets the metadata for each Content
           metadataMap.set(theCid, res)
         }
@@ -67,8 +67,8 @@ const DisplayUserContent: React.FC<PropType> = ({
         }
 
         if (metadataMap) {
-          console.log('**metadata map**')
-          console.log(metadataMap)
+          // console.log('**metadata map**')
+          // console.log(metadataMap)
           setContentMetadata(metadataMap)
           // console.log(metadataMap.get(contentArray[0].cid))
         }
