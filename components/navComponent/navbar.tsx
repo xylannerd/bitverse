@@ -13,7 +13,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
 import { Popover, Transition } from '@headlessui/react'
 import { usePopper } from 'react-popper'
-import  HandleMetamaskConnectionButton  from './handleMetamaskButton'
+import HandleMetamaskConnectionButton from './handleMetamaskButton'
 import { useRouter } from 'next/router'
 
 const Navbar: React.FC = () => {
@@ -44,13 +44,18 @@ const Navbar: React.FC = () => {
 
   //keep this useEffect on the top!
   useEffect(() => {
-    // @ts-ignore
-    if (ethereum.selectedAddress) {
+    try {
       // @ts-ignore
-      store.userAddress = ethereum.selectedAddress
-      console.log('inside navbar: ' + snapshot.userAddress)
-      // @ts-ignore
-      // console.log(ethereum.selectedAddress)
+      if (ethereum.selectedAddress) {
+        // @ts-ignore
+        store.userAddress = ethereum.selectedAddress
+        // console.log('inside navbar: ' + snapshot.userAddress)
+        // @ts-ignore
+        // console.log(ethereum.selectedAddress)
+      }
+    } catch (error) {
+      console.error("Please install metamask")
+
     }
   }, [snapshot.userAddress])
 
@@ -58,12 +63,16 @@ const Navbar: React.FC = () => {
   //need refactoring
   useEffect(() => {
     async function initProvider() {
-      const prv = await detectEthereumProvider()
-      setmProvider(prv)
-      // @ts-ignore
-      store.networkId = prv.networkVersion
-      // @ts-ignore
-      store.chainId = prv.chainId
+      try {
+        const prv = await detectEthereumProvider()
+        setmProvider(prv)
+        // @ts-ignore
+        store.networkId = prv.networkVersion
+        // @ts-ignore
+        store.chainId = prv.chainId
+      } catch (error) {
+        // console.error(error)
+      }
     }
     initProvider()
   }, [mProvider])
@@ -102,30 +111,42 @@ const Navbar: React.FC = () => {
   }
 
   useEffect(() => {
-    // @ts-ignore
-    ethereum.on('accountsChanged', (accounts) => {
-      // Handle the new accounts, or lack thereof.
-      // "accounts" will always be an array, but it can be empty.
-      handleAccountsChanged(accounts)
-    })
+    try {
+      // @ts-ignore
+      ethereum.on('accountsChanged', (accounts) => {
+        // Handle the new accounts, or lack thereof.
+        // "accounts" will always be an array, but it can be empty.
+        handleAccountsChanged(accounts)
+      })
+    } catch (error) {
+      // console.error(error)
+    }
   }, [snapshot.userAddress])
 
   useEffect(() => {
-    // @ts-ignore
-    ethereum.on('disconnect', (error) => {
-      window.location.reload()
-      console.log('Metamask Disconnected')
-    })
+    try {
+      // @ts-ignore
+      ethereum.on('disconnect', (error) => {
+        window.location.reload()
+        console.log('Metamask Disconnected')
+      })
+    } catch (error) {
+      // console.error(error)
+    }
   }, [snapshot.userAddress])
 
   useEffect(() => {
-    // @ts-ignore
-    ethereum.on('chainChanged', (_chainId) => {
-      // Handle the new chain.
-      // Correctly handling chain changes can be complicated.
-      // We recommend reloading the page unless you have good reason not to.
-      handleChainChanged(_chainId)
-    })
+    try {
+      // @ts-ignore
+      ethereum.on('chainChanged', (_chainId) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        handleChainChanged(_chainId)
+      })
+    } catch (error) {
+      // console.error(error)
+    }
   }, [snapshot.userAddress])
 
   function handleChainChanged(_chainId) {
@@ -137,7 +158,6 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-     
       <div
         id="navBar"
         className="flex items-center w-full h-16 bg-black shadow-md"
