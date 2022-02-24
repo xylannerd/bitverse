@@ -29,4 +29,5 @@ export const RIGHT_NETWORK =  polygon_mumbai_testnet //Replace this to change ne
 //ipfs.mihir.ch
 //ipfs.io
 //ipfs.dweb.link
-export const IPFS_GATEWAY_URL = "ipfs.dweb.link"
+// export const IPFS_GATEWAY_URL = "ipfs.dweb.link"
+export const IPFS_GATEWAY_URL = "ipfs.mihir.ch"
