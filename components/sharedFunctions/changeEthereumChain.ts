@@ -34,6 +34,7 @@ export const changeChain = async () => {
         })
       } catch (addError) {
         // handle "add" error
+        console.error("Error adding network", addError)
       }
     }
     // handle other "switch" errors
