@@ -41,7 +41,7 @@ When you the creator upload, let's say an image on the bitverse, following thing
     
 
 
-    ```
+    ```solidity
     /// @dev The main 'Content' struct.
     /// Every content in Bitverse is represented by a copy of this structure.
     struct Content {
