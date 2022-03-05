@@ -31,6 +31,70 @@ Bitverse is a <a href="https://en.wikipedia.org/wiki/Decentralized_autonomous_or
 </p>
 
 ---
+### How does it work -
+
+When you the creator upload, let's say an image on the bitverse, following things happen -
+* The image is added to IPFS, you may host the image on your computer or pin it on services like pinata. Your fans can also consume and seed that content on their devices.
+* Now the CID of that image is added to the smart contract on the ethereum blockchain, along with information like its author, the likes and dislikes it has, etc.
+* It is stored inside the smart contract as a struct -    
+    
+    
+
+
+    ```
+    /// @dev The main 'Content' struct.
+    /// Every content in Bitverse is represented by a copy of this structure.
+    struct Content {
+        //The IPFS-CID of the content.
+        //A unique identifier for the content.
+        string cid;
+        //The IPFS-CID of the content metadata.
+        //Example: Name, Description for a video content.
+        //Stored on IPFS in JSON format.
+        string metadataCid;
+        //Address of the content author.
+        address payable author;
+        //Total likes the author got for this content.
+        uint256 likes;
+        //Total dislikes the author got for this content.
+        uint256 dislikes;
+        // This is the net number of likes
+        // netlikes = likes - dislikes.
+        // It can also be a negative number,
+        // hence a signed integer.
+        // The token rewarded are calculated upon the number of netlikes.
+        // Note: No tokens can be rewarded more than once for the same milestone,
+        // We use milestone below to keep track of the checkpoints.
+        int256 netlikes;
+        // This is used to make sure no author is rewarded a token more than once for the same milestone.
+        uint256 milestone;
+        // This mapping contains all the users who've liked this content.
+        // Also used to make sure no user likes the content more than once.
+        mapping(address => bool) usersLiked;
+        // This mapping contains all the users who've disliked this content.
+        // Also used to make sure no user dislikes the content more than once.
+        mapping(address => bool) usersDisliked;
+        // The timestamp from the block when this content came into existence on the bitverse.
+        uint256 timeStamp;
+        //the content type, eg: image, video, blog, land, website etc.
+        string contentType;
+    }
+    ```
+
+      
+      
+Now whenever any user likes or dislikes a content, the record is updated inside the smart contract.
+
+ _Now the author of the content is rewarded in following way -_
+
+* An ERC20 token (Bitstone - BIT) is minted to the author's address whenever their content's hits a milestone.
+* The current Milestone is '10', i.e., for every 10th netlike the content is able to accrue, a token will be minted to the author's address.
+* Creators can choose to trade these tokens on DEX, Crypto-Exchanges or hodl if they like.
+* Those tokens would represent the likeability and credibility of the content as well as the creator in the vast expanse of the distributed network.
+* Those tokens can be used to get a sense of how much value you are generating through your content.
+
+
+---
 
 ### Technologies used:
 
