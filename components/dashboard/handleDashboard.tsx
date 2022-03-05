@@ -112,7 +112,7 @@ const HandleDashboard: React.FC<Props> = ({
           {!isLoadingNetwork && !rightNetwork && (
             <p className="flex items-center text-white mt-8 text-center ">
               {' '}
-              Please connect to the Ganache Network
+              Please select Polygon Mumbai Network
             </p>
           )}
         </div>
