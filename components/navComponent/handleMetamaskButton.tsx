@@ -37,7 +37,7 @@ function handleOnboarding() {
       return (
         <button
           onClick={requestForAccount}
-          className=" flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 rounded-md py-1 pl-2 pr-3 cursor-pointer"
+          className=" flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 hover:ring-gray-500 rounded-md py-1 pl-2 pr-3 cursor-pointer"
         >
           <p className="font-thin text-sm ml-1">Link Wallet</p>
         </button>
