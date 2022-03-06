@@ -45,11 +45,11 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
 
   //hover:bg-gray-900 hover:bg-opacity-50 cursor-pointer
   return (
-    <div className="flex h-56 border-b border-opacity-40 ">
-      <div className="flex flex-row items-center">
+    <div className="flex h-full py-4 md:py-0 md:h-56 border-b border-opacity-40 ">
+      <div className="flex flex-col md:flex-row items-center">
         <div
           id="imageBackground"
-          className="flex justify-center w-44 h-5/6 shrink-0 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden"
+          className="flex justify-center w-52 md:w-44 h-56 md:h-5/6 shrink-0 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden"
         >
           <img className="w-full object-cover" src={imageSource} />
 
@@ -64,8 +64,8 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
           </div> */}
         </div>
 
-        <div id="cardBody" className="h-full grow pt-8 pb-8 pl-4 pr-64">
-          <div className="flex flex-col h-full grow text-white justify-between flex-nowrap overflow-hidden truncate">
+        <div id="cardBody" className="w-80 md:w-full md:h-full grow pt-8 md:pb-8 md:pl-4 lg:pr-64">
+          <div className="flex flex-col h-full w-full shrink text-white justify-between flex-nowrap truncate">
             <div className="div">
               <div className="text-gray-500 text-sm">Name:</div>
               {metadata && <div></div>}
@@ -76,7 +76,7 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
               
               
            
-            <div className="flex flex-row space-x-1 text-gray-500 text-sm">
+            <div className="flex flex-row space-x-1 text-gray-500 text-sm overflow-ellipsis">
                 <div>Content-Cid:</div>{' '}
                 <a
                   href={`ipfs://${CID.parse(content.cid)
@@ -84,14 +84,14 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
                     .toString()}`}
                   target="_blank"
                 >
-                  <div className="hover:opacity-75">
+                  <div className="hover:opacity-75 overflow-auto">
                     {CID.parse(content.cid).toV1().toString()}
                   </div>
                 </a>
               </div>{' '}
            
            
-              <div className="flex flex-row space-x-1 text-gray-500 text-sm">
+              <div className="flex flex-row space-x-1 text-gray-500 text-sm overflow-ellipses">
                 <div>Metadata-Cid:</div>{' '}
                 <a
                   href={`ipfs://${CID.parse(content.metadataCid)
@@ -99,7 +99,7 @@ const ContentCard: React.FC<PropType> = ({ content, userMetadata }) => {
                     .toString()}`}
                   target="_blank"
                 >
-                  <div className="hover:opacity-75">
+                  <div className="hover:opacity-75 overflow-auto">
                     {CID.parse(content.metadataCid).toV1().toString()}
                   </div>
                 </a>

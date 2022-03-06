@@ -69,11 +69,11 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {
   }
 
   return (
-    <div className="flex h-56 border-b border-opacity-40 ">
-      <div className="flex flex-row items-center">
+    <div className="flex h-full md:h-56 py-4 border-b border-opacity-40">
+      <div className="flex flex-col md:flex-row items-center">
         <div
           id="imageBackground"
-          className="flex justify-center w-44 h-5/6 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden cursor-pointer relative"
+          className="flex justify-center w-52 md:w-44 h-56 md:h-5/6 z-10 mx-4 bg-gray-700 bg-opacity-25 rounded-md overflow-hidden cursor-pointer relative"
         >
           <a
             href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
@@ -86,9 +86,9 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {
           </a>
         </div>
 
-        <div id="cardBody" className="h-full grow pt-8 pb-8 pl-4 pr-64">
+        <div id="cardBody" className="w-80 md:w-full md:h-full grow md:pt-8 md:pb-8 md:pl-4 md:pr-64">
           {/* justify-between and then uncomment */}
-          <div className="flex flex-col h-full grow text-white justify-center flex-nowrap overflow-hidden truncate">
+          <div className="flex flex-col h-full grow text-white justify-center flex-nowrap overflow-hidden">
             {/* <div className="div"> */}
               {/* <div className="text-gray-500 text-sm">Name: {name}</div>{' '} */}
               {/* <div className="flex overflow-ellipsis w-96 text-gray-500 text-sm">
@@ -115,11 +115,12 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {
                 <div className="slashed-zero">Dislikes: {nft.dislikes.toNumber()}</div>
               </div>
             </div>
-          </div>
-
-          <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500">
             Note: Ipfs Uri previews may take some time to load
           </div>
+          </div>
+
+          
         </div>
       </div>
     </div>
