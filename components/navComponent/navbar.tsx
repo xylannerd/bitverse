@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
 
   const [mProvider, setmProvider] = useState(null)
   const [activeAccount, setActiveAccount] = useState(null)
+  const [showMenu, setShowMenu] = useState(false)
 
   // const { rootStore } = useContext(StoreContext)
 
@@ -54,8 +55,7 @@ const Navbar: React.FC = () => {
         // console.log(ethereum.selectedAddress)
       }
     } catch (error) {
-      console.error("Please install metamask")
-
+      console.error('Please install metamask')
     }
   }, [snapshot.userAddress])
 
@@ -160,19 +160,66 @@ const Navbar: React.FC = () => {
     <>
       <div
         id="navBar"
-        className="flex items-center w-full h-16 bg-black shadow-md"
+        className="inline-flex flex-col md:flex-row md:items-center w-full md:h-16 bg-black shadow-md"
       >
         <div
           id="leftSide"
-          className="flex w-3/6 h-full items-center bg-black text-white space-x-8"
+          className="inline-flex md:w-3/6 h-16 justify-between items-center bg-black text-white md:space-x-8"
         >
-          <Logo />
+          <div className="inline-flex space-x-2">
+            <Logo />
+            <Link href="/">
+              <div className="flex flex-row items-center justify-center text-white mr-8 ring-1 ring-gray-800 hover:ring-gray-500 rounded-md md:py-1 pl-1 pr-2 md:pl-2 md:pr-3 select-none cursor-pointer">
+                <p className="font-thin text-sm ml-1">About</p>
+              </div>
+            </Link>
+          </div>
+          <div
+            id="toggleMenu"
+            className="md:hidden justify-self-end mr-8 cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            {showMenu ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="white"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                />
+              </svg>
+            )}
+          </div>
         </div>
+
         <div
           id="rightSide"
-          className="flex w-3/6 h-full bg-black items-center justify-end"
+          className={`md:flex ${
+            showMenu ? 'flex' : 'hidden'
+          } flex-col md:flex-row md:w-3/6 h-full bg-black items-center justify-center md:justify-end`}
         >
-          <div className="flex flex-row space-x-8 text-white mr-16">
+          <div className="flex md:flex-row space-x-8 text-white md:mr-16">
             <Link href="/nft">
               <div
                 className={`select-none cursor-pointer ${
@@ -207,51 +254,54 @@ const Navbar: React.FC = () => {
               </div>
             </Link>
           </div>
-          <HandleMetamaskConnectionButton
-            userAddress={snapshot.userAddress}
-            provider={mProvider}
-            requestForAccount={requestForAccount}
-          />
-          {snapshot.userAddress && (
-            <Popover className="relative">
-              {({ open }) => (
-                <>
-                  <Popover.Button ref={setReferenceElement}>
-                    <motion.div
-                      className="rounded-full h-10 w-10 mr-8 bg-indigo-50 overflow-hidden flex items-center justify-center"
-                      whileHover={{ boxShadow: '0px 0px 8px white' }}
-                      whileTap={{
-                        scale: 0.99,
-                        boxShadow: '0px 0px 10px white',
-                      }}
-                    >
-                      {snapshot.userAddress && (
-                        <Blockies
-                          seed={snapshot.userAddress}
-                          size={11}
-                          bgColor="#000000"
-                          spotColor="#000000"
-                        />
-                      )}
-                    </motion.div>
-                  </Popover.Button>
 
-                  <Popover.Panel
-                    className="absolute z-20 bg-white py-1 px-3 rounded-md shadow-md"
-                    ref={setPopperElement}
-                    style={styles.popper}
-                    {...attributes.popper}
-                  >
-                    <div className="flex flex-col">
-                      <Link href="/dashboard">
-                        <a>Dashboard</a>
-                      </Link>
-                    </div>
-                  </Popover.Panel>
-                </>
-              )}
-            </Popover>
-          )}
+          <div className="flex flex-row items-center justify-center my-4">
+            <HandleMetamaskConnectionButton
+              userAddress={snapshot.userAddress}
+              provider={mProvider}
+              requestForAccount={requestForAccount}
+            />
+            {snapshot.userAddress && (
+              <Popover className="relative">
+                {({ open }) => (
+                  <>
+                    <Popover.Button ref={setReferenceElement}>
+                      <motion.div
+                        className="rounded-full h-10 w-10 mr-8 bg-indigo-50 overflow-hidden flex items-center justify-center"
+                        whileHover={{ boxShadow: '0px 0px 8px white' }}
+                        whileTap={{
+                          scale: 0.99,
+                          boxShadow: '0px 0px 10px white',
+                        }}
+                      >
+                        {snapshot.userAddress && (
+                          <Blockies
+                            seed={snapshot.userAddress}
+                            size={11}
+                            bgColor="#000000"
+                            spotColor="#000000"
+                          />
+                        )}
+                      </motion.div>
+                    </Popover.Button>
+
+                    <Popover.Panel
+                      className="absolute z-20 bg-white py-1 px-3 rounded-md shadow-md"
+                      ref={setPopperElement}
+                      style={styles.popper}
+                      {...attributes.popper}
+                    >
+                      <div className="flex flex-col">
+                        <Link href="/dashboard">
+                          <a>Dashboard</a>
+                        </Link>
+                      </div>
+                    </Popover.Panel>
+                  </>
+                )}
+              </Popover>
+            )}
+          </div>
         </div>
       </div>
     </>
