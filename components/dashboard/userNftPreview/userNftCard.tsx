@@ -118,7 +118,7 @@ const UserNftCard: React.FC<PropType> = ({ nft, ipfs, ethSigner }) => {
           </div>
 
           <div className="text-xs text-gray-500">
-            Note: Ipfs Uri previews may not show.
+            Note: Ipfs Uri previews may take some time to load
           </div>
         </div>
       </div>
